@@ -7,7 +7,7 @@
 </head>
 
 <body>
-@include('custom_layout.partials.admin_nav')
+@include('custom_layout.partials.admin.admin_nav')
 
 
 <main>

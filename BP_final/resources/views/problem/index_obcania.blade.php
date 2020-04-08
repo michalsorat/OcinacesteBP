@@ -1,4 +1,4 @@
-@extends('custom_layout.app')
+@extends('custom_layout.obcan.obcan_app')
 
 @section('content')
 
@@ -87,7 +87,7 @@
                 <div class="col-12">
                     <h1 class="text-center">Moje hlásenia</h1>
                 </div>
-                <div class="col-12 d-flex justify-content-center p-0">
+                <div class="col-12 d-flex justify-content-center flex-column">
                     <table class="table main-table">
                         <thead>
                         <tr>
@@ -120,6 +120,8 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    {{$problems->links()}}
 
                     @if(!empty(Session::get('success')))
                         <div class="alert alert-success"> {{ Session::get('success') }}</div>

@@ -4,20 +4,10 @@
             <img src="{{ asset('img/fiitLogo.png') }}" height="50">
             <img src="{{ asset('img/sucttskLogo2.png') }}" height="50" class="ml-3">
         </div>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav m-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/problem/create">Vytvor hlásenie</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/problem">Všetky hlásenia</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/problem">Navyse veci pre Adminov</a>
-                </li>
-            </ul>
-        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
         <!-- Right Side Of Navbar -->
         <ul class="navbar-nav ml-auto">
@@ -51,9 +41,5 @@
                 </li>
             @endguest
         </ul>
-        <button class="navbar-toggler ml-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
     </nav>
 </header>

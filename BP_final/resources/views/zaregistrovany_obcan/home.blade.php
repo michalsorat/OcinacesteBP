@@ -1,4 +1,4 @@
-@extends('custom_layout.app')
+@extends('custom_layout.obcan.obcan_app')
 
 @section('content')
     <div class="container">

@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'ProblemController@welcomePage');
 
 Auth::routes();
 
@@ -25,5 +23,8 @@ Route::get('/dispecer', 'DispecerController@index')->name('dispecer');
 Route::get('/manazer', 'ManazerController@index')->name('manazer');
 
 Route::resource('problem', 'ProblemController');
+Route::get('/mapa', 'ProblemController@mapa');
+
+
 
 

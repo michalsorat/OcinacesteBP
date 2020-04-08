@@ -1,4 +1,4 @@
-@extends('custom_layout.admin_app')
+@extends('custom_layout.admin.admin_app')
 
 @section('content')
 
@@ -6,63 +6,6 @@
         <div class="alert alert-info">{{ Session::get('message') }}</div>
     @endif
 
-    <div id="update-modal" class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Aktualizácia záznamu</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    <form class="start-form" action="{{ route('problem.store') }}" method="post">
-
-                        <!-- vytvara skryte vstupne pole, ktore zabranuje utoku cross site scripting -->
-                        @csrf
-                        <div class="w-100 mb-2">
-                            <label for="poloha">Poloha *</label>
-                            <input id="poloha" class="form-input" type="text" name="poloha">
-                        </div>
-
-                        <div class="w-100 mb-2">
-                            <label for="kategoria">Kategória *</label>
-                            <select id="kategoria" class="form-select form-input" name="kategoria_problemu_id">
-                                <option value="1">Stav vozovky</option>
-                                <option value="2">Dopravné značenie</option>
-                                <option value="3">Kvalita opravy</option>
-                                <option value="4">Prerastená zeleň</option>
-                            </select>
-                        </div>
-
-                        <div class="w-100 mb-2">
-                            <label for="stav_problemu">Stav problému *</label>
-                            <select id="stav_problemu" class="form-select form-input" name="stav_problemu_id">
-                                <option value="1">Chýbajúca</option>
-                                <option value="2">Poškodená</option>
-                                <option value="3">Vyblednutá</option>
-                                <option value="4">Zle viditeľná</option>
-                            </select>
-                        </div>
-
-
-                        <div class="w-100 mb-2">
-                            <label for="popis_problemu">Popis problému *</label>
-                            <textarea id="popis_problemu" rows="6" class="form-input" name="popis_problemu"></textarea>
-                        </div>
-
-                        <div class="w-100 mb-2">
-                            <label for="fotka">Vložiť fotku</label>
-                            <input id="fotka" type="file">
-                        </div>
-                        <button type="submit" class="btn btn-primary" name="submit">Aktualizovať</button>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
     <div id="delete-modal" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -75,11 +18,6 @@
                     <ul class="d-flex align-items-center justify-content-center mt-4">
                         <li><button type="button" class="btn btn-primary cancel mr-4" data-dismiss="modal" aria-label="Close">Zrušiť</button></li>
                         <!--<li><button type="button" class="btn btn-danger delete">Vymazať</button></li>-->
-
-
-
-
-
                     </ul>
                 </div>
             </div>
@@ -148,6 +86,7 @@
 
                     </table>
                     {{$problems->links()}}
+
                     @if(!empty(Session::get('success')))
                         <div class="alert alert-success"> {{ Session::get('success') }}</div>
                     @endif

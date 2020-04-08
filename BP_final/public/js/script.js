@@ -5,7 +5,9 @@
  */
 var markers = {};
 var markerString;
-const test = "Poloha";
+//const test = "Poloha";
+
+
 
 function initialize() {
     var trnava = { lat: 48.3767994, lng: 17.5835082 };
@@ -14,6 +16,7 @@ function initialize() {
         zoom: 14,
         center: trnava
     });
+    //window.alert(foo);
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function(event) {
@@ -22,10 +25,14 @@ function initialize() {
         var lng = event.latLng.lng();
 
         markerString = getMarkerString(lat, lng);
-        window.alert(markerString);
         addMarker(event.latLng, map);
 
         document.getElementById('poloha').value = markerString;
+
+    });
+
+    google.maps.event.addListener(marker, "rightclick", function (event) {
+        marker.setMap(null);
     });
 }
 
@@ -53,6 +60,12 @@ var getLatLng = function(lat, lng) {
     return new google.maps.LatLng(lat, lng);
 };
 
+function split(str){
+    var res = str.split(",")
+
+    return res;
+}
+
 
 // Adds a marker to the map.
 function addMarker(location, map) {
@@ -64,6 +77,21 @@ function addMarker(location, map) {
         map: map,
     });
 
+    bindMarkerEvents(marker); // bind right click event to marker
+
+}
+function bindMarkerEvents(marker) {
+    google.maps.event.addListener(marker, "rightclick", function (point) {
+        //var markerId = getMarkerUniqueId(point.latLng.lat(), point.latLng.lng()); // get marker id by using clicked point's coordinate
+        //var marker = markers[markerId]; // find marker
+        removeMarker(marker); // remove it
+    });
+}
+
+
+function removeMarker(marker) {
+    marker.setMap(null); // set markers setMap to null to remove it from map
+    //delete markers[markerId]; // delete marker instance from markers object
 }
 
 

@@ -7,7 +7,7 @@
 </head>
 
 <body>
-@include('custom_layout.partials.nav')
+@include('custom_layout.partials.obcan.obcan_nav')
 
 
 <main>

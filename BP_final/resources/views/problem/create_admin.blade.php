@@ -1,4 +1,4 @@
-@extends('custom_layout.obcan.obcan_app')
+@extends('custom_layout.admin.admin_app')
 
 @section('content')
 
@@ -147,9 +147,9 @@
                                         <label for="kategoria">Kategória *</label>
                                         <select id="kategoria" class="form-select form-input"
                                                 name="kategoria_problemu_id">
-                                        @foreach($kategorie as $kategoria)
+                                            @foreach($kategorie as $kategoria)
 
-                                            <option value="{{ $kategoria->kategoria_problemu_id }}">{{ $kategoria->nazov }}</option>
+                                                <option value="{{ $kategoria->kategoria_problemu_id }}">{{ $kategoria->nazov }}</option>
                                             @endforeach
                                         </select>
 

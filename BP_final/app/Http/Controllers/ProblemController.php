@@ -6,8 +6,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Problem;
 use App\Models\KategoriaProblemu;
+use App\Models\StavProblemu;
 use App\Models\Priorita;
+use App\Models\Kraj;
+use App\Models\KatastralneUzemie;
+use App\Models\Obec;
+use App\Models\Spravca;
+use App\Models\TypStavuRieseniaProblemu;
+use App\Models\StavRieseniaProblemu;
 use Illuminate\Support\Facades\Auth;
+
 
 class ProblemController extends Controller
 {
@@ -21,27 +29,28 @@ class ProblemController extends Controller
         $rola = Auth::user()->rola_id;
         $user_id = Auth::user()->id;
 
-
         if(($rola==1) || ($rola == 2)) {
-            $problems = Problem::with( 'KategoriaProblemu', 'StavProblemu', 'StavRieseniaProblemu.TypStavuRieseniaProblemu', 'users' )
-                ->where('pouzivatel_id', $user_id)
-                ->get();
+
+            $problems = Problem::where('pouzivatel_id', '=', $user_id)->paginate(5);
 
             return view('problem/index_obcania')->with('problems', $problems);
         }
         else
 
-            $problems = Problem::with( 'KategoriaProblemu', 'StavProblemu', 'StavRieseniaProblemu.TypStavuRieseniaProblemu', 'Priorita',
-                'users','PriradenyZamestnanec.users', 'PriradeneVozidlo.Vozidlo', 'Cesta.Kraj', 'Cesta.Obec', 'Cesta.KatastralneUzemie', 'Cesta.Spravca',
-                'PopisStavuRieseniaProblemu')
-                ->get();
             $problems = Problem::paginate(5);
-
-
-
-
-
             return view('problem/index_zamestnanci')->with ('problems', $problems);
+    }
+
+    public function mapa(){
+
+        $problems = Problem::all();
+        return view('problem/mapa_problemov')->with('problems', $problems);
+    }
+
+    public function welcomePage(){
+
+        $problems = Problem::all();
+        return view('welcomePage')->with('problems', $problems);
     }
 
     /**
@@ -51,7 +60,17 @@ class ProblemController extends Controller
      */
     public function create()
     {
-        return view('problem.create');
+        $rola = Auth::user()->rola_id;
+        $kategorie = KategoriaProblemu::all();
+        $stavy = StavProblemu::all();
+
+        if(($rola==1) || ($rola == 2)) {
+
+            return view('problem.create')->with('kategorie', $kategorie)->with('stavy', $stavy);
+        }
+        else{
+            return view('problem.create_admin')->with('kategorie', $kategorie)->with('stavy', $stavy);
+        }
     }
 
     /**
@@ -83,6 +102,7 @@ class ProblemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Problem $problem)
+
     {
         return view('problem.detail', compact('problem', $problem));
     }
@@ -95,7 +115,25 @@ class ProblemController extends Controller
      */
     public function edit(Problem $problem)
     {
-        return view('problem.update', compact('problem', $problem));
+        $priority = Priorita::all();
+        $kraje = Kraj::all();
+        $katastralne_uzemia = KatastralneUzemie::all();
+        $obce = Obec::all();
+        $spravcovia = Spravca::all();
+        $stavy_riesenia_problemu = TypStavuRieseniaProblemu::all();
+        $kategorie = KategoriaProblemu::all();
+        $stavy_problemu = StavProblemu::all();
+
+
+        return view('problem.edit', compact('problem', $problem))
+            ->with('priority', $priority)
+            ->with('kraje', $kraje)
+            ->with('katastralne_uzemia', $katastralne_uzemia)
+            ->with('obce', $obce)
+            ->with('spravcovia', $spravcovia)
+            ->with('stavy_riesenia_problemu', $stavy_riesenia_problemu)
+            ->with('kategorie', $kategorie)
+            ->with('stavy_problemu', $stavy_problemu);
     }
 
     /**
