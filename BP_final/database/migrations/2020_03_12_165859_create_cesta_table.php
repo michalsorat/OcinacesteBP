@@ -15,6 +15,7 @@ class CreateCestaTable extends Migration
     {
         Schema::create('cesta', function (Blueprint $table) {
             $table->bigIncrements('cesta_id');
+            $table->text('nazov');
             $table->collation = 'utf8mb4_slovak_ci';
 
         });

@@ -14,15 +14,15 @@ class PriradeneVozidloSeeder extends Seeder
     {
         $priradene = [
             [
+                'problem_id' => 1,
                 'vozidlo_id' => 1,
             ],
-            [
-                'vozidlo_id' => 2,
-            ]
+
         ];
 
         foreach ($priradene as $priradene_vozidlo) {
             PriradeneVozidlo::create(array(
+                'problem_id' => $priradene_vozidlo['problem_id'],
                 'vozidlo_id' => $priradene_vozidlo['vozidlo_id']
             ));
         }

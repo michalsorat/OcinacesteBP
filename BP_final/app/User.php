@@ -16,8 +16,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'rola_id'
+        'id','name', 'email', 'password', 'rola_id'
     ];
+    protected $table = 'users';
+    protected $primaryKey ='id';
 
     protected $attributes = [
         'rola_id' => 1, //nepriradena - default zaregistrovany obcan

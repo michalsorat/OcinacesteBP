@@ -14,21 +14,14 @@ class FotkaStavuRieseniaProblemuSeeder extends Seeder
     {
         $fotky = [
             [
+                'popis_stavu_riesenia_id' => 1,
                 'cesta_k_suboru' => 'nepriradena fotka',
             ],
-            [
-                'cesta_k_suboru' => 'C:\file1\file2\fotka1.png',
-            ],
-            [
-                'cesta_k_suboru' => 'C:\file1\file2\fotka2.png',
-            ],
-            [
-                'cesta_k_suboru' => 'C:\file1\file2\fotka3.png',
-            ]
         ];
 
         foreach ($fotky as $fotka_stavu_riesenia_problemu) {
             FotkaStavuRieseniaProblemu::create(array(
+                'popis_stavu_riesenia_id' => $fotka_stavu_riesenia_problemu['popis_stavu_riesenia_id'],
                 'cesta_k_suboru' => $fotka_stavu_riesenia_problemu['cesta_k_suboru'],
             ));
         }

@@ -8,7 +8,7 @@ class DispecerController extends Controller
 {
     public function index()
     {
-        return view('dispecer.home');
+        return redirect('/problem');
     }
 
     public function __construct()

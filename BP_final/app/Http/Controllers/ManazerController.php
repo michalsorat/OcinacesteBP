@@ -8,7 +8,7 @@ class ManazerController extends Controller
 {
     public function index()
     {
-        return view('manazer.home');
+        return redirect('/problem');
     }
 
     public function __construct()

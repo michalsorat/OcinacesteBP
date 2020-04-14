@@ -22,9 +22,6 @@ img {
     max-width: 100%;
 }
 
-a {
-    color: #fff;
-}
 
 .c-black {color: black}
 
@@ -102,10 +99,11 @@ textarea.form-input {
     font-size: 18px;
 }
 
-#delete-modal {
+.delete-modal {
     max-width: 400px !important;
     left: 50%;
-    transform: translate(-50%, 0);
+    top: 50%;
+    transform: translate(-50%, -25%);
 }
 
 .container {
@@ -116,7 +114,7 @@ textarea.form-input {
 
 .update li {
     display: flex;
-    align-items: center;
+    flex-direction: column;
 }
 
 .update-label {

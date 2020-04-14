@@ -7,7 +7,7 @@
 </head>
 
 <body>
-@include('custom_layout.partials..welcomePage.welcomePage_nav')
+@include('custom_layout.partials.welcomePage.welcomePage_nav')
 
 
 <main>

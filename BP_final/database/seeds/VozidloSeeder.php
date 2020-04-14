@@ -14,12 +14,6 @@ class VozidloSeeder extends Seeder
     {
         $vozidla = [
             [
-                'oznacenie' => 'Default vozidlo',
-                'SPZ' => '-',
-                'pocet_najazdenych_km' => '0',
-                'poznamka' => '-'
-            ],
-            [
                 'oznacenie' => 'Tatra',
                 'SPZ' => 'TT564HS',
                 'pocet_najazdenych_km' => '60000',

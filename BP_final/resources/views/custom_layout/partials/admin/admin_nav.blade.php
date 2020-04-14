@@ -7,14 +7,17 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav m-auto">
-                <li class="nav-item">
+                <li class="nav-item {{ Request::is('problem/create') ? 'active' : '' }}">
                     <a class="nav-link" href="/problem/create">Vytvor hlásenie</a>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item {{ Request::is('problem') ? 'active' : '' }}">
                     <a class="nav-link" href="/problem">Všetky hlásenia</a>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item {{ Request::is('mapa') ? 'active' : '' }}">
                     <a class="nav-link" href="/mapa">Mapa</a>
+                </li>
+                <li class="nav-item {{ Request::is('pouzivatelia') ? 'active' : '' }}">
+                    <a class="nav-link" href="/pouzivatelia">Používatelia</a>
                 </li>
             </ul>
         </div>

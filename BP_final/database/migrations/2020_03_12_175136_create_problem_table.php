@@ -21,6 +21,39 @@ class CreateProblemTable extends Migration
 
         });
 
+        Schema::table('problem', function (Blueprint $table) {
+
+            $table->bigInteger('priorita_id')->unsigned();
+            $table->bigInteger('cesta_id')->unsigned();
+            $table->bigInteger('pouzivatel_id')->unsigned();
+            $table->bigInteger('kategoria_problemu_id')->unsigned();
+            $table->bigInteger('stav_problemu_id')->unsigned();
+
+
+
+            $table->foreign('priorita_id')
+                ->references('priorita_id')->on('priorita')
+                ->onDelete('cascade');
+
+            $table->foreign('cesta_id')
+                ->references('cesta_id')->on('cesta')
+                ->onDelete('cascade');
+
+            $table->foreign('pouzivatel_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('kategoria_problemu_id')
+                ->references('kategoria_problemu_id')->on('kategoria_problemu')
+                ->onDelete('cascade');
+
+            $table->foreign('stav_problemu_id')
+                ->references('stav_problemu_id')->on('stav_problemu')
+                ->onDelete('cascade');
+
+            $table->timestamps();
+        });
+
 
     }
 

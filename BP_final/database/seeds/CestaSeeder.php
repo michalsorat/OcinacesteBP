@@ -14,6 +14,7 @@ class CestaSeeder extends Seeder
     {
         $cesty = [
             [
+                'nazov' => 'undefined',
                 'kraj_id' => 1,
                 'katastralne_uzemie_id' => 1,
                 'obec_id' => 1,
@@ -21,6 +22,7 @@ class CestaSeeder extends Seeder
 
             ],
             [
+                'nazov' => 'undefined',
                 'kraj_id' => 2,
                 'katastralne_uzemie_id' => 2,
                 'obec_id' => 2,
@@ -30,6 +32,7 @@ class CestaSeeder extends Seeder
 
         foreach ($cesty as $cesta) {
             Cesta::create(array(
+                'nazov' => $cesta['nazov'],
                 'kraj_id' => $cesta['kraj_id'],
                 'katastralne_uzemie_id' => $cesta['katastralne_uzemie_id'],
                 'obec_id' => $cesta['obec_id'],

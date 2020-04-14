@@ -5,6 +5,7 @@
 <meta name="keywords" content="">
 <meta name="author" content="">
 <meta name="robots" content="noindex">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <title>Oči na ceste</title>
 
@@ -15,6 +16,8 @@
 <!-- Custom styles for this template -->
 <link rel="stylesheet" type="text/css" href="{{ asset('css/all.min.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
+
+
 
 <!-- stare verzie exploreru nepodporuju HTML5, toto riesi tu chybu -->
 <!--[if lt IE 9]>

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cesta extends Model
 {
-    protected $fillable = ['cesta_id', 'kraj_id', 'katastralne_uzemie_id', 'obec_id', 'spravca_id'];
+    protected $fillable = ['nazov','cesta_id', 'kraj_id', 'katastralne_uzemie_id', 'obec_id', 'spravca_id'];
 
     protected $table='cesta';
     protected $primaryKey ='cesta_id';
