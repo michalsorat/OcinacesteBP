@@ -1,4 +1,4 @@
-@extends('custom_layout.obcan.obcan_app')
+@extends('custom_layout.welcomePage.welcomePage_app')
 
 @section('content')
 
@@ -7,16 +7,16 @@
          * Global marker object that holds all markers.
          * @type {Object.<string, google.maps.LatLng>}
          */
-        var markers = [];
         var markerString;
         var markersCount = 0;
 
-        function initialize() {
+        function initAutocomplete() {
             var trnava = {lat: 48.3767994, lng: 17.5835082};
 
             var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 12,
-                center: trnava
+                center: trnava,
+                zoom: 11,
+                mapTypeId: 'roadmap'
             });
 
             // This event listener calls addMarker() when the map is clicked.
@@ -35,9 +35,60 @@
                     "Pre odstránenie polohy z mapy, kliknite pravým tlačidlom myše na označené miesto");
 
             });
-        }
 
-        google.maps.event.addDomListener(window, 'load', initialize);
+
+            // Create the search box and link it to the UI element.
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+
+            var markers = [];
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                // Clear out the old markers.
+                markers.forEach(function (marker) {
+                    marker.setMap(null);
+                });
+                markers = [];
+
+                // For each place, get the icon, name and location.
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+
+                    // Create a marker for each place.
+                    markers.push(new google.maps.Marker({
+                        map: map,
+                        title: place.name,
+                        position: place.geometry.location,
+                        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                    }));
+
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+        }
 
 
         /**
@@ -47,7 +98,8 @@
          * @return {string} Concatenated marker id.
          */
         var getMarkerString = function (lat, lng) {
-            return lat + ',' + lng;
+
+            return lat.toFixed(6) + ',' + lng.toFixed(6);
         };
 
         /**
@@ -90,34 +142,25 @@
             marker.setMap(null); // set markers setMap to null to remove it from map
             document.getElementById('poloha').value = "";
         }
-
-        $("document").ready(function () {
-            /*$(".main-table tr").on("click", function() {
-                $('#update-modal').modal('show')
-            });*/
-
-        });
     </script>
 
     <section class="main-container h-100">
         <div class="container-fluid h-100">
             <div class="row h-100">
 
-                <!-- mapa -->
-                <div class="col-12 col-sm-12 col-md-6 col-lg-7">
+                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+
+                <div class="col-12 col-sm-12 col-md-6 col-lg-7 mb-3 mb-md-0">
                     <div id="map"></div>
                 </div>
-                <!-- mapa -->
 
                 <div class="col-12 col-sm-12 col-md-6 col-lg-5">
                     <div class="container">
                         <div class="row">
-                            <!-- nadpis -->
+
                             <div class="col-12">
                                 <h1 class="text-center">Vytvorenie hlásenia</h1>
                             </div>
-                            <!-- nadpis -->
-
 
                             @if ($errors->any())
                                 <div class="alert alert-danger">
@@ -132,54 +175,54 @@
 
                             <div class="col-12 d-flex justify-content-center p-0">
 
-                                <!-- formular -->
-                                <!-- <form class="start-form"> -->
-                                <form class="start-form" action="{{ route('problem.store') }}" method="post">
+                                <form class="start-form" action="{{ route('welcomePage.store') }}" method="post">
 
-                                    <!-- vytvara skryte vstupne pole, ktore zabranuje utoku cross site scripting -->
                                     @csrf
                                     <div class="w-100 mb-2">
-                                        <label for="poloha"> Poloha *</label>
+                                        <label for="poloha"><b>Poloha *</b></label>
                                         <input id="poloha" class="form-input" type="text" name="poloha" value="">
                                     </div>
 
                                     <div class="w-100 mb-2">
-                                        <label for="kategoria">Kategória *</label>
+                                        <label for="kategoria"><b>Kategória *</b></label>
                                         <select id="kategoria" class="form-select form-input"
                                                 name="kategoria_problemu_id">
-                                        @foreach($kategorie as $kategoria)
+                                            @foreach($kategorie as $kategoria)
 
-                                            <option value="{{ $kategoria->kategoria_problemu_id }}">{{ $kategoria->nazov }}</option>
+                                                <option
+                                                    value="{{ $kategoria->kategoria_problemu_id }}">{{ $kategoria->nazov }}</option>
                                             @endforeach
                                         </select>
 
                                     </div>
 
                                     <div class="w-100 mb-2">
-                                        <label for="stav_problemu">Stav problému *</label>
+                                        <label for="stav_problemu"><b>Stav problému *</b></label>
                                         <select id="stav_problemu" class="form-select form-input"
                                                 name="stav_problemu_id">
                                             @foreach($stavy as $stav)
 
-                                                <option value="{{ $stav->stav_problemu_id }}">{{ $stav->nazov }}</option>
+                                                <option
+                                                    value="{{ $stav->stav_problemu_id }}">{{ $stav->nazov }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 
 
                                     <div class="w-100 mb-2">
-                                        <label for="popis_problemu">Popis problému *</label>
+                                        <label for="popis_problemu"><b>Popis problému *</b></label>
                                         <textarea id="popis_problemu" rows="6" class="form-input"
                                                   name="popis_problemu"></textarea>
                                     </div>
-
-                                    <div class="w-100 mb-2">
-                                        <label for="fotka">Vložiť fotku</label>
-                                        <input id="fotka" type="file">
-                                    </div>
+                                    <!--
+                                                                        <div class="w-100 mb-2">
+                                                                            <label for="fotka">Vložiť fotku</label>
+                                                                            <input id="fotka" type="file">
+                                                                        </div>
+                                                                        -->
                                     <button type="submit" class="btn btn-primary" name="submit">Vytvorit</button>
                                 </form>
-                                <!-- formular -->
+
 
                             </div>
                         </div>

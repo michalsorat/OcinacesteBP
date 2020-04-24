@@ -36,8 +36,9 @@ p {
 }
 
 #map {
-    height: 100%;
+    height: 500px;
     max-height: 500px;
+
 }
 
 .dropdown-menu {
@@ -125,7 +126,7 @@ textarea.form-input {
 
 .update .form-input {width: auto}
 
-.pagination {justify-content: center}
+.pagination {justify-content: center;margin-top: 12px}
 
 .h-500 {height: 500px }
 
@@ -205,4 +206,33 @@ footer {
 }
 #target {
     width: 345px;
+}
+
+.filter-row {
+    background: #d4d4d4;
+}
+
+.table thead th {
+    vertical-align: top;
+}
+
+.data-form {
+    max-width: 200px;
+    width: 100%
+}
+
+.choose-data {
+    height: 35px;
+    width: 100%;
+}
+
+@media(max-width: 767px) {
+    .start-form {
+        width: 100%;
+        text-align: center;
+    }
+
+    .form-input {
+        margin: auto
+    }
 }

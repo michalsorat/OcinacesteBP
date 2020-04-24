@@ -44,25 +44,5 @@ class Problem extends Model
     {
         return $this->belongsTo('App\Models\StavProblemu', 'stav_problemu_id');
     }
-    /*
-    public function StavRieseniaProblemu()
-    {
-        return $this->belongsTo('App\Models\StavRieseniaProblemu');
-    }
 
-    public function PopisStavuRieseniaProblemu()
-    {
-        return $this->belongsTo('App\Models\PopisStavuRieseniaProblemu');
-    }
-
-    public function PriradenyZamestnanec()
-    {
-        return $this->belongsTo('App\Models\PriradenyZamestnanec');
-    }
-
-    public function PriradeneVozidlo()
-    {
-        return $this->belongsTo('App\Models\PriradeneVozidlo');
-    }
-    */
 }

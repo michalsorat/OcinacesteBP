@@ -15,18 +15,18 @@
                 <div class="col-12 d-flex justify-content-center flex-column">
                     <table class="table main-table">
                         <thead>
-                        <tr>
+                        <tr class="filter-row">
                             <th scope="col">#</th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Poloha</th>
-                            <th scope="col">Zadané</th>
-                            <th scope="col">Kategória</th>
-                            <th scope="col">Stav problému</th>
-                            <th scope="col">Stav riešenia</th>
-                            <th scope="col">Priorita</th>
-                            <th scope="col">Používateľ</th>
-                            <th scope="col">Zamestnanec</th>
-                            <th scope="col">Vozidlo</th>
+                            <th scope="col"><p>ID</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Poloha</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Zadané</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Kategória</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Stav problému</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Stav riešenia</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Priorita</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Používateľ</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Zamestnanec</p><input type="text" class="input-filter w-100"></th>
+                            <th scope="col"><p>Vozidlo</p><input type="text" class="input-filter w-100"></th>
                             <th scope="col">Edit</th>
                             <th scope="col">Detail</th>
                             <th scope="col">Vymaž záznam</th>
@@ -34,7 +34,6 @@
                         </tr>
                         </thead>
                         <tbody>
-
                         @php
                             $counter=1;
                         @endphp

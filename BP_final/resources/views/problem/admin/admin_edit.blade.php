@@ -262,7 +262,7 @@
                 <div class="d-flex align-items-center justify-content-center">
                     <button type="submit" class="btn btn-primary update-btn mr-3">Aktualizovať</button>
 
-                    <button type="submit" class="btn btn-danger remove-btn" data-toggle="modal"
+                    <button type="button" class="btn btn-danger remove-btn" data-toggle="modal"
                             data-target="#delete-modal-{{ $problem->problem_id }}">Vymazať
                     </button>
                 </div>

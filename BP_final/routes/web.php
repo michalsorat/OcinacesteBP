@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'ProblemController@welcomePage');
+Route::get('/', 'ProblemController@welcomePage')->name('welcome');
 
 Auth::routes();
 
@@ -29,7 +29,8 @@ Route::resource('pouzivatelia', 'UserController');
 Route::resource('cesta', 'CestaController');
 Route::get('/mapa', 'ProblemController@mapa')->name('mapa');
 
-Route::get('/problem/priradene', 'ProblemController@priradeneProblemy');
+Route::get('/problem/priradeneDispecerovi',
+    'ProblemController@priradeneProblemyDispecerovi')->name('priradeneDispecerovi');
 
 Route::get('/problem/{problem}/priradeniZamestnanci',
     'ProblemController@priradeniZamestnanci')->name('priradeniZamestnanci');
@@ -40,6 +41,7 @@ Route::get('/problem/{problem}/stavyRieseniaProblemu',
 Route::get('/problem/{problem}/popisyStavovRieseniaProblemu',
     'ProblemController@popisyStavovRieseniaProblemu')->name('popisyStavovRieseniaProblemu');
 
-
+Route::get('/welcomePage/create', 'ProblemController@welcomePageCreate')->name('welcomePage.create');
+Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');
 
 

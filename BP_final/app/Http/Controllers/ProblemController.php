@@ -167,6 +167,12 @@ class ProblemController extends Controller
         }
     }
 
+    public function welcomePageCreate(){
+        $kategorie = KategoriaProblemu::all();
+        $stavy = StavProblemu::all();
+        return view('problem.nezaregistrovanyObcan.nezaregistrovanyObcan_create')
+            ->with('kategorie', $kategorie)->with('stavy', $stavy);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -195,6 +201,24 @@ class ProblemController extends Controller
 
         return redirect('problem');
         //->with('success', 'Hlasenie bolo prijate!');
+    }
+
+    public function welcomePageStore(Request $request){
+        $request->validate([
+            'poloha' => 'required',
+            'popis_problemu' => 'required'
+        ]);
+
+        $request->request->add(['pouzivatel_id' => '0']);
+        Problem::create($request->all());
+
+        $last = DB::table('problem')->latest('problem_id')->first();
+        StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
+
+
+        return redirect('/');
+        //->with('success', 'Hlasenie bolo prijate!');
+
     }
 
     /**
@@ -424,7 +448,7 @@ class ProblemController extends Controller
     }
 
 
-    public function priradeneProblemy(Request $request, User $user)
+    public function priradeneProblemyDispecerovi(User $user)
     {
 
 
@@ -439,12 +463,10 @@ class ProblemController extends Controller
         if ($rola == 4) {
             return view('problem.dispecer.historia.dispecer_priradeniZamestnanci',
                 compact('problem', $problem))->with('zamestnanci', $zamestnanci);
-            }
-        else  if ($rola == 3) {
+        } else if ($rola == 3) {
             return view('problem.admin.historia.admin_priradeniZamestnanci',
                 compact('problem', $problem))->with('zamestnanci', $zamestnanci);
-        }
-        else  if ($rola == 5) {
+        } else if ($rola == 5) {
             return view('problem.manazer.historia.manazer_priradeniZamestnanci',
                 compact('problem', $problem))->with('zamestnanci', $zamestnanci);
         }
@@ -459,12 +481,10 @@ class ProblemController extends Controller
         if ($rola == 4) {
             return view('problem.dispecer.historia.dispecer_priradeneVozidla',
                 compact('problem', $problem))->with('vozidla', $vozidla);
-        }
-        else if ($rola == 3) {
+        } else if ($rola == 3) {
             return view('problem.admin.historia.admin_priradeneVozidla',
                 compact('problem', $problem))->with('vozidla', $vozidla);
-        }
-        else if ($rola == 5) {
+        } else if ($rola == 5) {
             return view('problem.manazer.historia.manazer_priradeneVozidla',
                 compact('problem', $problem))->with('vozidla', $vozidla);
         }
@@ -472,38 +492,35 @@ class ProblemController extends Controller
 
     public function stavyRieseniaProblemu(Problem $problem)
     {
-        $stavy= StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)->get();
+        $stavy = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)->get();
 
         $rola = Auth::user()->rola_id;
 
         if ($rola == 4) {
             return view('problem.dispecer.historia.dispecer_stavyRieseniaProblemu',
                 compact('problem', $problem))->with('stavy', $stavy);
-        }
-        else if ($rola == 3) {
+        } else if ($rola == 3) {
             return view('problem.admin.historia.admin_stavyRieseniaProblemu',
                 compact('problem', $problem))->with('stavy', $stavy);
-        }
-        else if ($rola == 5) {
+        } else if ($rola == 5) {
             return view('problem.manazer.historia.manazer_stavyRieseniaProblemu',
                 compact('problem', $problem))->with('stavy', $stavy);
         }
     }
+
     public function popisyStavovRieseniaProblemu(Problem $problem)
     {
-        $popisy= PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)->get();
+        $popisy = PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)->get();
 
         $rola = Auth::user()->rola_id;
 
         if ($rola == 4) {
             return view('problem.dispecer.historia.dispecer_popisyStavovRieseniaProblemu',
                 compact('problem', $problem))->with('popisy', $popisy);
-        }
-        else if ($rola == 3) {
+        } else if ($rola == 3) {
             return view('problem.admin.historia.admin_popisyStavovRieseniaProblemu',
                 compact('problem', $problem))->with('popisy', $popisy);
-        }
-        else if ($rola == 5) {
+        } else if ($rola == 5) {
             return view('problem.manazer.historia.manazer_popisyStavovRieseniaProblemu',
                 compact('problem', $problem))->with('popisy', $popisy);
         }

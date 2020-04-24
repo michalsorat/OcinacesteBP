@@ -8,20 +8,21 @@
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!--
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav m-auto">
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/problem/create">Vytvor hlásenie</a>
+                        <li class="nav-item {{ Request::is('welcomePage/create') ? 'active' : '' }}">
+                            <a class="nav-link" href="/welcomePage/create">Vytvor hlásenie</a>
                         </li>
 
-                        <li class="nav-item active">
-                            <a class="nav-link" href="/problem">Moje hlásenia</a>
+                        <li class="nav-item {{ Request::is('/') ? 'active' : '' }}">
+                            <a class="nav-link" href="/">Oči na ceste</a>
                         </li>
+
                     </ul>
                 </div>
-                -->
+
 
         <!-- Right Side Of Navbar -->
         <ul class="navbar-nav ml-auto">

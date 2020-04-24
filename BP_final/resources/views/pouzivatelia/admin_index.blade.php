@@ -125,8 +125,27 @@
                                         <div class="modal-header">
                                             <h5 class="modal-title">Zmeň rolu používateľovi</h5>
                                         </div>
-                                        <div class="modal-body">
+                                        <div class="modal-body text-center">
+                                            <form action="{{ route('pouzivatelia.update', $user->id) }}"
+                                                  method="POST" class="row w-100">
+                                                @csrf
+                                                @method('PUT')
+                                                <label class="update-label">Rola požívateľa:</label>
+                                                <select id="rola_id" class="form-select form-input m-auto"
+                                                        name="rola_id">
+                                                    @foreach($roly as $rola)
 
+                                                        @if($rola->rola_id == $user->Rola['nazov'])
+                                                            <option value="{{ $rola->rola_id }}"
+                                                                    selected>{{ $rola->nazov }}</option>
+
+                                                        @else
+                                                            <option
+                                                                value="{{ $rola->rola_id }}">{{ $rola->nazov }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                            </form>
 
                                             <ul class="d-flex align-items-center justify-content-center mt-4">
                                                 <li>
@@ -136,31 +155,9 @@
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <form action="{{ route('pouzivatelia.update', $user->id) }}"
-                                                          method="POST" class="row w-100">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <label class="update-label">Rola požívateľa:</label>
-                                                        <select id="rola_id" class="form-select form-input"
-                                                                name="rola_id">
-                                                            @foreach($roly as $rola)
-
-                                                                @if($rola->rola_id == $user->Rola['nazov'])
-                                                                    <option value="{{ $rola->rola_id }}"
-                                                                            selected>{{ $rola->nazov }}</option>
-
-                                                                @else
-                                                                    <option
-                                                                        value="{{ $rola->rola_id }}">{{ $rola->nazov }}</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                        <p class="text-center">
-                                                            <button type="submit"
-                                                                    class="btn btn-primary update-btn mr-3">Aktualizovať
-                                                            </button>
-                                                        </p>
-                                                    </form>
+                                                    <button type="submit"
+                                                            class="btn btn-primary update-btn mr-3">Aktualizovať
+                                                    </button>
                                                 </li>
                                             </ul>
                                         </div>
