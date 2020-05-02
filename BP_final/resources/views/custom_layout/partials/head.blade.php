@@ -18,7 +18,6 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
 
 
-
 <!-- stare verzie exploreru nepodporuju HTML5, toto riesi tu chybu -->
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -29,5 +28,6 @@
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
         crossorigin="anonymous"></script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3EBu72tg4-hAmpi6lQeWFC4_IMf8o4uI&libraries=places&callback=initAutocomplete"
-        async defer></script>
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwqdLzr2oJjx6qzdDY8YVE9m8-yRasOwc&libraries=places&callback=initAutocomplete"
+    async defer></script>

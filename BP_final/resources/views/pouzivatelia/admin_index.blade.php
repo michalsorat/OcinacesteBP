@@ -145,7 +145,7 @@
                                                         @endif
                                                     @endforeach
                                                 </select>
-                                            </form>
+
 
                                             <ul class="d-flex align-items-center justify-content-center mt-4">
                                                 <li>
@@ -160,6 +160,7 @@
                                                     </button>
                                                 </li>
                                             </ul>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

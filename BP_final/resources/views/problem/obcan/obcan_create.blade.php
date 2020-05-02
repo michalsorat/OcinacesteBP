@@ -180,7 +180,8 @@
                                     @csrf
                                     <div class="w-100 mb-2">
                                         <label for="poloha"><b>Poloha *</b></label>
-                                        <input id="poloha" class="form-input" type="text" name="poloha" value="">
+                                        <input id="poloha" class="form-input" type="text" name="poloha" value=""
+                                               disabled="disabled">
                                     </div>
 
                                     <div class="w-100 mb-2">

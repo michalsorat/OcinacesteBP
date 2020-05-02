@@ -236,3 +236,17 @@ footer {
         margin: auto
     }
 }
+
+.title-link {
+    color: #000 !important;
+}
+
+.red-border {
+    border: 2px solid red;
+}
+
+.footer-top {overflow: hidden}
+
+.w-80 {width: 80px}
+
+.filter-btn {line-height: 1; height: 30px}

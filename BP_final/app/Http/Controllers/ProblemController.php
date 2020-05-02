@@ -37,7 +37,7 @@ class ProblemController extends Controller
      * vlozenie do pola stavy_riesenia
      */
 
-    public function index()
+    public function index(Request $request)
     {
         $rola = Auth::user()->rola_id;
         $user_id = Auth::user()->id;
@@ -59,12 +59,19 @@ class ProblemController extends Controller
                 ->with('stavy_riesenia', $stavy_riesenia)
                 ->with('typy_stavov_riesenia', $typy_stavov);
         } else {
-            $problems = Problem::paginate(10);
+
+
+            $problems = Problem::all();
             $users = User::all();
             $vsetky_vozidla = Vozidlo::all();
             $stavy_riesenia = array();
             $priradeni_zamestnanci = array();
             $priradene_vozidla = array();
+
+            $kategorie = KategoriaProblemu::all();
+            $stavyProblemu = StavProblemu::all();
+            $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
+            $priority = Priorita::all();
 
             foreach ($problems as $problem) {
                 $typ = DB::table('stav_riesenia_problemu')
@@ -89,6 +96,16 @@ class ProblemController extends Controller
                     array_push($priradene_vozidla, $vozidla->vozidlo_id);
                 else
                     array_push($priradene_vozidla, 0);
+
+            }
+
+            $moje = false;
+
+            if ($rola == 4) {
+                if ($request->filterProblem == "moje") {
+                    $moje = true;
+
+                }
             }
 
             if ($rola == 3)
@@ -99,7 +116,11 @@ class ProblemController extends Controller
                     ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
                     ->with('zamestnanci', $users)
                     ->with('priradene_vozidla', $priradene_vozidla)
-                    ->with('vozidla', $vsetky_vozidla);
+                    ->with('vozidla', $vsetky_vozidla)
+                    ->with('kategorie', $kategorie)
+                    ->with('stavyProblemu', $stavyProblemu)
+                    ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                    ->with('priority', $priority);
             if ($rola == 4)
                 return view('problem.dispecer.dispecer_index')
                     ->with('problems', $problems)
@@ -108,7 +129,12 @@ class ProblemController extends Controller
                     ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
                     ->with('zamestnanci', $users)
                     ->with('priradene_vozidla', $priradene_vozidla)
-                    ->with('vozidla', $vsetky_vozidla);
+                    ->with('vozidla', $vsetky_vozidla)
+                    ->with('kategorie', $kategorie)
+                    ->with('stavyProblemu', $stavyProblemu)
+                    ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                    ->with('priority', $priority)
+                    ->with('moje', $moje);
             if ($rola == 5)
                 return view('problem.manazer.manazer_index')
                     ->with('problems', $problems)
@@ -117,31 +143,326 @@ class ProblemController extends Controller
                     ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
                     ->with('zamestnanci', $users)
                     ->with('priradene_vozidla', $priradene_vozidla)
-                    ->with('vozidla', $vsetky_vozidla);
+                    ->with('vozidla', $vsetky_vozidla)
+                    ->with('kategorie', $kategorie)
+                    ->with('stavyProblemu', $stavyProblemu)
+                    ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                    ->with('priority', $priority);
         }
     }
 
+
+    public function filter(Request $request)
+    {
+
+
+
+
+        if ($request->kategoria_problemu_id != null)
+            $problems_w_kategoria = Problem::where('kategoria_problemu_id', '=', $request->kategoria_problemu_id)
+                ->get();
+        else
+            $problems_w_kategoria = Problem::all();
+
+        if ($request->stav_problemu_id != null)
+            $problems_w_stav = Problem::where('stav_problemu_id', '=', $request->stav_problemu_id)
+                ->get();
+        else
+            $problems_w_stav = Problem::all();
+
+        if ($request->priorita_id != null)
+            $problems_w_priorita = Problem::where('priorita_id', '=', $request->priorita_id)
+                ->get();
+        else
+            $problems_w_priorita = Problem::all();
+
+        $final = $problems_w_kategoria->intersect($problems_w_stav)->intersect($problems_w_priorita);
+
+
+        if ($request->typ_stavu_riesenia_problemu_id != null) {
+            foreach($final as $problem){
+
+                $id = $problem->problem_id;
+
+                $stav_riesenia = DB::table('stav_riesenia_problemu')
+                    ->where('problem_id', '=', $problem->problem_id)
+                    ->latest('stav_riesenia_problemu_id')->first();
+
+                if($request->typ_stavu_riesenia_problemu_id !=
+                    $stav_riesenia->typ_stavu_riesenia_problemu_id){
+
+                    $key = $final->search(function($item) use ($id) {
+                        return $item->problem_id == $id;
+                    });
+
+                    $final->pull($key);
+                }
+            }
+        }
+
+        if($request->vozidlo_id != null){
+            foreach($final as $problem) {
+
+
+                $id = $problem->problem_id;
+
+                $vozidlo = DB::table('priradene_vozidlo')
+                    ->where('problem_id', '=', $problem->problem_id)
+                    ->latest('priradene_vozidlo_id')->first();
+
+
+                if ($vozidlo != null) {
+                    if ($request->vozidlo_id != $vozidlo->vozidlo_id) {
+                        $key = $final->search(function ($item) use ($id) {
+                            return $item->problem_id == $id;
+                        });
+                        $final->pull($key);
+                    }
+                }
+                else{
+                    $key = $final->search(function ($item) use ($id) {
+                        return $item->problem_id == $id;
+                    });
+                    $final->pull($key);
+                }
+            }
+        }
+
+        $rola = Auth::user()->rola_id;
+        $user_id = Auth::user()->id;
+        $typy_stavov = TypStavuRieseniaProblemu::all();
+        $users = User::all();
+        $vsetky_vozidla = Vozidlo::all();
+        $stavy_riesenia = array();
+        $priradeni_zamestnanci = array();
+        $priradene_vozidla = array();
+
+        $kategorie = KategoriaProblemu::all();
+        $stavyProblemu = StavProblemu::all();
+        $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
+        $priority = Priorita::all();
+
+        foreach ($final as $problem) {
+            $typ = DB::table('stav_riesenia_problemu')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('stav_riesenia_problemu_id')->first();
+            array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
+
+            $zamestnanci = DB::table('priradeny_zamestnanec')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('priradeny_zamestnanec_id')->first();
+            if ($zamestnanci != null)
+                array_push($priradeni_zamestnanci, $zamestnanci->zamestnanec_id);
+            else
+                array_push($priradeni_zamestnanci, 0);
+
+            $vozidla = DB::table('priradene_vozidlo')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('priradene_vozidlo_id')->first();
+
+
+            if ($vozidla != null)
+                array_push($priradene_vozidla, $vozidla->vozidlo_id);
+            else
+                array_push($priradene_vozidla, 0);
+
+        }
+
+        if($final->count() == 0){
+            return redirect('problem');
+        }
+
+
+        if ($rola == 3)
+            return view('problem.admin.admin_index')
+                ->with('problems', $final)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('typy_stavov_riesenia', $typy_stavov)
+                ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
+                ->with('zamestnanci', $users)
+                ->with('priradene_vozidla', $priradene_vozidla)
+                ->with('vozidla', $vsetky_vozidla)
+                ->with('kategorie', $kategorie)
+                ->with('stavyProblemu', $stavyProblemu)
+                ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                ->with('priority', $priority);
+        if ($rola == 4)
+            return view('problem.dispecer.dispecer_index')
+                ->with('problems', $final)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('typy_stavov_riesenia', $typy_stavov)
+                ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
+                ->with('zamestnanci', $users)
+                ->with('priradene_vozidla', $priradene_vozidla)
+                ->with('vozidla', $vsetky_vozidla)
+                ->with('kategorie', $kategorie)
+                ->with('stavyProblemu', $stavyProblemu)
+                ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                ->with('priority', $priority);
+        if($rola==5)
+            return view('problem.manazer.manazer_index')
+                ->with('problems', $final)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('typy_stavov_riesenia', $typy_stavov)
+                ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
+                ->with('zamestnanci', $users)
+                ->with('priradene_vozidla', $priradene_vozidla)
+                ->with('vozidla', $vsetky_vozidla)
+                ->with('kategorie', $kategorie)
+                ->with('stavyProblemu', $stavyProblemu)
+                ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                ->with('priority', $priority);
+
+    }
+
+
+    /**
+     * mapa vsetkych hlaseni pre pouzivatelov
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     *
+     *
+     * obsahuje infowindows s detailnymi info o jednotlivych problemoch
+     */
     public function mapa()
     {
 
+
         $rola = Auth::user()->rola_id;
         $problems = Problem::all();
+        $typy_stavov_riesenia = TypStavuRieseniaProblemu::all();
+        $popisyAll = PopisStavuRieseniaProblemu::all();
+        $usersAll = User::all();
+        $vozidlaAll = Vozidlo::all();
+
+
+        $stavy_riesenia = array();
+        $popisy_stavov_riesenia = array();
+        $zamestnanciArr = array();
+        $vozidlaArr = array();
+
+        $counter = 0;
+
+        foreach ($problems as $problem) {
+            $typ = DB::table('stav_riesenia_problemu')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('stav_riesenia_problemu_id')->first();
+            array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
+
+            $popisTable = DB::table('popis_stavu_riesenia_problemu')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('popis_stavu_riesenia_problemu_id')->first();
+            if ($popisTable != null) {
+                if ($popisTable->popis_stavu_riesenia_problemu_id != null)
+                    $id = $popisTable->popis_stavu_riesenia_problemu_id;
+
+                array_push($popisy_stavov_riesenia, $id);
+            } else array_push($popisy_stavov_riesenia, 0);
+
+
+            $priradeni_zamestnanci = DB::table('priradeny_zamestnanec')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('priradeny_zamestnanec_id')->first();
+            if ($priradeni_zamestnanci != null) {
+                if ($priradeni_zamestnanci->zamestnanec_id != null)
+                    $id = $priradeni_zamestnanci->zamestnanec_id;
+
+                array_push($zamestnanciArr, $id);
+            } else array_push($zamestnanciArr, 0);
+
+            $priradene_vozidla = DB::table('priradene_vozidlo')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('priradene_vozidlo_id')->first();
+            if ($priradene_vozidla != null) {
+                if ($priradene_vozidla->vozidlo_id != null)
+                    $id = $priradene_vozidla->vozidlo_id;
+
+                array_push($vozidlaArr, $id);
+            } else array_push($vozidlaArr, 0);
+        }
 
         if ($rola == 1) {
-            return view('problem.obcan.obcan_mapa_problemov')->with('problems', $problems);
+            return view('problem.obcan.obcan_mapa_problemov')
+                ->with('problems', $problems)
+                ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('popisyAll', $popisyAll)
+                ->with('popisyArr', $popisy_stavov_riesenia)
+                ->with('counter', $counter);
         } else if ($rola == 3) {
-            return view('problem.admin.admin_mapa_problemov')->with('problems', $problems);
+            return view('problem.admin.admin_mapa_problemov')
+                ->with('problems', $problems)
+                ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('popisyAll', $popisyAll)
+                ->with('popisyArr', $popisy_stavov_riesenia)
+                ->with('counter', $counter)
+                ->with('usersAll', $usersAll)
+                ->with('zamestnanciArr', $zamestnanciArr)
+                ->with('vozidlaAll', $vozidlaAll)
+                ->with('vozidlaArr', $vozidlaArr);
         } else if ($rola == 4) {
-            return view('problem.dispecer.dispecer_mapa_problemov')->with('problems', $problems);
+            return view('problem.dispecer.dispecer_mapa_problemov')
+                ->with('problems', $problems)
+                ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('popisyAll', $popisyAll)
+                ->with('popisyArr', $popisy_stavov_riesenia)
+                ->with('counter', $counter)
+                ->with('usersAll', $usersAll)
+                ->with('zamestnanciArr', $zamestnanciArr)
+                ->with('vozidlaAll', $vozidlaAll)
+                ->with('vozidlaArr', $vozidlaArr);
         } else if ($rola == 5) {
-            return view('problem.manazer.manazer_mapa_problemov')->with('problems', $problems);
+            return view('problem.manazer.manazer_mapa_problemov')
+                ->with('problems', $problems)
+                ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('popisyAll', $popisyAll)
+                ->with('popisyArr', $popisy_stavov_riesenia)
+                ->with('counter', $counter)
+                ->with('usersAll', $usersAll)
+                ->with('zamestnanciArr', $zamestnanciArr)
+                ->with('vozidlaAll', $vozidlaAll)
+                ->with('vozidlaArr', $vozidlaArr);
         }
     }
 
     public function welcomePage()
     {
         $problems = Problem::all();
-        return view('welcomePage')->with('problems', $problems);
+        $typy_stavov_riesenia = TypStavuRieseniaProblemu::all();
+        $popisyAll = PopisStavuRieseniaProblemu::all();
+
+
+        $stavy_riesenia = array();
+        $popisy_stavov_riesenia = array();
+
+        $counter = 0;
+
+        foreach ($problems as $problem) {
+            $typ = DB::table('stav_riesenia_problemu')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('stav_riesenia_problemu_id')->first();
+            array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
+
+            $popisTable = DB::table('popis_stavu_riesenia_problemu')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('popis_stavu_riesenia_problemu_id')->first();
+            if ($popisTable != null) {
+                if ($popisTable->popis_stavu_riesenia_problemu_id != null)
+                    $id = $popisTable->popis_stavu_riesenia_problemu_id;
+
+                array_push($popisy_stavov_riesenia, $id);
+            } else array_push($popisy_stavov_riesenia, 0);
+        }
+
+        return view('welcomePage')
+            ->with('problems', $problems)
+            ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
+            ->with('stavy_riesenia', $stavy_riesenia)
+            ->with('popisyAll', $popisyAll)
+            ->with('popisyArr', $popisy_stavov_riesenia)
+            ->with('counter', $counter);
     }
 
     /**
@@ -167,12 +488,14 @@ class ProblemController extends Controller
         }
     }
 
-    public function welcomePageCreate(){
+    public function welcomePageCreate()
+    {
         $kategorie = KategoriaProblemu::all();
         $stavy = StavProblemu::all();
         return view('problem.nezaregistrovanyObcan.nezaregistrovanyObcan_create')
             ->with('kategorie', $kategorie)->with('stavy', $stavy);
     }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -193,6 +516,8 @@ class ProblemController extends Controller
         ]);
 
         $request->request->add(['pouzivatel_id' => Auth::user()->id]);
+
+
         Problem::create($request->all());
 
         $last = DB::table('problem')->latest('problem_id')->first();
@@ -203,7 +528,8 @@ class ProblemController extends Controller
         //->with('success', 'Hlasenie bolo prijate!');
     }
 
-    public function welcomePageStore(Request $request){
+    public function welcomePageStore(Request $request)
+    {
         $request->validate([
             'poloha' => 'required',
             'popis_problemu' => 'required'
@@ -415,16 +741,19 @@ class ProblemController extends Controller
                         'problem_id' => $problem->problem_id]);
                 }
         }
+
         if ((Auth::user()->rola_id) == 5 || (Auth::user()->rola_id) == 3) {
             if ($request->priradeny_zamestnanec_id != null) {
-                if ($aktualny_priradeny_zamestnanec == null) {
-                    PriradenyZamestnanec::create(['zamestnanec_id' => $request->priradeny_zamestnanec_id,
-                        'problem_id' => $problem->problem_id]);
-                } else
-                    if ($request->priradeny_zamestnanec_id != $aktualny_priradeny_zamestnanec) {
+                if ($request->priradeny_zamestnanec_id != 0) {
+                    if ($aktualny_priradeny_zamestnanec == null) {
                         PriradenyZamestnanec::create(['zamestnanec_id' => $request->priradeny_zamestnanec_id,
                             'problem_id' => $problem->problem_id]);
-                    }
+                    } else
+                        if ($request->priradeny_zamestnanec_id != $aktualny_priradeny_zamestnanec) {
+                            PriradenyZamestnanec::create(['zamestnanec_id' => $request->priradeny_zamestnanec_id,
+                                'problem_id' => $problem->problem_id]);
+                        }
+                }
             }
         }
 
@@ -451,6 +780,9 @@ class ProblemController extends Controller
     public function priradeneProblemyDispecerovi(User $user)
     {
 
+        $dispecer = Auth::user()->id;
+        $priradenyZamestnanec = PriradenyZamestnanec::where('zamestnanec_id', '=', $dispecer);
+        dd($priradenyZamestnanec);
 
     }
 

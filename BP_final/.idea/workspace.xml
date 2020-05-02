@@ -37,7 +37,7 @@
       </list>
     </option>
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP">
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP from XAMPP">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/phpoption/phpoption" />
       <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
@@ -62,7 +62,6 @@
       <path value="$PROJECT_DIR$/vendor/psr/container" />
       <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
       <path value="$PROJECT_DIR$/vendor/psr/log" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/type" />
       <path value="$PROJECT_DIR$/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
       <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
@@ -137,10 +136,11 @@
   </component>
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="mysql" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="jsx.switch.disabled" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/views/problem/nezaregisterovanyObcan" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -151,6 +151,13 @@
     <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\BP_final\tests\Feature\HTTP tests" />
+      <recent name="C:\xampp\htdocs\BP_final\tests\Feature\hramesa" />
+      <recent name="C:\xampp\htdocs\BP_final\resources\views\problem\obcan" />
+      <recent name="C:\xampp\htdocs\BP_final\resources\views\problem\admin" />
+      <recent name="C:\xampp\htdocs\BP_final\resources\views\custom_layout\welcomePage" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\xampp\htdocs\BP_final\resources\views\problem\nezaregisterovanyObcan" />
       <recent name="C:\xampp\htdocs\BP_final\resources\views\problem\admin\historia" />
@@ -158,15 +165,12 @@
       <recent name="C:\xampp\htdocs\BP_final\public" />
       <recent name="C:\xampp\htdocs\BP_final\public\css" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\xampp\htdocs\BP_final\resources\views\problem\obcan" />
-      <recent name="C:\xampp\htdocs\BP_final\resources\views\problem\admin" />
-      <recent name="C:\xampp\htdocs\BP_final\resources\views\custom_layout\welcomePage" />
-      <recent name="C:\xampp\htdocs\BP_final\resources\views\custom_layout\obcan" />
-      <recent name="C:\xampp\htdocs\BP_final\resources\views\custom_layout\admin" />
-    </key>
   </component>
-  <component name="RunManager" selected="PHP Script.LoginController.php">
+  <component name="RunManager" selected="PHPUnit.BasicTest">
+    <configuration name="BasicTest" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Tests\Feature\BasicTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/hramesa/BasicTest.php" scope="Class" />
+      <method v="2" />
+    </configuration>
     <configuration name="phpunit.xml" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
       <TestRunner configuration_file="$PROJECT_DIR$/phpunit.xml" scope="XML" />
       <method v="2" />
@@ -186,6 +190,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="PHPUnit.BasicTest" />
         <item itemvalue="npm.dev" />
         <item itemvalue="PHP Script.LoginController.php" />
       </list>
@@ -254,6 +259,13 @@
       <workItem from="1587282534584" duration="19878000" />
       <workItem from="1587553078822" duration="2090000" />
       <workItem from="1587627095694" duration="11552000" />
+      <workItem from="1587738739169" duration="1627000" />
+      <workItem from="1587741321661" duration="659000" />
+      <workItem from="1587798826149" duration="19149000" />
+      <workItem from="1587886747710" duration="5809000" />
+      <workItem from="1587976301936" duration="20950000" />
+      <workItem from="1588149267738" duration="18402000" />
+      <workItem from="1588230618611" duration="21521000" />
     </task>
     <servers />
   </component>
@@ -261,13 +273,18 @@
     <option name="version" value="2" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="-856" y="542" key="#BasicTest" timestamp="1587831491992">
+      <screen x="-1080" y="0" width="1080" height="1890" />
+    </state>
+    <state x="-856" y="542" key="#BasicTest/-1080.0.1080.1890/0.0.1920.1050/1920.0.1280.689@-1080.0.1080.1890" timestamp="1587831491992" />
     <state x="-933" y="166" key="#HTTP_Proxy" timestamp="1586447144379">
       <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
     <state x="-933" y="166" key="#HTTP_Proxy/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1586447144379" />
-    <state x="-1246" y="140" key="#PHP" timestamp="1583678122221">
-      <screen x="-1920" y="9" width="1920" height="1080" />
+    <state x="-701" y="229" key="#PHP" timestamp="1587831489822">
+      <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
+    <state x="-701" y="229" key="#PHP/-1080.0.1080.1890/0.0.1920.1050/1920.0.1280.689@-1080.0.1080.1890" timestamp="1587831489822" />
     <state x="-1246" y="140" key="#PHP/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1583678122221" />
     <state x="-816" y="100" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586447794723">
       <screen x="-1080" y="0" width="1080" height="1890" />
@@ -280,11 +297,12 @@
     </state>
     <state x="-1280" y="285" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1584610556210" />
     <state x="-720" y="483" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/1920.0.1280.700/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1587113158635" />
-    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1585315125869">
-      <screen x="0" y="0" width="1280" height="720" />
+    <state x="-1080" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1587903512861">
+      <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
     <state x="-1920" y="9" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1585158107793" />
     <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1280.720/-1920.9.1920.1080@0.0.1280.720" timestamp="1585315125869" />
+    <state x="-1080" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/1920.0.1280.700/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1587903512861" />
     <state x="-692" y="517" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1586511829372">
       <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
@@ -296,37 +314,42 @@
       <screen x="-1920" y="9" width="1920" height="1080" />
     </state>
     <state x="-1276" y="204" width="645" height="690" key="#phpunit.xml/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1583677843738" />
-    <state x="-724" y="304" key="FileChooserDialogImpl" timestamp="1587043863085">
+    <state x="-724" y="304" key="FileChooserDialogImpl" timestamp="1587803970667">
       <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
+    <state x="-724" y="304" key="FileChooserDialogImpl/-1080.0.1080.1890/0.0.1920.1050/1920.0.1280.689@-1080.0.1080.1890" timestamp="1587803970667" />
     <state x="-724" y="304" key="FileChooserDialogImpl/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1587043863085" />
     <state x="-724" y="309" key="FileChooserDialogImpl/0.0.1280.720/-1080.0.1080.1920@-1080.0.1080.1920" timestamp="1586333533256" />
     <state x="-1288" y="183" key="FileChooserDialogImpl/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1586176589322" />
     <state x="421" y="116" key="FileChooserDialogImpl/0.0.1280.720/-1920.9.1920.1080@0.0.1280.720" timestamp="1585924008217" />
-    <state width="1037" height="285" key="GridCell.Tab.0.bottom" timestamp="1586807665167">
+    <state width="1037" height="285" key="GridCell.Tab.0.bottom" timestamp="1587831504636">
       <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
+    <state width="1037" height="285" key="GridCell.Tab.0.bottom/-1080.0.1080.1890/0.0.1920.1050/1920.0.1280.689@-1080.0.1080.1890" timestamp="1587831504636" />
     <state width="1037" height="285" key="GridCell.Tab.0.bottom/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1586807665167" />
     <state width="1237" height="251" key="GridCell.Tab.0.bottom/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1585343162573" />
     <state width="1237" height="251" key="GridCell.Tab.0.bottom/0.0.1280.720/-1920.9.1920.1080@0.0.1280.720" timestamp="1585316501674" />
     <state width="1877" height="176" key="GridCell.Tab.0.bottom/0.0.1280.720@0.0.1280.720" timestamp="1583359333221" />
-    <state width="1037" height="285" key="GridCell.Tab.0.center" timestamp="1586807665167">
+    <state width="1037" height="285" key="GridCell.Tab.0.center" timestamp="1587831504636">
       <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
+    <state width="1037" height="285" key="GridCell.Tab.0.center/-1080.0.1080.1890/0.0.1920.1050/1920.0.1280.689@-1080.0.1080.1890" timestamp="1587831504636" />
     <state width="1037" height="285" key="GridCell.Tab.0.center/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1586807665167" />
     <state width="1237" height="251" key="GridCell.Tab.0.center/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1585343162572" />
     <state width="1237" height="251" key="GridCell.Tab.0.center/0.0.1280.720/-1920.9.1920.1080@0.0.1280.720" timestamp="1585316501674" />
     <state width="1877" height="176" key="GridCell.Tab.0.center/0.0.1280.720@0.0.1280.720" timestamp="1583359333220" />
-    <state width="1037" height="285" key="GridCell.Tab.0.left" timestamp="1586807665167">
+    <state width="1037" height="285" key="GridCell.Tab.0.left" timestamp="1587831504636">
       <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
+    <state width="1037" height="285" key="GridCell.Tab.0.left/-1080.0.1080.1890/0.0.1920.1050/1920.0.1280.689@-1080.0.1080.1890" timestamp="1587831504636" />
     <state width="1037" height="285" key="GridCell.Tab.0.left/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1586807665167" />
     <state width="1237" height="251" key="GridCell.Tab.0.left/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1585343162572" />
     <state width="1237" height="251" key="GridCell.Tab.0.left/0.0.1280.720/-1920.9.1920.1080@0.0.1280.720" timestamp="1585316501674" />
     <state width="1877" height="176" key="GridCell.Tab.0.left/0.0.1280.720@0.0.1280.720" timestamp="1583359333219" />
-    <state width="1037" height="285" key="GridCell.Tab.0.right" timestamp="1586807665167">
+    <state width="1037" height="285" key="GridCell.Tab.0.right" timestamp="1587831504636">
       <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
+    <state width="1037" height="285" key="GridCell.Tab.0.right/-1080.0.1080.1890/0.0.1920.1050/1920.0.1280.689@-1080.0.1080.1890" timestamp="1587831504636" />
     <state width="1037" height="285" key="GridCell.Tab.0.right/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1586807665167" />
     <state width="1237" height="251" key="GridCell.Tab.0.right/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1585343162573" />
     <state width="1237" height="251" key="GridCell.Tab.0.right/0.0.1280.720/-1920.9.1920.1080@0.0.1280.720" timestamp="1585316501674" />
@@ -348,10 +371,15 @@
       <screen x="0" y="0" width="1280" height="720" />
     </state>
     <state x="0" y="0" width="609" height="720" key="find.popup/0.0.1280.720/-1920.9.1920.1080@0.0.1280.720" timestamp="1585238153212" />
-    <state x="-730" y="418" width="672" height="1206" key="search.everywhere.popup" timestamp="1586354907689">
-      <screen x="-1080" y="0" width="1080" height="1920" />
+    <state x="-884" y="453" key="run.anything.popup" timestamp="1588087185937">
+      <screen x="-1080" y="0" width="1080" height="1890" />
+    </state>
+    <state x="-884" y="453" key="run.anything.popup/-1080.0.1080.1890/0.0.1920.1050/1920.0.1280.689@-1080.0.1080.1890" timestamp="1588087185937" />
+    <state x="-730" y="411" width="672" height="1188" key="search.everywhere.popup" timestamp="1588187607784">
+      <screen x="-1080" y="0" width="1080" height="1890" />
     </state>
     <state x="-730" y="418" width="672" height="1206" key="search.everywhere.popup/0.0.1280.720/-1080.0.1080.1920@-1080.0.1080.1920" timestamp="1586354907689" />
     <state x="-1297" y="244" width="672" height="678" key="search.everywhere.popup/0.0.1280.720/-1920.9.1920.1080@-1920.9.1920.1080" timestamp="1585389754756" />
+    <state x="-730" y="411" width="672" height="1188" key="search.everywhere.popup/1920.0.1280.700/-1080.0.1080.1890/0.0.1920.1050@-1080.0.1080.1890" timestamp="1588187607784" />
   </component>
 </project>

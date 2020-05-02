@@ -13,9 +13,43 @@
                 mapTypeId: 'roadmap'
             });
 
+
+            var JSARR = <?php echo json_encode($stavy_riesenia); ?>;
+            var popisyArr = <?php echo json_encode($popisyArr); ?>;
+            var poc = 0;
+            var nazov_typu_riesenia;
+            var popis_stavu_riesenia;
+
                 @foreach($problems as $problem)
+
             var loc = split(" {{ $problem->poloha }}");
-            addMarker(getLocVar(loc[0], loc[1]), map);
+
+
+            @foreach($typy_stavov_riesenia as $typ)
+
+            if (JSARR[poc] == "{{$typ->typ_stavu_riesenia_problemu_id}}") {
+                nazov_typu_riesenia = "{{$typ->nazov}}"
+            }
+
+            @endforeach
+
+                @foreach($popisyAll as $popis)
+                if(popisyArr[poc] == 0){
+                    popis_stavu_riesenia = "Nepriradený popis"
+            }
+            else if (popisyArr[poc] == "{{$popis->popis_stavu_riesenia_problemu_id}}") {
+                popis_stavu_riesenia = "{{$popis->popis}}"
+
+            }
+            @endforeach
+
+                poc++;
+            addMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->created_at}}",
+                "{{ $problem->poloha }}", "{{ $problem->popis_problemu }}",
+                "{{ $problem->KategoriaProblemu['nazov'] }}",
+                "{{ $problem->StavProblemu['nazov'] }}",
+                nazov_typu_riesenia, "{{$problem->problem_id}}", popis_stavu_riesenia);
+
             @endforeach
 
             // Create the search box and link it to the UI element.
@@ -27,6 +61,7 @@
             map.addListener('bounds_changed', function () {
                 searchBox.setBounds(map.getBounds());
             });
+
 
             var markers = [];
             // Listen for the event fired when the user selects a prediction and retrieve
@@ -84,14 +119,14 @@
 
         }
 
-        function split(str){
+        function split(str) {
             var res = str.split(",");
 
             return res;
         }
 
         // Adds a marker to the map.
-        function addMarker(location, map) {
+        function addMarker(location, map, created_at, poloha, popis, kategoria, stav, typ_stavu_riesenia, id, popis) {
             // Add the marker at the clicked location, and add the next-available label
             // from the array of alphabetical characters.
             var marker = new google.maps.Marker({
@@ -100,21 +135,38 @@
                 map: map,
 
             });
+
+            var infowindow = new google.maps.InfoWindow({
+                content: "<p>" + "<b>ID: </b>" + id + "</p>" +
+                    "<p>" + "<b>Vytvorené dňa: </b>" + created_at + "</p>"
+                    + "<p>" + "<b>Poloha: </b>" + poloha + "</p>"
+                    + "<p>" + "<b>Popis: </b>" + popis + "</p>"
+                    + "<p>" + "<b>Kategória: </b>" + kategoria + "</p>"
+                    + "<p>" + "<b>Stav problému: </b>" + stav + "</p>"
+                    + "<p>" + "<b>Stav riešenia problému: </b>" + typ_stavu_riesenia + "</p>"
+                    + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popis + "</p>"
+            });
+
+            marker.addListener('click', function () {
+                infowindow.open(map, marker);
+            });
         }
+
 
     </script>
 
     <section class="main-container h-100">
         <div class="container-fluid h-100">
-            <div class="row h-100">
-                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <h3>Ak si našiel problém na ceste alebo v jej okolí, daj nám o ňom vedieť.</h3>
+                    *Ľavým klikom na ľubovoľné označenie otvorí okno s detailnými informáciami.
+                </div>
+                <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
 
-                <!-- mapa -->
                 <div class="col-12 h-500">
                     <div id="map"></div>
                 </div>
-                <!-- mapa -->
-
 
             </div>
         </div>

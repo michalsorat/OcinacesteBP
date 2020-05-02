@@ -15,6 +15,9 @@ Route::get('/', 'ProblemController@welcomePage')->name('welcome');
 
 Auth::routes();
 
+
+
+
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/zaregistrovanyObcan',
     'ZaregistrovanyObcanController@index')->name('zaregistrovanyObcan');
@@ -24,13 +27,13 @@ Route::get('/admin', 'AdminController@index')->name('admin');
 Route::get('/dispecer', 'DispecerController@index')->name('dispecer');
 Route::get('/manazer', 'ManazerController@index')->name('manazer');
 
-Route::resource('problem', 'ProblemController');
-Route::resource('pouzivatelia', 'UserController');
-Route::resource('cesta', 'CestaController');
-Route::get('/mapa', 'ProblemController@mapa')->name('mapa');
 
-Route::get('/problem/priradeneDispecerovi',
-    'ProblemController@priradeneProblemyDispecerovi')->name('priradeneDispecerovi');
+
+
+Route::resource('problem', 'ProblemController');
+Route::post('filtrovaneProblemy', 'ProblemController@filter')->name('filtered');
+Route::get('/priradene',
+    'ProblemController@priradeneProblemyDispecerovi')->name('problem.priradeneDispecerovi');
 
 Route::get('/problem/{problem}/priradeniZamestnanci',
     'ProblemController@priradeniZamestnanci')->name('priradeniZamestnanci');
@@ -40,6 +43,16 @@ Route::get('/problem/{problem}/stavyRieseniaProblemu',
     'ProblemController@stavyRieseniaProblemu')->name('stavyRieseniaProblemu');
 Route::get('/problem/{problem}/popisyStavovRieseniaProblemu',
     'ProblemController@popisyStavovRieseniaProblemu')->name('popisyStavovRieseniaProblemu');
+
+
+Route::get('/mapa', 'ProblemController@mapa')->name('mapa');
+
+
+
+Route::resource('pouzivatelia', 'UserController');
+Route::resource('cesta', 'CestaController');
+
+
 
 Route::get('/welcomePage/create', 'ProblemController@welcomePageCreate')->name('welcomePage.create');
 Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');

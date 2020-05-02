@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12 d-flex align-items-center">
                 <img src="{{ asset('img/erb-ttsk.svg') }}" height="50">
-                <p class="footer-text ml-4">Copyright</p>
+                <p class="footer-text ml-4">Copyright © 2020 Denis Piovarči, All rights reserved</p>
             </div>
         </div>
     </div>

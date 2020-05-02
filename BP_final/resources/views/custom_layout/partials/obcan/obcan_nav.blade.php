@@ -1,7 +1,8 @@
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="d-flex align-items-center">
-            <img src="{{ asset('img/fiitLogo.png') }}" height="50">
+            <a class="title-link" href="/problem"><h1>Oči na ceste</h1></a>
+            <img src="{{ asset('img/fiitLogo.png') }}" height="50" class="ml-3">
             <img src="{{ asset('img/sucttskLogo2.png') }}" height="50" class="ml-3">
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -10,7 +11,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav m-auto">
+            <ul class="navbar-nav ml-auto align-items-center">
                 <li class="nav-item {{ Request::is('problem/create') ? 'active' : '' }}">
                     <a class="nav-link" href="/problem/create">Vytvor hlásenie</a>
                 </li>
@@ -28,11 +29,11 @@
             <!-- Authentication Links -->
             @guest
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    <a class="nav-link" href="{{ route('login') }}">{{ __('Prihlásenie') }}</a>
                 </li>
                 @if (Route::has('register'))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Registrácia') }}</a>
                     </li>
                 @endif
             @else
@@ -45,7 +46,7 @@
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                            {{ __('Logout') }}
+                            {{ __('Odhlásenie') }}
                         </a>
 
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

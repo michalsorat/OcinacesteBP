@@ -83,7 +83,7 @@
 
         }
 
-        function split(str){
+        function split(str) {
             var res = str.split(",");
 
             return res;
@@ -125,16 +125,6 @@
                     </li>
                     <li id="priorita"><p class="detail-text"><span>Priorita: </span>{{ $problem->Priorita['priorita'] }}
                         </p></li>
-                    <li id="kraj"><p class="detail-text"><span>Kraj: </span>{{ $problem->Cesta->Kraj['nazov'] }}</p>
-                    </li>
-                    <li id="katastralneUzemie"><p class="detail-text">
-                            <span>Katastrálne územie: </span>{{ $problem->Cesta->KatastralneUzemie['nazov'] }}</p></li>
-                    <li id="obec"><p class="detail-text"><span>Obec: </span>{{ $problem->Cesta->Obec['nazov'] }}</p>
-                    </li>
-                    <li id="spravca"><p class="detail-text">
-                            <span>Správca komunikácie: </span>{{ $problem->Cesta->Spravca['nazov'] }}</p></li>
-
-                    <!-- <li id="usek"><p class="detail-text"><span>Usek: </span>!!dorobit!!</p></li> -->
 
                     <li id="kategoria"><p class="detail-text">
                             <span>Kategória: </span>{{ $problem->KategoriaProblemu['nazov'] }}</p></li>
@@ -149,7 +139,8 @@
                     @else
                         <li id="popis-stavu-riesenia-problemu"><p class="detail-text">
                                 <span>Priradený zamestnanec: </span>{{$priradeny_zamestnanec->users['name'] }}
-                                <a href="/problem/{{ $problem->problem_id }}/priradeniZamestnanci">(História)</a></p></li>
+                                <a href="/problem/{{ $problem->problem_id }}/priradeniZamestnanci">(História)</a></p>
+                        </li>
                     @endif
 
 
@@ -174,7 +165,8 @@
                     @else
                         <li id="popis-stavu-riesenia-problemu"><p class="detail-text">
                                 <span>Popis stavu riešenia problému: </span>{{$popis_stavu_riesenia->popis }}
-                                <a href="/problem/{{ $problem->problem_id }}/popisyStavovRieseniaProblemu">(História)</a></p></li>
+                                <a href="/problem/{{ $problem->problem_id }}/popisyStavovRieseniaProblemu">(História)</a>
+                            </p></li>
                     @endif
                 </ul>
                 <!-- tabulka s mojimi hlaseniami -->

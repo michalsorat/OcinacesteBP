@@ -148,7 +148,8 @@
         <div class="container-fluid h-100">
             <div class="row h-100">
 
-                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+
+                <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
 
                 <div class="col-12 col-sm-12 col-md-6 col-lg-7 mb-3 mb-md-0">
                     <div id="map"></div>
@@ -179,8 +180,9 @@
 
                                     @csrf
                                     <div class="w-100 mb-2">
-                                        <label for="poloha"><b>Poloha *</b></label>
-                                        <input id="poloha" class="form-input" type="text" name="poloha" value="">
+                                        <label for="poloha"><b>Poloha * </b>(Ľavý klik na mapu)</label>
+                                        <input id="poloha" class="form-input" type="text" name="poloha" value=""
+                                               >
                                     </div>
 
                                     <div class="w-100 mb-2">
@@ -190,7 +192,8 @@
                                             @foreach($kategorie as $kategoria)
 
                                                 <option
-                                                    value="{{ $kategoria->kategoria_problemu_id }}">{{ $kategoria->nazov }}</option>
+                                                    value="{{ $kategoria->kategoria_problemu_id }}">
+                                                    {{ $kategoria->nazov }}</option>
                                             @endforeach
                                         </select>
 
