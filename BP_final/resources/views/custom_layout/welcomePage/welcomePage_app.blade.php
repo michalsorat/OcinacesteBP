@@ -6,7 +6,7 @@
     @include('custom_layout.partials.head')
 </head>
 
-<body class="footer-top">
+<body class="{{ Request::is('/') ? 'footer-top' : '' }}">
 @include('custom_layout.partials.welcomePage.welcomePage_nav')
 
 

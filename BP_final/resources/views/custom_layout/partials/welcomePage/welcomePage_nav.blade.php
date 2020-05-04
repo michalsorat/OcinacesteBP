@@ -1,6 +1,6 @@
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center wrap-mobile">
             <a class="title-link" href="/"><h1>Oči na ceste</h1></a>
             <img src="{{ asset('img/fiitLogo.png') }}" height="50" class="ml-3">
             <img src="{{ asset('img/sucttskLogo2.png') }}" height="50" class="ml-3">

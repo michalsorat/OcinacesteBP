@@ -190,14 +190,17 @@
     <section class="main-container h-100">
         <div class="container-fluid h-100">
             <div class="row">
+
                 <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
 
                 <div class="col-12 h-500">
                     <div id="map"></div>
+                    *Ľavým klikom na ľubovoľné označenie otvorí okno s detailnými informáciami.
                 </div>
 
             </div>
         </div>
     </section>
+
 
 @endsection

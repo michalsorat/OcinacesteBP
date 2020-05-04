@@ -71,83 +71,12 @@
                         </select>
                     </li>
 
-
-                <!--
-                        <li id="kraj">
-                            <label class="update-label">Kraj:</label>
-                            <select id="kraj" class="form-select form-input" name="kraj">
-                                @foreach($kraje as $kraj)
-
-                    @if($kraj->kraj_id == $problem->Cesta->Kraj['kraj_id'])
-                        <option value="{{ $kraj->kraj_id }}"
-                                                selected>{{ $kraj->nazov }}</option>
-
-                                    @else
-                        <option value="{{ $kraj->kraj_id }}">{{ $kraj->nazov }}</option>
-                                    @endif
-                @endforeach
-                    </select>
-                </li>
-
-                <li id="katastralneUzemie">
-                    <label class="update-label">Katastralne uzemie:</label>
-                    <select id="katastralneUzemie" class="form-select form-input" name="katastralneUzemie">
-@foreach($katastralne_uzemia as $uzemie)
-
-                    @if($uzemie->katastralne_uzemie_id == $problem->Cesta->KatastralneUzemie['katastralne_uzemie_id'])
-                        <option value="{{ $uzemie->katastralne_uzemie_id }}"
-                                                selected>{{ $uzemie->nazov }}</option>
-
-                                    @else
-                        <option
-                            value="{{ $uzemie->katastralne_uzemie_id }}">{{ $uzemie->nazov }}</option>
-                                    @endif
-                @endforeach
-                    </select>
-                </li>
-
-
-                <li id="obec">
-                    <label class="update-label">Obec:</label>
-                    <select id="obec" class="form-select form-input" name="obec">
-@foreach($obce as $obec)
-
-                    @if($obec->obec_id == $problem->Cesta->Obec['obec_id'])
-                        <option value="{{ $obec->obec_id }}"
-                                                selected>{{ $obec->nazov }}</option>
-
-                                    @else
-                        <option value="{{ $obec->obec_id }}">{{ $obec->nazov }}</option>
-                                    @endif
-                @endforeach
-                    </select>
-                </li>
-
-                <li id="spravca">
-                    <label class="update-label">Spravca komunikacie:</label>
-                    <select id="spravca" class="form-select form-input" name="spravca">
-@foreach($spravcovia as $spravca)
-
-                    @if($spravca->spravca_id == $problem->Cesta->Spravca['spravca_id'])
-                        <option value="{{ $spravca->spravca_id }}"
-                                                selected>{{ $spravca->nazov }}</option>
-
-                                    @else
-                        <option value="{{ $spravca->spravca_id }}">{{ $spravca->nazov }}</option>
-                                    @endif
-                @endforeach
-                    </select>
-                </li>
--->
                 </ul>
             </div>
 
 
             <div class="col-12 col-sm-12 col-md-6">
                 <ul class="detail update">
-
-                    <!--  <li id="usek"><p class="detail-text"><span>Usek: </span>!!dorobit!!</p></li> -->
-
                     <li id="poloha"><label class="update-label">Poloha:</label><input type="text" class="form-input"
                                                                                       value="{{ $problem->poloha }}"
                                                                                       name="poloha">
@@ -259,7 +188,7 @@
             </div>
             <div class="col-12 mt-4">
                 <!-- tabulka s mojimi hlaseniami -->
-                <div class="d-flex align-items-center justify-content-center">
+                <div class="d-flex align-items-center justify-content-md-center">
                     <button type="submit" class="btn btn-primary update-btn mr-3">Aktualizovať</button>
 
                     <button type="button" class="btn btn-danger remove-btn" data-toggle="modal"

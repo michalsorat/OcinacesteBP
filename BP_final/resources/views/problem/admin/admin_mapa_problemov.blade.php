@@ -153,7 +153,7 @@
 
         // Adds a marker to the map.
         function addMarker(location, map, created_at, poloha, popis,
-                           kategoria, stav, typ_stavu_riesenia, id, popis,
+                           kategoria, stav, typ_stavu_riesenia, id, popisRiesenia,
                            priorita, meno, zamestnanec, vozidlo) {
             // Add the marker at the clicked location, and add the next-available label
             // from the array of alphabetical characters.
@@ -163,6 +163,10 @@
                 map: map,
 
             });
+
+            if(popisRiesenia == null){
+                popisRiesenia = "Nepriradený"
+            }
 
             var infowindow = new google.maps.InfoWindow({
                 content: "<p>" + "<b>ID: </b>" + id + "</p>" +
@@ -176,7 +180,7 @@
                     + "<p>" + "<b>Priorita: </b>" + priorita + "</p>"
                     + "<p>" + "<b>Priradené vozidlo: </b>" + vozidlo + "</p>"
                     + "<p>" + "<b>Stav riešenia problému: </b>" + typ_stavu_riesenia + "</p>"
-                    + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popis + "</p>"
+                    + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popisRiesenia + "</p>"
             });
 
             marker.addListener('click', function () {
@@ -190,14 +194,17 @@
     <section class="main-container h-100">
         <div class="container-fluid h-100">
             <div class="row">
+
                 <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
 
                 <div class="col-12 h-500">
                     <div id="map"></div>
+                    *Ľavým klikom na ľubovoľné označenie otvorí okno s detailnými informáciami.
                 </div>
 
             </div>
         </div>
     </section>
+
 
 @endsection

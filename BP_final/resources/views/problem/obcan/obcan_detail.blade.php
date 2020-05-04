@@ -5,17 +5,16 @@
     <script type="text/javascript">
 
         function initAutocomplete() {
-            var trnava = {lat: 48.3767994, lng: 17.5835082};
+
+            var loc = split(" {{ $problem->poloha }}");
+            var location = getLocVar(loc[0], loc[1]);
 
             var map = new google.maps.Map(document.getElementById('map'), {
-                center: trnava,
+                center: location,
                 zoom: 11,
                 mapTypeId: 'roadmap'
             });
-
-
-            var loc = split(" {{ $problem->poloha }}");
-            addMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->poloha }}");
+            addMarker(location, map, "{{ $problem->poloha }}");
 
 
             // Create the search box and link it to the UI element.

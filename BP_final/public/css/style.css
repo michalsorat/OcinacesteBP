@@ -233,7 +233,7 @@ footer {
     }
 
     .form-input {
-        margin: auto
+        width: 100% !important;
     }
 }
 
@@ -250,3 +250,23 @@ footer {
 .w-80 {width: 80px}
 
 .filter-btn {line-height: 1; height: 30px}
+
+.readonly {
+background-color: rgb(235, 235, 228);
+}
+
+@media screen and (max-width: 1050px) {
+    .footer-top {overflow-y: auto}
+}
+
+@media screen and (max-width: 504px) {
+    .wrap-mobile {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .wrap-mobile a {
+        flex: 0 1 100%;
+        text-align: center
+    }
+}

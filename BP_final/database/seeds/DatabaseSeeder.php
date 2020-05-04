@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
                 $this->call(VozidloSeeder::class);
                 $this->call(RolaSeeder::class);
                 $this->call(PrioritaSeeder::class);
+                $this->call(UserSeeder::class);
 
 
                 //$this->call(ProblemSeeder::class);

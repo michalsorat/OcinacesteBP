@@ -5,16 +5,16 @@
     <script type="text/javascript">
 
         function initAutocomplete() {
-            var trnava = {lat: 48.3767994, lng: 17.5835082};
+
+            var loc = split(" {{ $problem->poloha }}");
+            var location = getLocVar(loc[0], loc[1]);
 
             var map = new google.maps.Map(document.getElementById('map'), {
-                center: trnava,
+                center: location,
                 zoom: 11,
                 mapTypeId: 'roadmap'
             });
-
-            var loc = split(" {{ $problem->poloha }}");
-            addMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->problem_id }}", "{{ $problem->poloha }}");
+            addMarker(location, map, "{{ $problem->poloha }}");
 
 
             // Create the search box and link it to the UI element.
@@ -90,19 +90,20 @@
         }
 
         // Adds a marker to the map.
-        function addMarker(location, map, id, poloha) {
+        function addMarker(location, map, poloha) {
             // Add the marker at the clicked location, and add the next-available label
             // from the array of alphabetical characters.
             var marker = new google.maps.Marker({
                 position: location,
                 animation: google.maps.Animation.DROP,
                 map: map,
-                title: "ID: " + id + "\n" + "Poloha: " + poloha
+                title: "Poloha: " + poloha
 
             });
         }
 
     </script>
+
 
 
     <div class="container-fluid">
@@ -111,7 +112,7 @@
                 <div id="map"></div>
             </div>
 
-            <div class="col-12 col-sm-12 col-md-6 col-lg-5">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-5 mt-3 mt-md-0">
 
                 <!-- tabulka s mojimi hlaseniami -->
                 <ul class="detail">
@@ -138,14 +139,15 @@
                     @else
                         <li id="popis-stavu-riesenia-problemu"><p class="detail-text">
                                 <span>Priradený zamestnanec: </span>{{$priradeny_zamestnanec->users['name'] }}
-                                <a href="/problem/{{ $problem->problem_id }}/priradeniZamestnanci">(História)</a></p></li>
+                                <a href="/problem/{{ $problem->problem_id }}/priradeniZamestnanci">(História)</a></p>
+                        </li>
                     @endif
 
 
                     @if($priradene_vozidlo == null)
                         <li id="popis-stavu-riesenia-problemu"><p class="detail-text">
                                 <span>Priradené vozidlo: </span>Vozidlo zatiaľ nebolo priradené
-                                </p></li>
+                            </p></li>
                     @else
                         <li id="popis-stavu-riesenia-problemu"><p class="detail-text">
                                 <span>Priradené vozidlo: </span>{{$priradene_vozidlo->vozidlo['SPZ'] }}
@@ -163,7 +165,8 @@
                     @else
                         <li id="popis-stavu-riesenia-problemu"><p class="detail-text">
                                 <span>Popis stavu riešenia problému: </span>{{$popis_stavu_riesenia->popis }}
-                                <a href="/problem/{{ $problem->problem_id }}/popisyStavovRieseniaProblemu">(História)</a></p></li>
+                                <a href="/problem/{{ $problem->problem_id }}/popisyStavovRieseniaProblemu">(História)</a>
+                            </p></li>
                     @endif
                 </ul>
                 <!-- tabulka s mojimi hlaseniami -->

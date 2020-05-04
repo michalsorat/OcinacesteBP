@@ -31,8 +31,9 @@
                     addMarker(event.latLng, map);
 
                     document.getElementById('poloha').value = markerString;
-                } else window.alert("Môžete pridať iba jednu polohu. " +
-                    "Pre odstránenie polohy z mapy, kliknite pravým tlačidlom myše na označené miesto");
+                } else window.alert("Môžete vytvoriť iba jeden problém súčasne. " +
+                    "Pre odstránenie označenia z mapy, kliknite pravým tlačidlom myše na označené miesto." +
+                    " Následne môžete vytvoriť nové označenie.");
 
             });
 
@@ -147,10 +148,13 @@
     <section class="main-container h-100">
         <div class="container-fluid h-100">
             <div class="row h-100">
-                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
 
-                <div class="col-12 col-sm-12 col-md-6 col-lg-7">
+
+                <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
+
+                <div class="col-12 col-sm-12 col-md-6 col-lg-7 mb-3 mb-md-0">
                     <div id="map"></div>
+                    <p class="mt-1">*Ľavým klikom na mapu sa vytvorí označenie miesta problému.</p>
                 </div>
 
                 <div class="col-12 col-sm-12 col-md-6 col-lg-5">
@@ -178,9 +182,9 @@
 
                                     @csrf
                                     <div class="w-100 mb-2">
-                                        <label for="poloha"><b>Poloha *</b></label>
-                                        <input id="poloha" class="form-input" type="text" name="poloha" value=""
-                                               disabled="disabled">
+                                        <label for="poloha"><b>Poloha * </b></label>
+                                        <input id="poloha" class="form-input readonly" type="text" name="poloha"
+                                               value="" readonly="true">
                                     </div>
 
                                     <div class="w-100 mb-2">
@@ -190,7 +194,8 @@
                                             @foreach($kategorie as $kategoria)
 
                                                 <option
-                                                    value="{{ $kategoria->kategoria_problemu_id }}">{{ $kategoria->nazov }}</option>
+                                                    value="{{ $kategoria->kategoria_problemu_id }}">
+                                                    {{ $kategoria->nazov }}</option>
                                             @endforeach
                                         </select>
 

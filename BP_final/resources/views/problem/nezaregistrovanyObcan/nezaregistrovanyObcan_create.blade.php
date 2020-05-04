@@ -31,8 +31,9 @@
                     addMarker(event.latLng, map);
 
                     document.getElementById('poloha').value = markerString;
-                } else window.alert("Môžete pridať iba jednu polohu. " +
-                    "Pre odstránenie polohy z mapy, kliknite pravým tlačidlom myše na označené miesto");
+                } else window.alert("Môžete vytvoriť iba jeden problém súčasne. " +
+                    "Pre odstránenie označenia z mapy, kliknite pravým tlačidlom myše na označené miesto." +
+                    " Následne môžete vytvoriť nové označenie.");
 
             });
 
@@ -153,6 +154,7 @@
 
                 <div class="col-12 col-sm-12 col-md-6 col-lg-7 mb-3 mb-md-0">
                     <div id="map"></div>
+                    <p class="mt-1">*Ľavým klikom na mapu sa vytvorí označenie miesta problému.</p>
                 </div>
 
                 <div class="col-12 col-sm-12 col-md-6 col-lg-5">
@@ -180,9 +182,9 @@
 
                                     @csrf
                                     <div class="w-100 mb-2">
-                                        <label for="poloha"><b>Poloha * </b>(Ľavý klik na mapu)</label>
-                                        <input id="poloha" class="form-input" type="text" name="poloha" value=""
-                                               >
+                                        <label for="poloha"><b>Poloha * </b></label>
+                                        <input id="poloha" class="form-input readonly" type="text" name="poloha"
+                                               value="" readonly="true">
                                     </div>
 
                                     <div class="w-100 mb-2">

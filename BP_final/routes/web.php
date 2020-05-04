@@ -32,7 +32,7 @@ Route::get('/manazer', 'ManazerController@index')->name('manazer');
 
 Route::resource('problem', 'ProblemController');
 Route::post('filtrovaneProblemy', 'ProblemController@filter')->name('filtered');
-Route::get('/priradene',
+Route::post('/moje',
     'ProblemController@priradeneProblemyDispecerovi')->name('problem.priradeneDispecerovi');
 
 Route::get('/problem/{problem}/priradeniZamestnanci',

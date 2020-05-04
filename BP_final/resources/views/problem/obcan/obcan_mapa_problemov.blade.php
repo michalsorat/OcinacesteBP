@@ -16,6 +16,8 @@
 
             var JSARR = <?php echo json_encode($stavy_riesenia); ?>;
             var popisyArr = <?php echo json_encode($popisyArr); ?>;
+
+
             var poc = 0;
             var nazov_typu_riesenia;
             var popis_stavu_riesenia;
@@ -34,11 +36,15 @@
             @endforeach
 
                 @foreach($popisyAll as $popis)
-            if(popisyArr[poc] == 0){
+
+            if (popisyArr[poc] == 0) {
+
                 popis_stavu_riesenia = "Nepriradený popis"
-            }
-            else if (popisyArr[poc] == "{{$popis->popis_stavu_riesenia_problemu_id}}") {
+
+            } else if (popisyArr[poc] == "{{$popis->popis_stavu_riesenia_problemu_id}}") {
+
                 popis_stavu_riesenia = "{{$popis->popis}}"
+
 
             }
             @endforeach
@@ -126,7 +132,7 @@
         }
 
         // Adds a marker to the map.
-        function addMarker(location, map, created_at, poloha, popis, kategoria, stav, typ_stavu_riesenia, id, popis) {
+        function addMarker(location, map, created_at, poloha, popis, kategoria, stav, typ_stavu_riesenia, id, popisRiesenia) {
             // Add the marker at the clicked location, and add the next-available label
             // from the array of alphabetical characters.
             var marker = new google.maps.Marker({
@@ -136,6 +142,11 @@
 
             });
 
+
+            if(popisRiesenia == null){
+                popisRiesenia = "Nepriradený"
+            }
+
             var infowindow = new google.maps.InfoWindow({
                 content: "<p>" + "<b>ID: </b>" + id + "</p>" +
                     "<p>" + "<b>Vytvorené dňa: </b>" + created_at + "</p>"
@@ -144,7 +155,7 @@
                     + "<p>" + "<b>Kategória: </b>" + kategoria + "</p>"
                     + "<p>" + "<b>Stav problému: </b>" + stav + "</p>"
                     + "<p>" + "<b>Stav riešenia problému: </b>" + typ_stavu_riesenia + "</p>"
-                    + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popis + "</p>"
+                    + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popisRiesenia + "</p>"
             });
 
             marker.addListener('click', function () {
@@ -158,10 +169,15 @@
     <section class="main-container h-100">
         <div class="container-fluid h-100">
             <div class="row">
+                <div class="col-12 mb-4">
+                    <h3>Ak si našiel problém na ceste alebo v jej okolí, daj nám o ňom vedieť.</h3>
+
+                </div>
                 <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
 
                 <div class="col-12 h-500">
                     <div id="map"></div>
+                    *Ľavým klikom na ľubovoľné označenie otvorí okno s detailnými informáciami.
                 </div>
 
             </div>

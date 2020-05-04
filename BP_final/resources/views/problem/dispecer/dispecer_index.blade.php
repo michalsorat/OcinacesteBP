@@ -1,37 +1,29 @@
 @extends('custom_layout.dispecer.dispecer_app')
-
 @section('content')
 
     @if (Session::has('message'))
         <div class="alert alert-info">{{ Session::get('message') }}</div>
     @endif
 
-    <script type="text/javascript">
-
-    </script>
-
     <section class="main-container h-100">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    @if($moje == false)
-                        <h1 class="text-center">Všetky hlásenia</h1>
-                    @else
-                        <h1 class="text-center">Moje hlásenia</h1>
-                    @endif
+
+                    <h1 class="text-center">Všetky hlásenia</h1>
+
                 </div>
+
                 <div class="col-12 d-flex justify-content-end mb-3">
-                    <form action="{{ action('ProblemController@index') }}" class="data-form"
-                          method="GET" id="myForm">
+                    <form action="{{ action('ProblemController@priradeneProblemyDispecerovi') }}" class="data-form"
+                          method="POST" id="myForm">
                         @csrf
                         <select class="choose-data" name="filterProblem">
-                            @if($moje == false)
+
                                 <option value="vsetky" selected>Všetky hlásenia</option>
                                 <option value="moje">Moje hlásenia</option>
-                            @else
-                                <option value="vsetky">Všetky hlásenia</option>
-                                <option value="moje" selected>Moje hlásenia</option>
-                            @endif
+
+
                         </select>
                         <button type="submit" class="btn btn-primary" name="submit">Vytvorit</button>
                     </form>
@@ -72,12 +64,12 @@
 
 
                                     <th scope="col"><p>Stav problému</p><select
-                                            id="stav_problemu" class="input-filter form-input w-100"
-                                            name="stavu_problemu_id">
+                                            id="stav_problemu_id" class="input-filter form-input w-100"
+                                            name="stav_problemu_id">
                                             <option value="" selected disabled hidden>Vyber</option>
                                             @foreach($stavyProblemu as $stav)
                                                 <option value="{{ $stav->stav_problemu_id }}">
-                                                    {{ $stav->nazov }}</option>
+                                                    {{ $stav->nazov}}</option>
                                             @endforeach
                                         </select></th>
 
@@ -128,212 +120,113 @@
 
                             </thead>
                             <tbody>
-
                             @php
                                 $counter=1;
                             @endphp
-                            @if($moje == false)
-                                @foreach($problems as $problem)
+                            @foreach($problems as $problem)
 
-                                    <tr>
-                                        <td>{{ $counter }}</td>
-                                        <td>{{ $problem->problem_id }}</td>
-                                        <td>{{ $problem->poloha }}</td>
-                                        <td>{{ $problem->created_at }}</td>
-                                        <td>{{ $problem->KategoriaProblemu['nazov'] }}</td>
-                                        <td>{{ $problem->StavProblemu['nazov'] }}</td>
+                                <tr>
+                                    <td>{{ $counter }}</td>
+                                    <td class="w-80">{{ $problem->problem_id }}</td>
+                                    <td>{{ $problem->poloha }}</td>
+                                    <td>{{ $problem->created_at }}</td>
+                                    <td>{{ $problem->KategoriaProblemu['nazov'] }}</td>
+                                    <td>{{ $problem->StavProblemu['nazov'] }}</td>
 
-                                        @foreach($typy_stavov_riesenia as $typ)
-                                            @if($stavy_riesenia[$counter-1] == $typ->typ_stavu_riesenia_problemu_id)
-                                                <td>{{ $typ->nazov }}</td>
+                                    @foreach($typy_stavov_riesenia as $typ)
+                                        @if($stavy_riesenia[$counter-1] == $typ->typ_stavu_riesenia_problemu_id)
+                                            <td>{{ $typ->nazov }}</td>
+                                        @endif
+                                    @endforeach
+
+                                    <td>{{ $problem->Priorita['priorita'] }}</td>
+                                    <td>{{ $problem->users['name'] }}</td>
+
+                                    @foreach($zamestnanci as $zamestnanec)
+                                        @if($priradeni_zamestnanci[$counter-1] == 0)
+                                            <td>Nepriradený</td>
+                                            @break
+                                        @else
+                                            @if($priradeni_zamestnanci[$counter-1] == $zamestnanec->id)
+                                                <td>{{ $zamestnanec->name }}</td>
                                             @endif
-                                        @endforeach
+                                        @endif
+                                    @endforeach
 
-                                        <td>{{ $problem->Priorita['priorita'] }}</td>
-                                        <td>{{ $problem->users['name'] }}</td>
 
-                                        @foreach($zamestnanci as $zamestnanec)
-                                            @if($priradeni_zamestnanci[$counter-1] == 0)
-                                                <td>Nepriradený</td>
-                                                @break
-                                            @else
-                                                @if($priradeni_zamestnanci[$counter-1] == $zamestnanec->id)
-                                                    <td>{{ $zamestnanec->name }}</td>
-                                                @endif
+
+                                    @foreach($vozidla as $vozidlo)
+                                        @if($priradene_vozidla[$counter-1] == 0)
+                                            <td>Nepriradené</td>
+                                            @break
+                                        @else
+                                            @if($priradene_vozidla[$counter-1] == $vozidlo->vozidlo_id)
+                                                <td>{{ $vozidlo->SPZ }}</td>
                                             @endif
-                                        @endforeach
+                                        @endif
+                                    @endforeach
 
-                                        @foreach($vozidla as $vozidlo)
-                                            @if($priradene_vozidla[$counter-1] == 0)
-                                                <td>Nepriradené</td>
-                                                @break
-                                            @else
-                                                @if($priradene_vozidla[$counter-1] == $vozidlo->vozidlo_id)
-                                                    <td>{{ $vozidlo->SPZ }}</td>
-                                                @endif
-                                            @endif
-                                        @endforeach
 
-                                        <td><a href="/problem/{{ $problem->problem_id }}/edit" class="c-black"><i
-                                                    class="fas fa-edit"></i></a></td>
-                                        <td><a href="/problem/{{ $problem->problem_id }}" class="c-black"><i
-                                                    class="fas fa-info"></i></a></td>
-                                        <td>
-                                            <p class="text-center">
-                                                <button type="submit" class="border-0" data-toggle="modal"
-                                                        data-target="#delete-modal-{{ $problem->problem_id }}"><i
-                                                        class="far fa-trash-alt"></i>
-                                                </button>
-                                            </p>
-                                        </td>
-                                    </tr>
-                                    @php
-                                        $counter++;
-                                    @endphp
+                                    <td><a href="/problem/{{ $problem->problem_id }}/edit" class="c-black"><i
+                                                class="fas fa-edit"></i></a></td>
+                                    <td><a href="/problem/{{ $problem->problem_id }}" class="c-black"><i
+                                                class="fas fa-info"></i></a></td>
+                                    <td>
+                                        <p class="text-center">
+                                            <button type="submit" class="border-0" data-toggle="modal"
+                                                    data-target="#delete-modal-{{ $problem->problem_id }}"><i
+                                                    class="far fa-trash-alt"></i>
+                                            </button>
+                                        </p>
+                                    </td>
+                                </tr>
+                                @php
+                                    $counter++;
+                                @endphp
 
-                                    <div id="delete-modal-{{ $problem->problem_id }}" class="modal delete-modal"
-                                         tabindex="-1"
-                                         role="dialog">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Vymazať záznam</h5>
-                                                </div>
-                                                <div class="modal-body">
+                                <div id="delete-modal-{{ $problem->problem_id }}" class="modal delete-modal"
+                                     tabindex="-1"
+                                     role="dialog">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Vymazať záznam</h5>
+                                            </div>
+                                            <div class="modal-body">
 
-                                                    <p>Ste si istý, že chcete vymazať záznam?</p>
-                                                    <ul class="d-flex align-items-center justify-content-center mt-4">
-                                                        <li>
-                                                            <button type="button" class="btn btn-primary cancel mr-4"
-                                                                    data-dismiss="modal"
-                                                                    aria-label="Close">Zrušiť
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <form
-                                                                action="{{ route('problem.destroy', $problem->problem_id) }}"
-                                                                method="POST">
-                                                                @method('DELETE')
-                                                                @csrf
-                                                                <p class="text-center">
-                                                                    <button type="submit" class="btn btn-danger delete">
-                                                                        Vymazať
-                                                                    </button>
-                                                                </p>
-                                                            </form>
-                                                        </li>
-                                                    </ul>
-                                                </div>
+                                                <p>Ste si istý, že chcete vymazať záznam?</p>
+                                                <ul class="d-flex align-items-center justify-content-center mt-4">
+                                                    <li>
+                                                        <button type="button" class="btn btn-primary cancel mr-4"
+                                                                data-dismiss="modal"
+                                                                aria-label="Close">Zrušiť
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <form
+                                                            action="{{ route('problem.destroy', $problem->problem_id) }}"
+                                                            method="POST">
+                                                            @method('DELETE')
+                                                            @csrf
+                                                            <p class="text-center">
+                                                                <button type="submit" class="btn btn-danger delete">
+                                                                    Vymazať
+                                                                </button>
+                                                            </p>
+
+                                                        </form>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
+                                </div>
 
-                            @else
-                                @foreach($problems as $problem)
-                                    @if($user_id == $priradeni_zamestnanci[$counter-1])
-                                        <tr>
-                                            <td>{{ $counter }}</td>
-                                            <td>{{ $problem->problem_id }}</td>
-                                            <td>{{ $problem->poloha }}</td>
-                                            <td>{{ $problem->created_at }}</td>
-                                            <td>{{ $problem->KategoriaProblemu['nazov'] }}</td>
-                                            <td>{{ $problem->StavProblemu['nazov'] }}</td>
+                            @endforeach
 
-                                            @foreach($typy_stavov_riesenia as $typ)
-                                                @if($stavy_riesenia[$counter-1] == $typ->typ_stavu_riesenia_problemu_id)
-                                                    <td>{{ $typ->nazov }}</td>
-                                                @endif
-                                            @endforeach
-
-                                            <td>{{ $problem->Priorita['priorita'] }}</td>
-                                            <td>{{ $problem->users['name'] }}</td>
-
-                                            @foreach($zamestnanci as $zamestnanec)
-                                                @if($priradeni_zamestnanci[$counter-1] == 0)
-                                                    <td>Nepriradený</td>
-                                                    @break
-                                                @else
-                                                    @if($priradeni_zamestnanci[$counter-1] == $zamestnanec->id)
-                                                        <td>{{ $zamestnanec->name }}</td>
-                                                    @endif
-                                                @endif
-                                            @endforeach
-
-                                            @foreach($vozidla as $vozidlo)
-                                                @if($priradene_vozidla[$counter-1] == 0)
-                                                    <td>Nepriradené</td>
-                                                    @break
-                                                @else
-                                                    @if($priradene_vozidla[$counter-1] == $vozidlo->vozidlo_id)
-                                                        <td>{{ $vozidlo->SPZ }}</td>
-                                                    @endif
-                                                @endif
-                                            @endforeach
-
-                                            <td><a href="/problem/{{ $problem->problem_id }}/edit" class="c-black"><i
-                                                        class="fas fa-edit"></i></a></td>
-                                            <td><a href="/problem/{{ $problem->problem_id }}" class="c-black"><i
-                                                        class="fas fa-info"></i></a></td>
-                                            <td>
-                                                <p class="text-center">
-                                                    <button type="submit" class="border-0" data-toggle="modal"
-                                                            data-target="#delete-modal-{{ $problem->problem_id }}"><i
-                                                            class="far fa-trash-alt"></i>
-                                                    </button>
-                                                </p>
-                                            </td>
-                                        </tr>
-
-
-                                        <div id="delete-modal-{{ $problem->problem_id }}" class="modal delete-modal"
-                                             tabindex="-1"
-                                             role="dialog">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Vymazať záznam</h5>
-                                                    </div>
-                                                    <div class="modal-body">
-
-                                                        <p>Ste si istý, že chcete vymazať záznam?</p>
-                                                        <ul class="d-flex align-items-center justify-content-center mt-4">
-                                                            <li>
-                                                                <button type="button"
-                                                                        class="btn btn-primary cancel mr-4"
-                                                                        data-dismiss="modal"
-                                                                        aria-label="Close">Zrušiť
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <form
-                                                                    action="{{ route('problem.destroy', $problem->problem_id) }}"
-                                                                    method="POST">
-                                                                    @method('DELETE')
-                                                                    @csrf
-                                                                    <p class="text-center">
-                                                                        <button type="submit"
-                                                                                class="btn btn-danger delete">
-                                                                            Vymazať
-                                                                        </button>
-                                                                    </p>
-
-                                                                </form>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @php
-                                        $counter++;
-                                    @endphp
-                                @endforeach
-                            @endif
                             </tbody>
-                        </table>
 
+                        </table>
                     </div>
 
 

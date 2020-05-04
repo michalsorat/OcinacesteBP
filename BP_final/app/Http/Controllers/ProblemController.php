@@ -99,15 +99,6 @@ class ProblemController extends Controller
 
             }
 
-            $moje = false;
-
-            if ($rola == 4) {
-                if ($request->filterProblem == "moje") {
-                    $moje = true;
-
-                }
-            }
-
             if ($rola == 3)
                 return view('problem.admin.admin_index')
                     ->with('problems', $problems)
@@ -133,8 +124,8 @@ class ProblemController extends Controller
                     ->with('kategorie', $kategorie)
                     ->with('stavyProblemu', $stavyProblemu)
                     ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
-                    ->with('priority', $priority)
-                    ->with('moje', $moje);
+                    ->with('priority', $priority);
+
             if ($rola == 5)
                 return view('problem.manazer.manazer_index')
                     ->with('problems', $problems)
@@ -154,8 +145,6 @@ class ProblemController extends Controller
 
     public function filter(Request $request)
     {
-
-
 
 
         if ($request->kategoria_problemu_id != null)
@@ -180,7 +169,7 @@ class ProblemController extends Controller
 
 
         if ($request->typ_stavu_riesenia_problemu_id != null) {
-            foreach($final as $problem){
+            foreach ($final as $problem) {
 
                 $id = $problem->problem_id;
 
@@ -188,10 +177,10 @@ class ProblemController extends Controller
                     ->where('problem_id', '=', $problem->problem_id)
                     ->latest('stav_riesenia_problemu_id')->first();
 
-                if($request->typ_stavu_riesenia_problemu_id !=
-                    $stav_riesenia->typ_stavu_riesenia_problemu_id){
+                if ($request->typ_stavu_riesenia_problemu_id !=
+                    $stav_riesenia->typ_stavu_riesenia_problemu_id) {
 
-                    $key = $final->search(function($item) use ($id) {
+                    $key = $final->search(function ($item) use ($id) {
                         return $item->problem_id == $id;
                     });
 
@@ -200,8 +189,8 @@ class ProblemController extends Controller
             }
         }
 
-        if($request->vozidlo_id != null){
-            foreach($final as $problem) {
+        if ($request->vozidlo_id != null) {
+            foreach ($final as $problem) {
 
 
                 $id = $problem->problem_id;
@@ -218,8 +207,7 @@ class ProblemController extends Controller
                         });
                         $final->pull($key);
                     }
-                }
-                else{
+                } else {
                     $key = $final->search(function ($item) use ($id) {
                         return $item->problem_id == $id;
                     });
@@ -268,7 +256,7 @@ class ProblemController extends Controller
 
         }
 
-        if($final->count() == 0){
+        if ($final->count() == 0) {
             return redirect('problem');
         }
 
@@ -299,7 +287,7 @@ class ProblemController extends Controller
                 ->with('stavyProblemu', $stavyProblemu)
                 ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
                 ->with('priority', $priority);
-        if($rola==5)
+        if ($rola == 5)
             return view('problem.manazer.manazer_index')
                 ->with('problems', $final)
                 ->with('stavy_riesenia', $stavy_riesenia)
@@ -515,6 +503,7 @@ class ProblemController extends Controller
             'popis_problemu' => 'required'
         ]);
 
+
         $request->request->add(['pouzivatel_id' => Auth::user()->id]);
 
 
@@ -535,7 +524,7 @@ class ProblemController extends Controller
             'popis_problemu' => 'required'
         ]);
 
-        $request->request->add(['pouzivatel_id' => '0']);
+        $request->request->add(['pouzivatel_id' => '1']);
         Problem::create($request->all());
 
         $last = DB::table('problem')->latest('problem_id')->first();
@@ -782,7 +771,7 @@ class ProblemController extends Controller
 
         $dispecer = Auth::user()->id;
         $priradenyZamestnanec = PriradenyZamestnanec::where('zamestnanec_id', '=', $dispecer);
-        dd($priradenyZamestnanec);
+
 
     }
 
