@@ -21,12 +21,12 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/home';
-    public const ZObcanHome = '/zaregistrovanyObcan';
-    public const NObcanHome = '/nezaregistrovanyObcan';
-    public const AdminHome = '/admin';
-    public const DispecerHome = '/dispecer';
-    public const ManazerHome = '/manazer';
+    public const HOME = '/problem';
+    public const ZObcanHome = '/problem';
+    public const NObcanHome = '/problem';
+    public const AdminHome = '/problem';
+    public const DispecerHome = '/problem';
+    public const ManazerHome = '/problem';
 
 
     /**

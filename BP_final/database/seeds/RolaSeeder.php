@@ -14,19 +14,19 @@ class RolaSeeder extends Seeder
     {
         $roly = [
             [
-                'nazov' => 'zaregistrovany obcan',
+                'nazov' => 'Zaregistrovaný občan',
             ],
             [
-                'nazov' => 'nezaregistrovany obcan',
+                'nazov' => 'Nezaregistrovaný občan',
             ],
             [
-                'nazov' => 'admin',
+                'nazov' => 'Administrátor',
             ],
             [
-                'nazov' => 'dispecer',
+                'nazov' => 'Dispečer',
             ],
             [
-                'nazov' => 'manazer'
+                'nazov' => 'Manažér'
             ]
         ];
 

@@ -17,13 +17,13 @@ class VozidloSeeder extends Seeder
                 'oznacenie' => 'Tatra',
                 'SPZ' => 'TT564HS',
                 'pocet_najazdenych_km' => '60000',
-                'poznamka' => 'servis posledny Jun 2019'
+                'poznamka' => 'Posledný servis Jún 2019'
             ],
             [
                 'oznacenie' => 'Tatra',
                 'SPZ' => 'TT783OP',
                 'pocet_najazdenych_km' => '30000',
-                'poznamka' => 'servis posledny Jan 2015'
+                'poznamka' => 'Posledný servis Január 2015'
             ]
         ];
 

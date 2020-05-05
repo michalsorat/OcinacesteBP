@@ -143,7 +143,7 @@
             });
 
 
-            if(popisRiesenia == null){
+            if (popisRiesenia == null) {
                 popisRiesenia = "Nepriradený"
             }
 
@@ -169,15 +169,19 @@
     <section class="main-container h-100">
         <div class="container-fluid h-100">
             <div class="row">
-                <div class="col-12 mb-4">
-                    <h3>Ak si našiel problém na ceste alebo v jej okolí, daj nám o ňom vedieť.</h3>
+                <div class="col-12 mb-4 nadpis">
+                    <h3>Ak si našiel problém na ceste alebo v jej okolí (stav vozovky, dopravné značenie, kvalita opravy
+                        alebo zeleň), daj nám o ňom vedieť!</h3>
 
                 </div>
                 <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
 
-                <div class="col-12 h-500">
+                <div class="col-12 h-500 ">
                     <div id="map"></div>
-                    *Ľavým klikom na ľubovoľné označenie otvorí okno s detailnými informáciami.
+                    <p class="mt-1"> *Ľavým klikom na ľubovoľné označenie otvorí okno s detailnými informáciami.
+                    </p>
+
+
                 </div>
 
             </div>

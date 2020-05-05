@@ -15,7 +15,7 @@ class SpravcaSeeder extends Seeder
         $spravca = [
 
             [
-                'nazov' => 'Nepriradeny',
+                'nazov' => 'Nepriradený',
             ],
             [
                 'nazov' => 'Rychlostna cesta',

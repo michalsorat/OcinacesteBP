@@ -21,9 +21,11 @@
                 <li class="nav-item {{ Request::is('mapa') ? 'active' : '' }}">
                     <a class="nav-link" href="/mapa">Mapa</a>
                 </li>
+                <!--
                 <li class="nav-item {{ Request::is('pouzivatelia') ? 'active' : '' }}">
                     <a class="nav-link" href="/pouzivatelia">Dispečeri</a>
                 </li>
+                -->
             </ul>
         </div>
 

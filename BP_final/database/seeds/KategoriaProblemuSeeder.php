@@ -17,13 +17,13 @@ class KategoriaProblemuSeeder extends Seeder
                 'nazov' => 'Stav vozovky',
             ],
             [
-                'nazov' => 'Dopravne znacenie',
+                'nazov' => 'Dopravné značenie',
             ],
             [
                 'nazov' => 'Kvalita opravy',
             ],
             [
-                'nazov' => 'Zelen'
+                'nazov' => 'Zeleň'
             ]
         ];
 

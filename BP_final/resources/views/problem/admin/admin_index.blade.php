@@ -13,26 +13,35 @@
                     <h1 class="text-center">Všetky hlásenia</h1>
                 </div>
 
+
                 <div class="col-12 d-flex justify-content-center flex-column">
                     <div class="table-responsive">
                         <table class="table main-table">
                             <thead>
+
                             <form action="{{ action('ProblemController@filter') }}"
                                   method="POST">
                                 @csrf
+
+                                <div class="col-12 d-flex justify-content-end mb-3">
+                                    <button type="submit" class="btn btn-primary" name="submit">Filtruj</button>
+                                </div>
+
                                 <tr class="filter-row">
                                     <th scope="col"><p>#</p>
-                                        <button type="submit" class="btn btn-primary filter-btn w-100">Zobraz</button>
                                     </th>
-                                    <th scope="col w-80"><p>ID</p><input type="text"
-                                                                         class="input-filter form-input w-100"
-                                                                         name="problem_id" disabled="disabled"></th>
-                                    <th scope="col"><p>Poloha</p><input type="text"
-                                                                        class="input-filter form-input w-100"
-                                                                        name="poloha" disabled="disabled"></th>
-                                    <th scope="col"><p>Zadané</p><input type="text"
-                                                                        class="input-filter form-input w-100"
-                                                                        name="created_at" disabled="disabled"></th>
+                                    <th scope="col w-80"><p>ID</p></th>
+                                    <th scope="col"><p>Poloha</p></th>
+                                    <th scope="col"><p>Zadané</p>
+                                        <select
+                                            id="orderBy" class="input-filter form-input w-100"
+                                            name="orderBy">
+
+                                            <option value="" selected disabled hidden>Vyber</option>
+                                            <option value="1">Zoraď od najnovších</option>
+                                            <option value="2">Zoraď od najstarších</option>
+
+                                        </select></th>
 
 
                                     <th scope="col"><p>Kategória</p><select
@@ -78,13 +87,27 @@
                                             @endforeach
                                         </select></th>
 
-                                    <th scope="col"><p>Používateľ</p><input type="text"
-                                                                            class="input-filter form-input w-100"
-                                                                            name="pouzivatel_id" disabled="disabled">
+                                    <th scope="col"><p>Používateľ</p>
+                                        <select
+                                            id="user" class="input-filter form-input form-input w-100"
+                                            name="pouzivatel_id">
+                                            <option value="" selected disabled hidden>Vyber</option>
+                                            @foreach($zamestnanci as $user)
+                                                <option value="{{ $user->id }}"
+                                                >{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </th>
-                                    <th scope="col"><p>Zamestnanec</p><input type="text"
-                                                                             class="input-filter form-input w-100"
-                                                                             name="zamestnanec" disabled="disabled">
+                                    <th scope="col"><p>Zamestnanec</p>
+                                        <select
+                                            id="user" class="input-filter form-input form-input w-100"
+                                            name="zamestnanec_id">
+                                            <option value="" selected disabled hidden>Vyber</option>
+                                            @foreach($VsetciZamestnanci as $user)
+                                                <option value="{{ $user->id }}"
+                                                >{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </th>
                                     <th scope="col"><p>Vozidlo</p><select
                                             id="vozidla" class="input-filter form-input w-100"
@@ -101,7 +124,6 @@
 
                                 </tr>
                             </form>
-
                             </thead>
                             <tbody>
                             @php
@@ -207,10 +229,11 @@
                                 </div>
 
                             @endforeach
-
                             </tbody>
-
                         </table>
+                        @if(Request::url() === 'http://127.0.0.1:8000/problem')
+                            {{$problems->links()}}
+                        @endif
                     </div>
 
 

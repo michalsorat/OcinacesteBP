@@ -14,19 +14,19 @@ class TypStavuRieseniaProblemuSeeder extends Seeder
     {
         $typy = [
             [
-                'nazov' => 'prijate',
+                'nazov' => 'Prijaté',
             ],
             [
-                'nazov' => 'potvrdene',
+                'nazov' => 'Potvrdené',
             ],
             [
-                'nazov' => 'v procese',
+                'nazov' => 'V procese',
             ],
             [
-                'nazov' => 'ukoncene',
+                'nazov' => 'Ukončené',
             ],
             [
-                'nazov' => 'odlozene'
+                'nazov' => 'Odložené'
             ]
         ];
 

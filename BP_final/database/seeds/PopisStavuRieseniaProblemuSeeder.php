@@ -14,7 +14,7 @@ class PopisStavuRieseniaProblemuSeeder extends Seeder
     {
         $popisy = [
             [
-                'popis' => 'nepridaredny popis',
+                'popis' => 'Nepriradený popis',
                 'problem_id' => 1
 
             ],

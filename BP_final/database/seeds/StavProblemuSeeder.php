@@ -14,16 +14,19 @@ class StavProblemuSeeder extends Seeder
     {
         $stavy = [
             [
-                'nazov' => 'chybajuca',
+                'nazov' => 'Chýbajúca',
             ],
             [
-                'nazov' => 'poskodena',
+                'nazov' => 'Poškodená',
             ],
             [
-                'nazov' => 'vyblednuta',
+                'nazov' => 'Vyblednutá',
             ],
             [
-                'nazov' => 'zle viditelna'
+                'nazov' => 'Zle viditeľná',
+            ],
+            [
+                'nazov' => 'Prerastená'
             ]
         ];
 

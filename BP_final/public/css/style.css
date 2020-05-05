@@ -226,6 +226,10 @@ footer {
     width: 100%;
 }
 
+.nadpis{
+    text-align: center;
+}
+
 @media(max-width: 767px) {
     .start-form {
         width: 100%;
