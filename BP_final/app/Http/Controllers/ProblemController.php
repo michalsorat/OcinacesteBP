@@ -336,7 +336,6 @@ class ProblemController extends Controller
         }
 
 
-
         if ($rola == 3)
             return view('problem.admin.admin_index')
                 ->with('problems', $final)

@@ -7,7 +7,7 @@
         </div>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav m-auto">
+            <ul class="navbar-nav ml-auto align-items-center">
                 <li class="nav-item {{ Request::is('problem/create') ? 'active' : '' }}">
                     <a class="nav-link" href="/problem/create">Vytvor hlásenie</a>
                 </li>
