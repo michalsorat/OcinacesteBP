@@ -70,18 +70,22 @@
                                     <td>{{ $user->created_at }}</td>
                                     <td>
                                         <p class="text-center">
+                                            @if($user->id != 2)
                                             <button type="submit" class="border-0" data-toggle="modal"
                                                     data-target="#edit-modal-{{ $user->id }}"><i
                                                     class="fas fa-edit"></i>
                                             </button>
+                                                @endif
                                         </p>
                                     </td>
                                     <td>
                                         <p class="text-center">
+                                            @if($user->id != 2)
                                             <button type="submit" class="border-0" data-toggle="modal"
                                                     data-target="#delete-modal-{{ $user->id }}"><i
                                                     class="far fa-trash-alt"></i>
                                             </button>
+                                                @endif
                                         </p>
                                     </td>
                                 </tr>

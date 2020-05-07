@@ -28,49 +28,54 @@
         </div>
     </div>
 
+
     <section class="main-container h-100">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <h1 class="text-center">História priradených vozidiel pre problém ID {{$problem->problem_id}}</h1>
                 </div>
+
+
                 <div class="col-12 d-flex justify-content-center flex-column">
-                    <table class="table main-table">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Označenie</th>
-                            <th scope="col">ŠPZ</th>
-                            <th scope="col">Počet najazdených km</th>
-                            <th scope="col">Pridelené</th>
-
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @php
-                            $counter = 1;
-                        @endphp
-                        @foreach($vozidla as $priradene_voz)
-
+                    <div class="table-responsive">
+                        <table class="table main-table">
+                            <thead>
                             <tr>
-                                <td>{{ $counter }}</td>
-                                <td>{{ $priradene_voz->vozidlo_id }}</td>
-                                <td>{{ $priradene_voz->vozidlo['oznacenie'] }}</td>
-                                <td>{{ $priradene_voz->vozidlo['SPZ'] }}</td>
-                                <td>{{ $priradene_voz->vozidlo['pocet_najazdenych_km'] }}</td>
-                                <td>{{ $priradene_voz->created_at }}</td>
+                                <th scope="col">#</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Označenie</th>
+                                <th scope="col">ŠPZ</th>
+                                <th scope="col">Počet najazdených km</th>
+                                <th scope="col">Pridelené</th>
 
                             </tr>
+                            </thead>
+                            <tbody>
                             @php
-                                $counter++;
+                                $counter = 1;
                             @endphp
+                            @foreach($vozidla as $priradene_voz)
 
-                        @endforeach
+                                <tr>
+                                    <td>{{ $counter }}</td>
+                                    <td>{{ $priradene_voz->vozidlo_id }}</td>
+                                    <td>{{ $priradene_voz->vozidlo['oznacenie'] }}</td>
+                                    <td>{{ $priradene_voz->vozidlo['SPZ'] }}</td>
+                                    <td>{{ $priradene_voz->vozidlo['pocet_najazdenych_km'] }}</td>
+                                    <td>{{ $priradene_voz->created_at }}</td>
 
-                        </tbody>
+                                </tr>
+                                @php
+                                    $counter++;
+                                @endphp
 
-                    </table>
+                            @endforeach
+
+                            </tbody>
+
+                        </table>
+                    </div>
 
 
                     @if(!empty(Session::get('success')))

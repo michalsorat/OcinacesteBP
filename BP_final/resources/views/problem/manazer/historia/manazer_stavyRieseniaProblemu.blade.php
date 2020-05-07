@@ -28,45 +28,52 @@
         </div>
     </div>
 
+
+
     <section class="main-container h-100">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <h1 class="text-center">História priradených stavov riešenia problému pre problém ID {{$problem->problem_id}}</h1>
+                    <h1 class="text-center">    História priradených stavov riešenia problému pre problém
+                        ID {{$problem->problem_id}}</h1>
                 </div>
+
+
                 <div class="col-12 d-flex justify-content-center flex-column">
-                    <table class="table main-table">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Názov Stavu</th>
-                            <th scope="col">Pridelené</th>
-
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @php
-                            $counter = 1;
-                        @endphp
-                        @foreach($stavy as $stav)
-
+                    <div class="table-responsive">
+                        <table class="table main-table">
+                            <thead>
                             <tr>
-                                <td>{{ $counter }}</td>
-                                <td>{{ $stav->stav_riesenia_problemu_id }}</td>
-                                <td>{{ $stav->TypStavuRieseniaProblemu['nazov'] }}</td>
-                                <td>{{ $stav->created_at }}</td>
+                                <th scope="col">#</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Názov Stavu</th>
+                                <th scope="col">Pridelené</th>
 
                             </tr>
+                            </thead>
+                            <tbody>
                             @php
-                                $counter++;
+                                $counter = 1;
                             @endphp
+                            @foreach($stavy as $stav)
 
-                        @endforeach
+                                <tr>
+                                    <td>{{ $counter }}</td>
+                                    <td>{{ $stav->stav_riesenia_problemu_id }}</td>
+                                    <td>{{ $stav->TypStavuRieseniaProblemu['nazov'] }}</td>
+                                    <td>{{ $stav->created_at }}</td>
 
-                        </tbody>
+                                </tr>
+                                @php
+                                    $counter++;
+                                @endphp
 
-                    </table>
+                            @endforeach
+
+                            </tbody>
+
+                        </table>
+                    </div>
 
 
                     @if(!empty(Session::get('success')))

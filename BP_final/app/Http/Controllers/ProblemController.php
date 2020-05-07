@@ -43,6 +43,8 @@ class ProblemController extends Controller
         $user_id = Auth::user()->id;
         $typy_stavov = TypStavuRieseniaProblemu::all();
 
+
+
         if (($rola == 1) || ($rola == 2)) {
 
             $problems = Problem::where('pouzivatel_id', '=', $user_id)->paginate(10);

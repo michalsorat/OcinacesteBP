@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -14,20 +15,26 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'id' => 0,
                 'name' => 'Nezaregistrovany obcan',
                 'email' => '-',
                 'password' => '-',
                 'rola_id' => 2
+            ],
+
+            [
+                'name' => 'System admin',
+                'email' => 'system@admin',
+                'password' => 'system_Admin_12345_ForCaseOfNeed',
+                'rola_id' => 3
             ]
         ];
 
         foreach ($users as $user) {
             User::create(array(
-                'id' => $user['id'],
+
                 'name' => $user['name'],
                 'email' => $user['email'],
-                'password' => $user['password'],
+                'password' => Hash::make($user['password']),
                 'rola_id' => $user['rola_id']
             ));
         }

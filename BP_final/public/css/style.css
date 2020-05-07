@@ -239,6 +239,10 @@ footer {
     .form-input {
         width: 100% !important;
     }
+
+    main {
+        height: 100% !important;
+    }
 }
 
 .title-link {
