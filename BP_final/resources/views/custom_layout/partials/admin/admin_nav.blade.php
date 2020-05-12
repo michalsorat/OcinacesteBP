@@ -1,3 +1,11 @@
+@if($errors->all() && Request::path() == 'pouzivatelia')
+    <script>
+        $(function() {
+            $('#edit-modal-{{Auth::user()->id}}').modal('show');
+        });
+    </script>
+@endif
+
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="d-flex align-items-center wrap-mobile">
@@ -42,6 +50,11 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+
+                        <button class="dropdown-item" data-toggle="modal"
+                                data-target="#edit-modal-{{Auth::user()->id}}">Nastavenia
+                        </button>
+
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -61,3 +74,69 @@
         </button>
     </nav>
 </header>
+
+
+<div id="edit-modal-{{ Auth::user()->id }}" class="modal edit-modal" tabindex="-1"
+     role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Zmena používateľského konta</h5>
+            </div>
+
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            <div class="modal-body text-center">
+                <form action="{{ route('pouzivatelia.update', Auth::user()->id) }}"
+                      method="POST" class="w-100">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label class="update-label">Meno a Priezvisko:</label>
+                        <input id="name" class="form-input m-auto" type="text" name="name"
+                               value="{{Auth::user()->name}}">
+                    </div>
+                    <div>
+                        <label class="update-label">Email:</label>
+                        <input id="email" class="form-input m-auto" type="text" name="email"
+                               value="{{Auth::user()->email}}">
+                    </div>
+                    <div>
+                        <label class="update-label">Nové heslo:</label>
+                        <input id="password" type="password"
+                               class="form-input m-auto"
+                               name="password"
+                        >
+                    </div>
+                    <div>
+                        <label class="update-label">Potvrďte nové heslo:</label>
+                        <input id="password-confirm" type="password" class="form-input m-auto"
+                               name="password_confirmation">
+
+                    </div>
+                    <ul class="d-flex align-items-center justify-content-center mt-4">
+                        <li>
+                            <button type="button" class="btn btn-primary cancel mr-4"
+                                    data-dismiss="modal"
+                                    aria-label="Close">Zrušiť
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit"
+                                    class="btn btn-primary update-btn mr-3">Aktualizovať
+                            </button>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

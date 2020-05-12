@@ -15,11 +15,12 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Nezaregistrovany obcan',
+                'name' => 'Nezaregistrovaný občan',
                 'email' => '-',
                 'password' => '-',
                 'rola_id' => 2
             ],
+            /*
 
             [
                 'name' => 'System admin',
@@ -27,6 +28,7 @@ class UserSeeder extends Seeder
                 'password' => 'system_Admin_12345_ForCaseOfNeed',
                 'rola_id' => 3
             ]
+            */
         ];
 
         foreach ($users as $user) {

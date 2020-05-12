@@ -7,6 +7,8 @@ use App\User;
 use App\Rola;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
@@ -74,7 +76,12 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+
+        $rola = Auth::user()->rola_id;
+
+        if($rola == 1){
+            return view('pouzivatelia.obcan_edit');
+        }
     }
 
     /**
@@ -87,10 +94,45 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::find($id);
-        $user->rola_id = $request->rola_id;
+
+        if($request->rola_id != null) {
+            $user->rola_id = $request->rola_id;
+            $user->save();
+        }
+
+        if($request->name != $user->name){
+            $request->validate([
+                'name' => ['required', 'min:5', 'string', 'max:255']
+            ]);
+        }
+
+
+        if($request->email != $user->email){
+            $request->validate([
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users']
+            ]);
+        }
+
+        if($request->password != null){
+            $request->validate([
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
+            ]);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if($request->password != null) {
+            $user->password = Hash::make($request->password);
+        }
         $user->save();
 
-        return redirect('pouzivatelia');
+
+
+        if(Auth::user()->rola_id == 3)
+            return redirect('pouzivatelia');
+        else
+            return redirect('problem');
     }
 
     /**

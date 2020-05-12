@@ -90,6 +90,14 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        if(User::all()->count() == 1){
+            return User::create([
+                'rola_id' => 3,
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+        }
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
