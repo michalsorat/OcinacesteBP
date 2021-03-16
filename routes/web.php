@@ -50,5 +50,5 @@ Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcome
 
 Route::post('/uploadProblemImage', 'ProblemController@storeProblemImgAndroid')->name('uploadProblemImage');
 Route::get('/showAllAndroid', 'ProblemController@showAllProblemsAndroid')->name('showAllAndroid');
-Route::get('/unregisteredPostAndroid/{poloha}/{popis_problemu}/{kategoria_problemu}/{stav_problemu}/{imgId}', 'ProblemController@unregisteredAddRecordAndroid')->name('unregisteredPostAndroid');
+Route::get('/unregisteredPostAndroid/{poloha}/{popis_problemu}/{kategoria_problemu}/{stav_problemu}/{imgId}/{idOfUser}', 'ProblemController@unregisteredAddRecordAndroid')->name('unregisteredPostAndroid');
 	Route::post('/loginAndroid', 'Api/LoginController@login')->name('loginAndroid');

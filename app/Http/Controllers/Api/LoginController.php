@@ -41,13 +41,13 @@ class LoginController extends Controller
 
 		else {
 			$response_data = [
-				"status_code" => 200,
-				"auth_token" => 'fff',
+				"status_code" => 400,
+				"auth_token" => '',
 				"user" => [
-					"id" => "1",
-					"name" => "henten",
-					"email" => "neviem",
-					"rola_id" => "1"	
+					"id" => "0",
+					"name" => "",
+					"email" => "",
+					"rola_id" => "2"	
 				]
 			];
 			return response()->json($response_data);

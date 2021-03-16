@@ -572,7 +572,8 @@ class ProblemController extends Controller
             $popis_stavu_riesenia_problemu = DB::table('popis_stavu_riesenia_problemu')
                 ->where('problem_id', '=', $problem->problem_id)
                 ->pluck('popis')
-                ->first();
+		->first();
+
             if ($popis_stavu_riesenia_problemu != null)
             {
                 $popis_stavu_riesenia_problemu = iconv('UTF-8', 'ASCII//TRANSLIT', $popis_stavu_riesenia_problemu);
@@ -593,9 +594,10 @@ class ProblemController extends Controller
                     "popis" => $problem->popis_problemu,
                     "stav_problemu" =>$stav_problemu,
                     "stav_riesenia_problemu" =>$typ_stavu_riesenia_problemu,  
-            "popis_riesenia_problemu" =>$popis_stavu_riesenia_problemu,
-            "created_at" => $created_at1
-            );
+            	    "popis_riesenia_problemu" =>$popis_stavu_riesenia_problemu,
+             	    "created_at" => $created_at1,
+		    "pouzivatel" => $problem->pouzivatel_id
+            	);
 
                 $poc++;
 
@@ -606,7 +608,7 @@ class ProblemController extends Controller
 
     }
 
-    public function unregisteredAddRecordAndroid($poloha, $popis_problemu, $kategoria_problemu, $stav_problemu, $imgId)
+    public function unregisteredAddRecordAndroid($poloha, $popis_problemu, $kategoria_problemu, $stav_problemu, $imgId, $idOfUser)
     {
         $arr = array();
          
@@ -624,7 +626,7 @@ class ProblemController extends Controller
             ->first();
 
     $arr = array(
-        'pouzivatel_id' => '1',
+        'pouzivatel_id' => $idOfUser,
             'poloha' => $poloha,
         'popis_problemu' => $popis_problemu,
         'kategoria_problemu_id' => $kategoria_problemu_id,
