@@ -539,40 +539,96 @@ class ProblemController extends Controller
 
 
     //PRIDAL SIMON DRIENIK, ZOBRAZENIE VSETKYCH MARKEROV V ANDROID APPKE
-    public function showAllProblemsAndroid()
+    public function showAllProblemsAndroid($x)
     {
             $problems = Problem::all();
             $arr = array(); 
         $poc = 0; 
 
             foreach($problems as $problem)
-        {
-            $stav_problemu = DB::table('stav_problemu')
+	    {
+	    
+	    $stav_problemu = DB::table('stav_problemu')
+		->orderBy('created_at', 'desc')
                 ->where('stav_problemu_id', '=', $problem->stav_problemu_id)
                 ->pluck('nazov')
                 ->first();
             $stav_problemu = iconv('UTF-8', 'ASCII//TRANSLIT', $stav_problemu);
 
             $kategoria_problemu = DB::table('kategoria_problemu')
-                ->where('kategoria_problemu_id', '=', $problem->kategoria_problemu_id)
+		->orderBy('created_at', 'desc')    
+		->where('kategoria_problemu_id', '=', $problem->kategoria_problemu_id)
                 ->pluck('nazov')
                 ->first();
             $kategoria_problemu = iconv('UTF-8', 'ASCII//TRANSLIT', $kategoria_problemu);
 
-            $stav_riesenia_problemu = DB::table('stav_riesenia_problemu')
+	    $stav_riesenia_problemu = DB::table('stav_riesenia_problemu')
+		->orderBy('created_at', 'desc')
                 ->where('problem_id', '=', $problem->problem_id)
                 ->pluck('typ_stavu_riesenia_problemu_id')
                 ->first();
             $typ_stavu_riesenia_problemu = DB::table('typ_stavu_riesenia_problemu')
-                ->where('typ_stavu_riesenia_problemu_id', '=', $stav_riesenia_problemu)
+		->orderBy('created_at', 'desc')    
+		->where('typ_stavu_riesenia_problemu_id', '=', $stav_riesenia_problemu)
                 ->pluck('nazov')
                 ->first();
             $typ_stavu_riesenia_problemu = iconv('UTF-8', 'ASCII//TRANSLIT', $typ_stavu_riesenia_problemu);
 
             $popis_stavu_riesenia_problemu = DB::table('popis_stavu_riesenia_problemu')
-                ->where('problem_id', '=', $problem->problem_id)
+		->orderBy('created_at', 'desc')    
+		->where('problem_id', '=', $problem->problem_id)
                 ->pluck('popis')
 		->first();
+
+	    $pouzivatel_meno = DB::table('users')
+		    ->orderBy('created_at', 'desc')
+		    ->where('id', '=', $problem->pouzivatel_id)
+		    ->pluck('name')
+		    ->first();
+
+	    $priradeny_zamestnanec_id = DB::table('priradeny_zamestnanec')
+		    ->orderBy('created_at', 'desc')
+		    ->where('problem_id', '=', $problem->problem_id)
+		    ->pluck('zamestnanec_id')
+		    ->first();
+
+	    if ($priradeny_zamestnanec_id != null)
+	    {
+		    $priradeny_zamestnanec_meno = DB::table('users')
+			    ->orderBy('created_at', 'desc')
+			    ->where('id','=', $priradeny_zamestnanec_id)
+			    ->pluck('name')
+			    ->first();
+		    $priradeny_zamestnanec_meno = iconv('UTF-8', 'ASCII//TRANSLIT', $priradeny_zamestnanec_meno);
+	    }
+	    else{
+		    $priradeny_zamestnanec_meno = 'Nepriradeny';
+	    }
+
+	    $priorita = DB::table('priorita')
+		    ->orderBy('created_at', 'desc')
+		    ->where('priorita_id','=', $problem->priorita_id)
+		    ->pluck('priorita')
+		    ->first();
+	    $priorita = iconv('UTF-8', 'ASCII//TRANSLIT', $priorita);
+
+	    $priradene_vozidlo_id = DB::table('priradene_vozidlo')
+		    ->orderBy('created_at', 'desc')
+		    ->where('problem_id', '=', $problem->problem_id)
+		    ->pluck('vozidlo_id')
+		    ->first();
+
+	    if ($priradene_vozidlo_id != null){
+		    $priradene_vozidlo_spz = DB::table('vozidlo')
+			    ->orderBy('created_at', 'desc')
+			    ->where('vozidlo_id', '=', $priradene_vozidlo_id)
+			    ->pluck('SPZ')
+			    ->first;
+		    $priradene_vozidlo_spz = iconv('UTF-8', 'ASCII//TRANSLIT', $priradene_vozidlo_spz);
+	    }
+	    else{
+		$priradene_vozidlo_spz = 'Nepriradene';
+	    }
 
             if ($popis_stavu_riesenia_problemu != null)
             {
@@ -581,11 +637,14 @@ class ProblemController extends Controller
             if ($popis_stavu_riesenia_problemu == null)
             {
              $popis_stavu_riesenia_problemu = 'neuvedene';   
-            }     
+	    }
+
 
 	    
 	    $created_at1 = $problem->created_at->toDateTimeString();
 
+	    if (($x != 0 && $x == $problem->problem_id) || ($x == 0))
+	    {
 
                 $arr[$poc] = array( 
                     "position" => $problem->poloha,  
@@ -596,10 +655,15 @@ class ProblemController extends Controller
                     "stav_riesenia_problemu" =>$typ_stavu_riesenia_problemu,  
             	    "popis_riesenia_problemu" =>$popis_stavu_riesenia_problemu,
              	    "created_at" => $created_at1,
-		    "pouzivatel" => $problem->pouzivatel_id
+		    "pouzivatel" => $problem->pouzivatel_id,
+		    "priradeny_zamestnanec" => $priradeny_zamestnanec_meno,
+		    "priorita" => $priorita,
+		    "priradene_vozidlo" => $priradene_vozidlo_spz,
+		    "pouzivatel_meno" => $pouzivatel_meno
             	);
 
-                $poc++;
+		$poc++;
+	    }
 
        }
 
@@ -607,6 +671,68 @@ class ProblemController extends Controller
            
 
     }
+
+    public function getSpinnersAndroid(){
+
+	 $popis_stavu_riesenia = TypStavuRieseniaProblemu::all();
+	 $arr_popis_stavu_riesenia = array();
+	 foreach($popis_stavu_riesenia as $popis_stavu)
+	 {
+		array_push($arr_popis_stavu_riesenia, iconv('UTF-8', 'ASCII//TRANSLIT', $popis_stavu->nazov));
+	 }
+
+	 $users = User::all();
+	 $arr_zamestnanci = array();
+	 foreach($users as $user)
+	 {
+		 if($user->rola_id == 4)
+			 array_push($arr_zamestnanci, iconv('UTF-8', 'ASCII//TRANSLIT', $user->name));
+	 }
+
+	 $priority = Priorita::all();
+	 $arr_priority = array();
+	 foreach($priority as $priorita)
+	 {
+		array_push($arr_priority, iconv('UTF-8', 'ASCII//TRANSLIT', $priorita->priorita));
+	 }
+
+	 $kategorie = KategoriaProblemu::all();
+	 $arr_kategorie_problemu = array();
+	 foreach($kategorie as $kategoria)
+	 {
+		array_push($arr_kategorie_problemu, iconv('UTF-8', 'ASCII//TRANSLIT', $kategoria->nazov));
+		 }
+
+	 $stavy_problemu = StavProblemu::all();
+	 $arr_stavy_problemu = array();
+	 foreach($stavy_problemu as $stav)
+	 {
+		array_push($arr_stavy_problemu, iconv('UTF-8', 'ASCII//TRANSLIT', $stav->nazov));
+	 }
+
+	 $vozidla = Vozidlo::all();
+	 $arr_vozidla = array();
+	 foreach($vozidla as $vozidlo)
+	 {
+		array_push($arr_vozidla, iconv('UTF-8', 'ASCII//TRANSLIT', $vozidlo->SPZ));
+	 }
+
+	 array_push($arr_vozidla, 'Nepriradene');
+	 array_push($arr_zamestnanci, 'Nepriradeny');
+
+	 $arr[0] = array(
+		 "zamestnanci" => $arr_zamestnanci,
+		 "priority" => $arr_priority,
+		 "kategorie" => $arr_kategorie_problemu,
+		 "stavy_problemu" => $arr_stavy_problemu,
+		 "stavy_riesenia" => $arr_popis_stavu_riesenia,
+		 "vozidla" => $arr_vozidla );
+	
+	return json_encode($arr);
+
+    }
+
+
 
     public function unregisteredAddRecordAndroid($poloha, $popis_problemu, $kategoria_problemu, $stav_problemu, $imgId, $idOfUser)
     {
