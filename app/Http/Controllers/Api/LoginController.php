@@ -23,6 +23,7 @@ class LoginController extends Controller
 
 		if($user != null && Hash::check($data['password'], $user->getAuthPassword()))
 		{
+			
 			$user->remember_token = Str::random(60);
 			$user->save();
 

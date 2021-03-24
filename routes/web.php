@@ -53,3 +53,4 @@ Route::get('/showAllAndroid/{x}', 'ProblemController@showAllProblemsAndroid')->n
 Route::get('/unregisteredPostAndroid/{poloha}/{popis_problemu}/{kategoria_problemu}/{stav_problemu}/{imgId}/{idOfUser}', 'ProblemController@unregisteredAddRecordAndroid')->name('unregisteredPostAndroid');
 Route::post('/loginAndroid', 'Api/LoginController@login')->name('loginAndroid');
 Route::get('/spinners', 'ProblemController@getSpinnersAndroid')->name('spinners');
+Route::get('/downloadImg/{id}', 'ProblemController@getImgsAndroid')->name('downloadImg');

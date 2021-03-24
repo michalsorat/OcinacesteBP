@@ -21,3 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::Group(['namespace' => 'Api'], function(){
 	Route::post('/loginAndroid', 'LoginController@login')->name('loginAndroid');
 });
+
+Route::post('/delete', 'ProblemController@deleteProblem')->name('deleteProblem');
+Route::post('/uploadRiesenieImage', 'ProblemController@uploadRiesenieImage')->name('uploadRiesenieImage');
+Route::post('/editProblem', 'ProblemController@editProblem')->name('editProblem');

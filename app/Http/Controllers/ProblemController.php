@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
 use App\Models\Problem;
 use App\Models\KategoriaProblemu;
+use App\Models\Komentar;
 use App\Models\StavProblemu;
 use App\Models\Priorita;
 use App\Models\Kraj;
@@ -21,6 +22,7 @@ use App\Models\Spravca;
 use App\Models\TypStavuRieseniaProblemu;
 use App\Models\StavRieseniaProblemu;
 use App\Models\FotkaProblemu;
+use App\Models\FotkaStavuRieseniaProblemu;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 
@@ -623,8 +625,8 @@ class ProblemController extends Controller
 			    ->orderBy('created_at', 'desc')
 			    ->where('vozidlo_id', '=', $priradene_vozidlo_id)
 			    ->pluck('SPZ')
-			    ->first;
-		    $priradene_vozidlo_spz = iconv('UTF-8', 'ASCII//TRANSLIT', $priradene_vozidlo_spz);
+			    ->first();
+		    
 	    }
 	    else{
 		$priradene_vozidlo_spz = 'Nepriradene';
@@ -672,10 +674,162 @@ class ProblemController extends Controller
 
     }
 
+    public function getImgsAndroid($id)
+    {
+	$fotka_problemu = FotkaProblemu::all();
+	$fotka_stavu_rieseia_problemu = FotkaStavuRieseniaProblemu::all();
+	$popis_stavu_riesenia = PopisStavuRieseniaProblemu::all();
+	$url_foto_problemu = "n";
+	$url_foto_riesenia = "n";
+	$popis_stavu_riesenia_problemu_id = 0;
+	
+
+	foreach($fotka_problemu as $foto_problemu)
+	{
+		if ($foto_problemu->problem_id == $id)
+			$url_foto_problemu = $foto_problemu->cesta_k_suboru;
+	}
+	foreach($popis_stavu_riesenia as $popis)
+	{
+		if ($popis->problem_id == $id)
+			$popis_stavu_riesenia_problemu_id = $popis->popis_stavu_riesenia_problemu_id;
+	}
+
+	if ($popis_stavu_riesenia_problemu_id != 0)
+		foreach($fotka_stavu_riesenia_problemu as $fotka_riesenia)
+		{
+			if ($fotka_riesenia->popis_stavu_riesenia_id == $popis_stavu_riesenia_problemu_id)
+				$url_foto_riesenia = $fotka_riesenia->cesta_k_suboru;
+		}
+
+	$arr[0] = array(
+		"URLproblem" => $url_foto_problemu,
+	        "URLriesenie" => $url_foto_riesenia	
+	);
+	return json_encode($arr);	
+    }
+
+    public function deleteProblem(Request $request)
+    {
+	$token = $request->authToken;
+	$problemID = $request->problemID;
+
+	$autheticated = 0;
+	$users = User::all();
+
+	foreach($users as $user)
+	{
+		if (($user->remember_token == $token and $user->rola_id != 1) and $user->rola_id != 2)
+			$autheticated = 1;
+	}
+
+	if ($autheticated == 1)
+	{
+		$fotka_problemu = FotkaProblemu::all();
+		$fotka_problemu_link = "";
+		
+		foreach($fotka_problemu as $foto)
+		{
+			if ($foto->problem_id == $problemID)
+			{
+				$fotka_problemu_link = $foto->cesta_k_suboru;
+				$id_foto = $foto->fotka_problemu_id;
+				DB::table('fotka_problemu')
+					->where('fotka_problemu_id', '=', $id_foto)
+					->delete();
+				Storage::delete('/public' . $fotka_problemu_link);
+
+			}	
+		}
+		
+		$stav_riesenia = StavRieseniaProblemu::all();
+		
+		foreach($stav_riesenia as $stav)
+		{
+			if ($stav->problem_id == $problemID)
+			{
+				DB::table('stav_riesenia_problemu')
+					->where('stav_riesenia_problemu_id', '=', $stav->stav_riesenia_problemu_id)->delete();
+			}
+		}
+
+		$popis_stavu_riesenia = PopisStavuRieseniaProblemu::all();
+
+		foreach ($popis_stavu_riesenia as $popis)
+		{
+			if ($popis->problem_id == $problemID)
+			{
+				$foto_popisu = FotkaStavuRieseniaProblemu::all();
+				foreach ($foto_popisu as $foto)
+				{
+					if ($foto->popis_stavu_riesenia_problemu_id == $popis->popis_stavu_riesenia_problemu_id)
+					{
+						$foto_link = $foto->cesta_k_suboru;
+						$id_foto = $foto->fotka_stavu_riesenia_problemu_id;
+						DB::table('fotka_stavu_riesenia_problemu')
+							->where('fotka_stavu_riesenia_problemu_id', '=', $id_foto)
+							->delete();
+						Storage::delete('/public' . $foto_link);
+					}
+				}
+				DB::table('popis_stavu_riesenia_problemu')
+					->where('popis_stavu_riesenia_problemu_id', '=', $popis->popis_stavu_riesenia_problemu_id)
+					->delete();
+			}
+		}
+
+		$komentar = Komentar::all();
+
+		foreach ($komentar as $koment)
+		{
+			if ($koment->problem_id == $problemID)
+				DB::table('komentar')
+				->where('komentar_id', '=', $koment->komentar_id)
+				->delete();
+		}
+
+		$priradene_vozidlo = PriradeneVozidlo::all();
+
+		foreach ($priradene_vozidlo as $vozidlo)
+		{
+			if ($vozidlo->problem_id == $problemID)
+				DB::table('priradene_vozidlo')
+				->where('priradene_vozidlo_id', '=', $vozidlo->priradene_vozidlo_id)
+				->delete();
+		}
+
+		$priradeny_zamestnanec = PriradenyZamestnanec::all();
+
+		foreach ($priradeny_zamestnanec as $zamestnanec)
+		{
+			if ($zamestnanec->problem_id == $problemID)
+				DB::table('priradeny_zamestnanec')
+				->where('priradeny_zamestnanec_id', '=', $zamestnanec->priradeny_zamestnanec_id)
+				->delete();
+		}
+
+		$problem = Problem::all();
+
+		foreach($problem as $pr)
+		{
+			if ($pr->problem_id == $problemID)
+				DB::table('problem')
+				->where('problem_id', '=', $problemID)
+				->delete();
+		}
+
+		return 1; 
+		
+	}
+	else{
+		return 0;
+	}  
+    }
+
     public function getSpinnersAndroid(){
 
 	 $popis_stavu_riesenia = TypStavuRieseniaProblemu::all();
-	 $arr_popis_stavu_riesenia = array();
+		 $arr_popis_stavu_riesenia = array();
 	 foreach($popis_stavu_riesenia as $popis_stavu)
 	 {
 		array_push($arr_popis_stavu_riesenia, iconv('UTF-8', 'ASCII//TRANSLIT', $popis_stavu->nazov));
@@ -802,8 +956,122 @@ class ProblemController extends Controller
 		return $last->fotka_problemu_id;
 	
     }
-    
 
+    public function uploadRiesenieImage(Request $request)
+    {
+	$users = User::all();
+	$token = $request->token;
+	$riesenieID = (int)$request->riesenieID;
+	$autheticated = 0;
+
+	foreach($users as $user)
+	{
+		if ($user->remember_token == $token and ($user->rola_id == 3 || $user->rola_id == 4 || $user->rola_id == 5))
+			$autheticated = 1;
+	}
+
+	if ($autheticated == 1)
+	{
+		$request->image->storeAs('/public', $request->name.".".$request->image->extension());
+		$url = Storage::url($request->name.".".$request->image->extension());
+		$arr = array('cesta_k_suboru' => $url, 'popis_stavu_riesenia_id' => $riesenieID);
+		FotkaStavuRieseniaProblemu::create($arr);
+
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+
+
+    }
+	
+
+    public function editProblem(Request $request)
+    {
+	    $users = User::all();
+	    $token = $request->token;
+	    $autheticated = 0;
+
+	    foreach($users as $user)
+	    {
+		if ($user->remember_token == $token and ($user->rola_id == 3 || $user->rola_id == 4 || $user->rola_id == 5))
+			$autheticated = 1;
+	    }
+
+	    if ($autheticated == 1)
+	    {
+		if ($request->zamestanec != "n")
+		{
+			foreach ($users as $user)
+			{
+				if (iconv('UTF-8', 'ASCII//TRANSLIT', $user->name) == $request->zamestnanec)
+				{
+					PriradenyZamestnanec::create(['problem_id' => $request->problemID, 'zamestnanec_id' => $user->id]);
+				}
+			}
+		}		
+		if ($request->priorita != "n")
+		{
+			$priority = Priorita::all();
+			foreach ($priority as $priorita)
+			{
+				if (iconv('UTF-8', 'ASCII//TRANSLIT', $priorita->priorita) == $request->priorita)
+					Problem::where('problem_id', $request->problemID)->update(['priorita_id' => $priorita->priorita_id]);
+			}
+		}
+		if ($request->kategoria != "n")
+		{
+			$kategorie = KategoriaProblemu::all();
+			foreach ($kategorie as $kategoria)
+			{
+				if(iconv('UTF-8', 'ASCII//TRANSLIT', $kategoria->nazov) == $request->kategoria)
+					Problem::where('problem_id', $request->problemID)->update(['kategoria_problemu_id' => $kategoria->kategoria_problemu_id]);
+			}
+		}
+		if ($request->stavProblemu != "n")
+		{
+			$stavy = StavProblemu::all();
+			foreach ($stavy as $stav)
+			{
+				if (iconv('UTF-8', 'ASCII//TRANSLIT', $stav->nazov) == $request->stavProblemu)
+					Problem::where('problem_id', $request->problemID)->update(['stav_problemu_id' => $stav->stav_problemu_id]);
+			}
+		}
+		if ($request->stavRiesenia != "n")
+		{
+			$stavy = TypStavuRieseniaProblemu::all();
+			foreach ($stavy as $stav)
+			{
+				if (iconv('UTF-8', 'ASCII//TRANSLIT', $stav->nazov) == $request->stavRiesenia)
+					StavRieseniaProblemu::create(['problem_id' => $request->problemID, 'typ_stavu_riesenia_problemu_id' => $stav->typ_stavu_riesenia_problemu_id]);
+			}
+		}
+		if ($request->vozidlo != "n")
+		{
+			$vozidla = Vozidlo::all();
+			foreach($vozidla as $vozidlo)
+			{
+				if (iconv('UTF-8', 'ASCII//TRANSLIT', $vozidlo->SPZ) == $request->vozidlo)
+					PriradeneVozidlo::create(['problem_id' => $request->problemID, 'vozidlo_id' => $vozidlo->vozidlo_id]);
+			}
+		}
+		if ($request->popisRiesenia != "n")
+		{
+			PopisStavuRieseniaProblemu::create(['problem_id' => $request->problemID, 'popis' => $request->popisRiesenia]);
+			$last = DB::table('popis_stavu_riesenia_problemu')->latest('popis_stavu_riesenia_problemu_id')->first();
+
+			return $last->popis_stavu_riesenia_problemu_id;
+
+		}
+		else
+			return 0;	
+	    }
+	    else
+		    return -1;
+
+    }
     /**
      * Show the form for creating a new resource.
      *
