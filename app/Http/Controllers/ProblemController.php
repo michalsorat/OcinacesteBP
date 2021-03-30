@@ -677,7 +677,7 @@ class ProblemController extends Controller
     public function getImgsAndroid($id)
     {
 	$fotka_problemu = FotkaProblemu::all();
-	$fotka_stavu_rieseia_problemu = FotkaStavuRieseniaProblemu::all();
+	$fotka_stavu_riesenia_problemu = FotkaStavuRieseniaProblemu::all();
 	$popis_stavu_riesenia = PopisStavuRieseniaProblemu::all();
 	$url_foto_problemu = "n";
 	$url_foto_riesenia = "n";
@@ -957,6 +957,181 @@ class ProblemController extends Controller
 	
     }
 
+    public function historyAndroid(Request $request){
+
+	$attribute = $request->attribute;
+	$problemID = $request->problemID;
+	$arr = array();
+
+	if ($attribute == 0)
+	{
+		$items = FotkaStavuRieseniaProblemu::all();
+	}
+	if ($attribute == 1)
+	{
+		$items = Komentar::all();
+	}
+	if ($attribute == 2)
+	{
+		$items = PopisStavuRieseniaProblemu::all();
+	}
+	if ($attribute == 3)
+	{
+		$items = PriradeneVozidlo::all();
+	}
+	if ($attribute == 4)
+	{
+		$items = PriradenyZamestnanec::all();
+	}
+	if ($attribute == 5)
+	{
+		$items = StavRieseniaProblemu::all();
+	}
+	
+	$i = 0;
+	$pocet = 0;
+	$date = "";
+	$name = "";
+
+	if ($attribute == 0)
+	{
+		$popisy = PopisStavuRieseniaProblemu::all();
+		foreach ($popisy as $popis)
+		{
+			if ($popis->problem_id == $problemID)
+			{
+				foreach ($items as $item)
+				{
+					if ($item->popis_stavu_riesenia_id == $popis->popis_stavu_riesenia_problemu_id)
+					{
+						$arr[$pocet] = array(
+							'meno' => $item->cesta_k_suboru,
+							'date' => $item->created_at->toDateTimeString(),
+							'user' => "none"
+						);
+						$pocet++;
+					}
+				}
+			}
+				
+		}
+
+	}
+
+	if ($attribute == 1)
+	{
+		foreach ($items as $item)
+		{
+			if ($item->problem_id == $problemID)
+			{
+				$text = $item->komentar;
+				$datum = $item->created_at->toDateTimeString();
+				$users = User::all();
+				foreach ($users as $user)
+				{
+					if ($user->id == $item->pouzivatel_id)
+						$uzivatel = $user->name;
+				}
+				$arr[$pocet] = array(
+					'meno' => $text,
+					'date' => $datum,
+					'user' => $uzivatel
+				);
+				$pocet++;
+			}
+		}
+	}
+
+	if ($attribute == 2)
+	{
+		foreach ($items as $item)
+		{
+			if ($item->problem_id == $problemID)
+			{
+				$arr[$pocet] = array(
+					'meno' => $item->popis,
+					'date' => $item->created_at->toDateTimeString(),
+					'user' => "none"
+				);
+				$pocet++;
+			}
+		}
+	}
+
+	if ($attribute == 3)
+	{
+		foreach ($items as $item)
+		{
+			if ($item->problem_id == $problemID)
+			{
+				$date = $item->created_at->toDateTimeString();
+				$vozidla = Vozidlo::all();
+				foreach ($vozidla as $vozidlo)
+				{			
+					if ($vozidlo->vozidlo_id == $item->vozidlo_id)
+					{
+						$meno = $vozidlo->SPZ;
+					}
+				}
+				$arr[$pocet] = array(
+					'meno' => $meno,
+					'date' => $date,
+					'user' => "none"
+				);
+				$pocet++;	
+			}
+		}
+	}
+
+	if ($attribute == 4)
+	{
+		foreach ($items as $item)
+		{
+			if ($item->problem_id == $problemID)
+			{
+				$users = User::all();
+				foreach ($users as $user)
+				{
+					if ($user->id == $item->zamestnanec_id)
+						$name = $user->name;
+				}
+				$arr[$pocet] = array(
+					'meno' => $name,
+					'date' => $item->created_at->toDateTimeString(),
+					'user' => "none"
+				);
+				$pocet++;
+
+			}
+		}
+	}
+
+	if ($attribute == 5)
+	{
+		foreach ($items as $item)
+		{
+			if ($item->problem_id == $problemID)
+			{
+				$typy = TypStavuRieseniaProblemu::all();
+				foreach ($typy as $typ)
+				{
+					if ($typ->typ_stavu_riesenia_problemu_id == $item->typ_stavu_riesenia_problemu_id)
+						$meno = $typ->nazov;
+				}
+				$arr[$pocet] = array(
+					'meno' => $meno,
+					'date' => $item->created_at->toDateTimeString(),
+					'user' => "none"
+				);
+				$pocet++;
+			}
+		}
+	}
+
+	return json_encode($arr);
+
+    }
+
     public function uploadRiesenieImage(Request $request)
     {
 	$users = User::all();
@@ -976,8 +1151,9 @@ class ProblemController extends Controller
 		$url = Storage::url($request->name.".".$request->image->extension());
 		$arr = array('cesta_k_suboru' => $url, 'popis_stavu_riesenia_id' => $riesenieID);
 		FotkaStavuRieseniaProblemu::create($arr);
-
 		return 1;
+
+	
 	}
 	else
 	{

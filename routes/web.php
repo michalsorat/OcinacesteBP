@@ -54,3 +54,4 @@ Route::get('/unregisteredPostAndroid/{poloha}/{popis_problemu}/{kategoria_proble
 Route::post('/loginAndroid', 'Api/LoginController@login')->name('loginAndroid');
 Route::get('/spinners', 'ProblemController@getSpinnersAndroid')->name('spinners');
 Route::get('/downloadImg/{id}', 'ProblemController@getImgsAndroid')->name('downloadImg');
+Route::get('/history/{attribute}/{problemID}', 'ProblemController@historyAndroid')->name('history');

@@ -5,7 +5,7 @@
     <script type="text/javascript">
 
         function initAutocomplete() {
-            var trnava = {lat: 48.3767994, lng: 17.5835082};
+            var trnava = {lat: 48.717822, lng: 19.455870};
 
             var map = new google.maps.Map(document.getElementById('map'), {
                 center: trnava,
