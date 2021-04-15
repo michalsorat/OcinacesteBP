@@ -541,7 +541,7 @@ class ProblemController extends Controller
 
 
     //PRIDAL SIMON DRIENIK, ZOBRAZENIE VSETKYCH MARKEROV V ANDROID APPKE
-    public function showAllProblemsAndroid($x)
+    public function showAllProblemsAndroid($x, $role)
     {
             $problems = Problem::all();
             $arr = array(); 
@@ -555,14 +555,14 @@ class ProblemController extends Controller
                 ->where('stav_problemu_id', '=', $problem->stav_problemu_id)
                 ->pluck('nazov')
                 ->first();
-            $stav_problemu = iconv('UTF-8', 'ASCII//TRANSLIT', $stav_problemu);
+            $stav_problemu = iconv('UTF-8', 'UTF-8', $stav_problemu);
 
             $kategoria_problemu = DB::table('kategoria_problemu')
 		->orderBy('created_at', 'desc')    
 		->where('kategoria_problemu_id', '=', $problem->kategoria_problemu_id)
                 ->pluck('nazov')
                 ->first();
-            $kategoria_problemu = iconv('UTF-8', 'ASCII//TRANSLIT', $kategoria_problemu);
+            $kategoria_problemu = iconv('UTF-8', 'UTF-8', $kategoria_problemu);
 
 	    $stav_riesenia_problemu = DB::table('stav_riesenia_problemu')
 		->orderBy('created_at', 'desc')
@@ -574,13 +574,18 @@ class ProblemController extends Controller
 		->where('typ_stavu_riesenia_problemu_id', '=', $stav_riesenia_problemu)
                 ->pluck('nazov')
                 ->first();
-            $typ_stavu_riesenia_problemu = iconv('UTF-8', 'ASCII//TRANSLIT', $typ_stavu_riesenia_problemu);
-
+            $typ_stavu_riesenia_problemu = iconv('UTF-8', 'UTF-8', $typ_stavu_riesenia_problemu);
+		
             $popis_stavu_riesenia_problemu = DB::table('popis_stavu_riesenia_problemu')
 		->orderBy('created_at', 'desc')    
 		->where('problem_id', '=', $problem->problem_id)
                 ->pluck('popis')
 		->first();
+	    $popis_stavu_riesenia_problemu_verejne = DB::table('popis_stavu_riesenia_problemu')
+		    ->orderBy('created_at', 'desc')
+		    ->where('problem_id', '=', $problem->problem_id)
+		    ->pluck('verejne')
+		    ->first();
 
 	    $pouzivatel_meno = DB::table('users')
 		    ->orderBy('created_at', 'desc')
@@ -601,7 +606,7 @@ class ProblemController extends Controller
 			    ->where('id','=', $priradeny_zamestnanec_id)
 			    ->pluck('name')
 			    ->first();
-		    $priradeny_zamestnanec_meno = iconv('UTF-8', 'ASCII//TRANSLIT', $priradeny_zamestnanec_meno);
+		    $priradeny_zamestnanec_meno = iconv('UTF-8', 'UTF-8', $priradeny_zamestnanec_meno);
 	    }
 	    else{
 		    $priradeny_zamestnanec_meno = 'Nepriradeny';
@@ -612,7 +617,7 @@ class ProblemController extends Controller
 		    ->where('priorita_id','=', $problem->priorita_id)
 		    ->pluck('priorita')
 		    ->first();
-	    $priorita = iconv('UTF-8', 'ASCII//TRANSLIT', $priorita);
+	    $priorita = iconv('UTF-8', 'UTF-8', $priorita);
 
 	    $priradene_vozidlo_id = DB::table('priradene_vozidlo')
 		    ->orderBy('created_at', 'desc')
@@ -633,8 +638,11 @@ class ProblemController extends Controller
 	    }
 
             if ($popis_stavu_riesenia_problemu != null)
-            {
-                $popis_stavu_riesenia_problemu = iconv('UTF-8', 'ASCII//TRANSLIT', $popis_stavu_riesenia_problemu);
+	    {
+		if ($popis_stavu_riesenia_problemu_verejne == 1 || $role > 2)
+			$popis_stavu_riesenia_problemu = iconv('UTF-8', 'UTF-8', $popis_stavu_riesenia_problemu);
+		else
+			$popis_stavu_riesenia_problemu = 'neuvedene';
             }
             if ($popis_stavu_riesenia_problemu == null)
             {
@@ -832,7 +840,7 @@ class ProblemController extends Controller
 		 $arr_popis_stavu_riesenia = array();
 	 foreach($popis_stavu_riesenia as $popis_stavu)
 	 {
-		array_push($arr_popis_stavu_riesenia, iconv('UTF-8', 'ASCII//TRANSLIT', $popis_stavu->nazov));
+		array_push($arr_popis_stavu_riesenia, iconv('UTF-8', 'UTF-8', $popis_stavu->nazov));
 	 }
 
 	 $users = User::all();
@@ -840,35 +848,35 @@ class ProblemController extends Controller
 	 foreach($users as $user)
 	 {
 		 if($user->rola_id == 4)
-			 array_push($arr_zamestnanci, iconv('UTF-8', 'ASCII//TRANSLIT', $user->name));
+			 array_push($arr_zamestnanci, iconv('UTF-8', 'UTF-8', $user->name));
 	 }
 
 	 $priority = Priorita::all();
 	 $arr_priority = array();
 	 foreach($priority as $priorita)
 	 {
-		array_push($arr_priority, iconv('UTF-8', 'ASCII//TRANSLIT', $priorita->priorita));
+		array_push($arr_priority, iconv('UTF-8', 'UTF-8', $priorita->priorita));
 	 }
 
 	 $kategorie = KategoriaProblemu::all();
 	 $arr_kategorie_problemu = array();
 	 foreach($kategorie as $kategoria)
 	 {
-		array_push($arr_kategorie_problemu, iconv('UTF-8', 'ASCII//TRANSLIT', $kategoria->nazov));
+		array_push($arr_kategorie_problemu, iconv('UTF-8', 'UTF-8', $kategoria->nazov));
 		 }
 
 	 $stavy_problemu = StavProblemu::all();
 	 $arr_stavy_problemu = array();
 	 foreach($stavy_problemu as $stav)
 	 {
-		array_push($arr_stavy_problemu, iconv('UTF-8', 'ASCII//TRANSLIT', $stav->nazov));
+		array_push($arr_stavy_problemu, iconv('UTF-8', 'UTF-8', $stav->nazov));
 	 }
 
 	 $vozidla = Vozidlo::all();
 	 $arr_vozidla = array();
 	 foreach($vozidla as $vozidlo)
 	 {
-		array_push($arr_vozidla, iconv('UTF-8', 'ASCII//TRANSLIT', $vozidlo->SPZ));
+		array_push($arr_vozidla, iconv('UTF-8', 'UTF-8', $vozidlo->SPZ));
 	 }
 
 	 array_push($arr_vozidla, 'Nepriradene');
@@ -883,6 +891,148 @@ class ProblemController extends Controller
 		 "vozidla" => $arr_vozidla );
 	
 	return json_encode($arr);
+
+    }
+
+    public function showUsersAndroid(){
+	$users = User::all();
+	$i = 0;
+	foreach ($users as $user)
+	{
+		if ($user->rola_id != 2)
+		{
+			$arr[$i] = array(
+				"name" => iconv('UTF-8', 'UTF-8', $user->name),
+				"email" => $user->email,
+				"created_at" => $user->created_at->toDateTimeString(),
+				"role" => $user->rola_id
+			);
+			$i++;
+		}	
+	}
+	return json_encode($arr);
+
+    }
+
+    public function deleteAccountAndroid(Request $request)
+    {
+	    $authenticated = 0;
+	    $users = User::all();
+	    $notAdmin = 0;
+	    $elseAdmin = 0;
+	    $isHere = 0;
+	    $anotherAdmin = 0;
+
+
+	    foreach ($users as $user)
+	    { 
+		    if ($user->rola_id == 3 and $user->remember_token == $request->AuthToken)
+			    $authenticated = 1;
+		    if ($user->email == $request->email and $user->rola_id != 3)
+			    $notAdmin = 1;
+		    if ($user->email == $request->email)
+			    $isHere = 1;
+		    if ($user->email != $request->email and $user->rola_id == 3)
+			    $elseAdmin = 1;
+		    if (($user->email == $request->email and $user->rola_id == 3) and $user->remember_token != $request->AuthToken)
+			    $anotherAdmin = 1;
+	    }
+
+	    if ($authenticated == 1)
+	    {
+		    if ($isHere == 1)
+		    {
+
+			    if ($notAdmin == 1)
+			    {
+				    User::where('email', $request->email)->delete();
+				    return 1;
+			    }
+			    else
+			    {
+				if ($anotherAdmin == 0)
+				{
+					if ($elseAdmin == 1)
+					{
+						User::where('email', $request->email)->delete();
+						return 1;
+					}
+					else
+						return 2;
+				}
+				else
+					return 3;
+			    }
+
+		    }
+		    else
+			    return 0;
+
+	    }
+	    else
+		    return -1;
+    }
+
+    public function editAccountAndroid(Request $request)
+    {
+	$authenticated = 0;
+	$users = User::all();
+	$isHere = 0;
+	$isAdmin = 0;
+	$anotherAdmin = 0;
+	$elseAdmin = 0;
+
+	foreach ($users as $user)
+	{
+		if ($user->rola_id == 3 and $user->remember_token == $request->AuthToken)
+			$authenticated = 1;
+		if ($user->email == $request->email)
+			$isHere = 1;
+		if ($user->email == $request->email and $user->rola_id == 3)
+			$isAdmin = 1;
+		if (($user->email == $request->email and $user->rola_id == 3) and $user->remember_token != $request->AuthToken)
+			$elseAdmin = 1;
+		if ($user->email != $request->email and $user->rola_id == 3)
+			$anotherAdmin = 1;
+	}
+
+	if ($authenticated == 1)
+	{
+		if ($isHere == 1)
+		{
+			if ($isAdmin == 1)
+			{
+				if ($elseAdmin == 0)
+				{
+					if ($anotherAdmin == 1)
+					{
+					$user1 = User::where('email', $request->email)->first();
+					$user1->rola_id = $request->rola;
+					$user1->save();
+					return 1; 
+					}
+					else
+						return 3;
+				}
+				else
+					return 2;
+
+			}
+			else
+			{
+				$user1 = User::where('email', $request->email)->first();
+				$user1->rola_id = $request->rola;
+				$user1->save();
+				return 1;
+			}
+		}
+		else
+			return 0;
+
+	}
+	else
+		return -1;
+
 
     }
 
@@ -941,19 +1091,22 @@ class ProblemController extends Controller
 
     public function storeProblemImgAndroid(Request $request){
 
-		$validated = $request->validate([
+	/*$validated = $request->validate([
 			'name' => 'string|max:40',
-			'image'=> 'mimes:jpeg,png|max:5070'
-		]);
-		$extension = $request->image->extension();
-		$request->image->storeAs('/public', $validated['name'].".".$extension);
-		$url = Storage::url($validated['name'].".".$extension);
-		$arr = array('cesta_k_suboru' => $url, 'problem_id' => 1);
-		FotkaProblemu::create($arr);
-
-		$last = DB::table('fotka_problemu')->latest('fotka_problemu_id')->first();
+			'image'=> 'mimes:jpeg,png|max:100070'
+		]);*/
+	
 		
-		return $last->fotka_problemu_id;
+			$extension = $request->file('image')->extension();
+			$request->image->storeAs('/public', $request->image.".".$extension);
+			$url = Storage::url($validated['name'].".".$extension);
+			$arr = array('cesta_k_suboru' => $url, 'problem_id' => 1);
+			FotkaProblemu::create($arr);
+
+			$last = DB::table('fotka_problemu')->latest('fotka_problemu_id')->first();
+		
+			//return $last->fotka_problemu_id;
+			return $extension;	
 	
     }
 
@@ -1046,7 +1199,7 @@ class ProblemController extends Controller
 	{
 		foreach ($items as $item)
 		{
-			if ($item->problem_id == $problemID)
+			if ($item->problem_id == $problemID && ($item->verejne == 1 || $request->role  > 2))
 			{
 				$arr[$pocet] = array(
 					'meno' => $item->popis,
@@ -1162,6 +1315,38 @@ class ProblemController extends Controller
 
 
     }
+
+    public function comment(Request $request)
+    {
+	$users = User::all();
+	$token = $request->token;
+	$problemID = $request->idProblem;
+	$komentText = $request->komentText;
+	$userID = $request->userID;
+	$autheticated = 0;
+
+	if ($userID > 1)
+	{
+		foreach ($users as $user)
+		{
+			if ($user->remember_token == $token && $user->id == $userID)
+				$autheticated = 1;
+		}
+	}
+	else
+	{
+		$autheticated = 1;
+	}
+
+	if ($autheticated == 1)
+	{
+		Komentar::create(['je_zamestnanec' => 0, 'komentar' => $komentText, 'problem_id' => $problemID, 'pouzivatel_id' => $userID, 'zverejnitelnost' => 1]);
+		return 1;
+	}
+	else{
+		return 5;
+	}
+    }
 	
 
     public function editProblem(Request $request)
@@ -1178,6 +1363,8 @@ class ProblemController extends Controller
 
 	    if ($autheticated == 1)
 	    {
+
+
 		if ($request->zamestanec != "n")
 		{
 			foreach ($users as $user)
@@ -1237,6 +1424,8 @@ class ProblemController extends Controller
 		{
 			PopisStavuRieseniaProblemu::create(['problem_id' => $request->problemID, 'popis' => $request->popisRiesenia]);
 			$last = DB::table('popis_stavu_riesenia_problemu')->latest('popis_stavu_riesenia_problemu_id')->first();
+
+			DB::table('popis_stavu_riesenia_problemu')->where('popis_stavu_riesenia_problemu_id', $last->popis_stavu_riesenia_problemu_id)->update(['verejne' => $request->verejne]);
 
 			return $last->popis_stavu_riesenia_problemu_id;
 

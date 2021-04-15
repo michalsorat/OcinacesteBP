@@ -49,9 +49,10 @@ Route::get('/welcomePage/create', 'ProblemController@welcomePageCreate')->name('
 Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');
 
 Route::post('/uploadProblemImage', 'ProblemController@storeProblemImgAndroid')->name('uploadProblemImage');
-Route::get('/showAllAndroid/{x}', 'ProblemController@showAllProblemsAndroid')->name('showAllAndroid');
+Route::get('/showAllAndroid/{x}/{y}', 'ProblemController@showAllProblemsAndroid')->name('showAllAndroid');
 Route::get('/unregisteredPostAndroid/{poloha}/{popis_problemu}/{kategoria_problemu}/{stav_problemu}/{imgId}/{idOfUser}', 'ProblemController@unregisteredAddRecordAndroid')->name('unregisteredPostAndroid');
 Route::post('/loginAndroid', 'Api/LoginController@login')->name('loginAndroid');
 Route::get('/spinners', 'ProblemController@getSpinnersAndroid')->name('spinners');
 Route::get('/downloadImg/{id}', 'ProblemController@getImgsAndroid')->name('downloadImg');
-Route::get('/history/{attribute}/{problemID}', 'ProblemController@historyAndroid')->name('history');
+Route::get('/history/{attribute}/{problemID}/{role}', 'ProblemController@historyAndroid')->name('history');
+Route::get('/showUsersAndroid', 'ProblemController@showUsersAndroid')->name('showUsersAndroid');

@@ -25,3 +25,6 @@ Route::Group(['namespace' => 'Api'], function(){
 Route::post('/delete', 'ProblemController@deleteProblem')->name('deleteProblem');
 Route::post('/uploadRiesenieImage', 'ProblemController@uploadRiesenieImage')->name('uploadRiesenieImage');
 Route::post('/editProblem', 'ProblemController@editProblem')->name('editProblem');
+Route::post('/comment', 'ProblemController@comment')->name('comment');
+Route::post('/deleteAccount', 'ProblemController@deleteAccountAndroid')->name('deleteAccount');
+Route::post('/editAccount', 'ProblemController@editAccountAndroid')->name('editAccount');
