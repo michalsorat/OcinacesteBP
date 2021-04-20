@@ -541,7 +541,7 @@ class ProblemController extends Controller
 
 
     //PRIDAL SIMON DRIENIK, ZOBRAZENIE VSETKYCH MARKEROV V ANDROID APPKE
-    public function showAllProblemsAndroid($x, $role)
+    public function showAllProblemsAndroid($x, $zamestnanec, $stavProblemu, $kategoria, $datumOd, $datumDo, $vozidlo, $priorita1, $stavRiesenia, $role)
     {
             $problems = Problem::all();
             $arr = array(); 
@@ -655,24 +655,35 @@ class ProblemController extends Controller
 
 	    if (($x != 0 && $x == $problem->problem_id) || ($x == 0))
 	    {
+		    if (($zamestnanec == $priradeny_zamestnanec_meno) || ($zamestnanec == "-"))
+			    if (($stavProblemu == $stav_problemu) || ($stavProblemu == "-"))
+				    if (($kategoria == $kategoria_problemu) || ($kategoria == "-"))
+					    if (strtotime($datumOd) < strtotime($created_at1) || $datumOd == "0000-00-00")
+						    if (strtotime($datumDo) > strtotime($created_at1) || $datumDo == "0000-00-00")
+							    if ($vozidlo == $priradene_vozidlo_spz || $vozidlo == "-")
+								    if ($priorita1 == $priorita || $priorita1 == "-")
+									    if ($stavRiesenia == $typ_stavu_riesenia_problemu || $stavRiesenia == "-")
+										    {
 
-                $arr[$poc] = array( 
-                    "position" => $problem->poloha,  
-                    "id" => $problem->problem_id, 
-                    "kategoria" => $kategoria_problemu,
-                    "popis" => $problem->popis_problemu,
-                    "stav_problemu" =>$stav_problemu,
-                    "stav_riesenia_problemu" =>$typ_stavu_riesenia_problemu,  
-            	    "popis_riesenia_problemu" =>$popis_stavu_riesenia_problemu,
-             	    "created_at" => $created_at1,
-		    "pouzivatel" => $problem->pouzivatel_id,
-		    "priradeny_zamestnanec" => $priradeny_zamestnanec_meno,
-		    "priorita" => $priorita,
-		    "priradene_vozidlo" => $priradene_vozidlo_spz,
-		    "pouzivatel_meno" => $pouzivatel_meno
-            	);
 
-		$poc++;
+                								$arr[$poc] = array( 
+                    								"position" => $problem->poloha,  
+                    								"id" => $problem->problem_id, 
+                    								"kategoria" => $kategoria_problemu,
+                    								"popis" => $problem->popis_problemu,
+                    								"stav_problemu" =>$stav_problemu,
+                    								"stav_riesenia_problemu" =>$typ_stavu_riesenia_problemu,  
+            	    								"popis_riesenia_problemu" =>$popis_stavu_riesenia_problemu,
+             	    								"created_at" => $created_at1,
+		    								"pouzivatel" => $problem->pouzivatel_id,
+		   	 							"priradeny_zamestnanec" => $priradeny_zamestnanec_meno,
+		    								"priorita" => $priorita,
+		    								"priradene_vozidlo" => $priradene_vozidlo_spz,
+		    								"pouzivatel_meno" => $pouzivatel_meno
+            									);
+
+										$poc++;
+									    }
 	    }
 
        }

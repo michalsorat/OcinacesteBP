@@ -49,7 +49,7 @@ Route::get('/welcomePage/create', 'ProblemController@welcomePageCreate')->name('
 Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');
 
 Route::post('/uploadProblemImage', 'ProblemController@storeProblemImgAndroid')->name('uploadProblemImage');
-Route::get('/showAllAndroid/{x}/{y}', 'ProblemController@showAllProblemsAndroid')->name('showAllAndroid');
+Route::get('/showAllAndroid/{x}/{zamestnanec}/{stavProblemu}/{kategoria}/{datumOd}/{datumDo}/{vozidlo}/{priorita}/{stavRiesenia}/{y}', 'ProblemController@showAllProblemsAndroid')->name('showAllAndroid');
 Route::get('/unregisteredPostAndroid/{poloha}/{popis_problemu}/{kategoria_problemu}/{stav_problemu}/{imgId}/{idOfUser}', 'ProblemController@unregisteredAddRecordAndroid')->name('unregisteredPostAndroid');
 Route::post('/loginAndroid', 'Api/LoginController@login')->name('loginAndroid');
 Route::get('/spinners', 'ProblemController@getSpinnersAndroid')->name('spinners');
