@@ -1,5 +1,6 @@
+{{--android_appka--}}
 <script type="text/javascript">
-            
+
             var typ_stavu_problemu_nazov;
             var stav_riesenia_problemu_id;
             var kategoria_problemu_nazov;
@@ -42,15 +43,15 @@
                 }
             @endforeach
 
-            $arr[poc] = array( 
-                "position" => "{{$problem->poloha}}",  
-                "id" => "{{$problem->problem_id}}",  
+            $arr[poc] = array(
+                "position" => "{{$problem->poloha}}",
+                "id" => "{{$problem->problem_id}}",
                 "kategoria" => kategoria_problemu_nazov,
                 "popis" => "{{$problem->popis_problemu}}",
                 "stav_problemu" => typ_stavu_problemu_nazov,
-                "stav_riesenia_problemu" => typ_stavu_riesenia_problemu_nazov,  
-                "popis_rieseneho_problemu" => popis_stavu_riesenia_problemu_nazov  
-            ); 
+                "stav_riesenia_problemu" => typ_stavu_riesenia_problemu_nazov,
+                "popis_rieseneho_problemu" => popis_stavu_riesenia_problemu_nazov
+            );
 
             poc++;
 
@@ -58,7 +59,7 @@
 
             return $arr;
 
-           /* @foreach($arr as $k =>$a)  
+           /* @foreach($arr as $k =>$a)
             $arr[$k] = json_decode(json_encode($a));
             @endforeach*/
 

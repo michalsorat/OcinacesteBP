@@ -5,8 +5,9 @@
     <script type="text/javascript">
 
         function initAutocomplete() {
-            var trnava = {lat: 48.717822, lng: 19.455870};
+            var trnava = {lat: 48.3767994, lng: 17.5835082};
 
+            //all problems
             var map = new google.maps.Map(document.getElementById('map'), {
                 center: trnava,
                 zoom: 11,
@@ -18,11 +19,11 @@
             var popisyArr = <?php echo json_encode($popisyArr); ?>;
 
 
-            var poc = 0;
-            var nazov_typu_riesenia;
-            var popis_stavu_riesenia;
+            let poc = 0;
+            let nazov_typu_riesenia;
+            let popis_stavu_riesenia;
 
-                @foreach($problems as $problem)
+            @foreach($problems as $problem)
 
             var loc = split(" {{ $problem->poloha }}");
 
@@ -110,6 +111,89 @@
                 });
                 map.fitBounds(bounds);
             });
+
+            //create new problem
+            var map1 = new google.maps.Map(document.getElementById('map1'), {
+                center: trnava,
+                zoom: 11,
+                mapTypeId: 'roadmap'
+            });
+            var contentString = document.getElementById('create-form');
+            // This event listener calls addMarker1() when the map is clicked.
+            google.maps.event.addListener(map1, 'click', function (event) {
+
+                if (markersCount < 1) {
+
+                    var lat = event.latLng.lat();
+                    var lng = event.latLng.lng();
+
+                    contentString.style.display = "block";
+                    var infowindow = new google.maps.InfoWindow({
+                        content: contentString
+                    });
+
+                    markerString = getMarkerString(lat, lng);
+                    addMarker1(event.latLng, map1, infowindow);
+
+                    document.getElementById('poloha').value = markerString;
+                } else window.alert("Môžete vytvoriť iba jeden problém súčasne. " +
+                    "Pre odstránenie označenia z mapy, kliknite pravým tlačidlom myše na označené miesto." +
+                    " Následne môžete vytvoriť nové označenie.");
+
+            })
+
+            // Create the search box and link it to the UI element.
+            var input1 = document.getElementById('pac-input1');
+            var searchBox1 = new google.maps.places.SearchBox(input1);
+            map1.controls[google.maps.ControlPosition.TOP_LEFT].push(input1);
+            //
+            // // Bias the SearchBox results towards current map's viewport.
+            map1.addListener('bounds_changed', function () {
+                searchBox1.setBounds(map1.getBounds());
+            });
+
+
+            var markers1 = [];
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox1.addListener('places_changed', function () {
+                var places1 = searchBox1.getPlaces();
+
+                if (places1.length === 0) {
+                    return;
+                }
+
+                // Clear out the old markers.
+                markers1.forEach(function (marker) {
+                    marker.setMap(null);
+                });
+                markers1 = [];
+
+                // For each place, get the icon, name and location.
+                var bounds1 = new google.maps.LatLngBounds();
+                places1.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+
+                    // Create a marker for each place.
+                    markers1.push(new google.maps.Marker({
+                        map: map1,
+                        title: place.name,
+                        position: place.geometry.location,
+                        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                    }));
+
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds1.union(place.geometry.viewport);
+                    } else {
+                        bounds1.extend(place.geometry.location);
+                    }
+                });
+                map1.fitBounds(bounds1);
+            });
         }
 
         /**
@@ -126,15 +210,11 @@
         }
 
         function split(str) {
-            var res = str.split(",");
-
-            return res;
+            return str.split(",");
         }
 
         // Adds a marker to the map.
         function addMarker(location, map, created_at, poloha, popis, kategoria, stav, typ_stavu_riesenia, id, popisRiesenia) {
-            // Add the marker at the clicked location, and add the next-available label
-            // from the array of alphabetical characters.
             var marker = new google.maps.Marker({
                 position: location,
                 animation: google.maps.Animation.DROP,
@@ -164,27 +244,211 @@
         }
 
 
+        var markerString;
+        var markersCount = 0;
+
+        /**
+         * Concatenates given lat and lng with an comma and returns it.
+         * @param {!number} lat Latitude.
+         * @param {!number} lng Longitude.
+         * @return {string} Concatenated marker id.
+        //  */
+        var getMarkerString = function (lat, lng) {
+
+            return lat.toFixed(6) + ',' + lng.toFixed(6);
+        };
+
+        /**
+         * Creates an instance of google.maps.LatLng by given lat and lng values and returns it.
+         * This function can be useful for getting new coordinates quickly.
+         * @param {!number} lat Latitude.
+         * @param {!number} lng Longitude.
+         * @return {google.maps.LatLng} An instance of google.maps.LatLng object
+         */
+        var getLatLng = function (lat, lng) {
+            return new google.maps.LatLng(lat, lng);
+        };
+
+        // // Adds a marker to the map.
+        function addMarker1(location, map, infowindow) {
+            // Add the marker at the clicked location, and add the next-available label
+            // from the array of alphabetical characters.
+            var marker1 = new google.maps.Marker({
+                position: location,
+                animation: google.maps.Animation.DROP,
+                map: map,
+            });
+            infowindow.open(map, marker1);
+            bindMarkerEvents(marker1, infowindow); // bind right click event to marker
+            markersCount++;
+        }
+
+        function bindMarkerEvents(marker1, infoWindow) {
+            google.maps.event.addListener(marker1, "rightclick", function (point) {
+                markersCount--;
+                removeMarker(marker1); // remove it
+            });
+            google.maps.event.addListener(infoWindow,'closeclick',function(){
+                markersCount--;
+                removeMarker(marker1); // remove it
+            });
+        }
+
+        function removeMarker(marker1) {
+            marker1.setMap(null); // set markers setMap to null to remove it from map
+            document.getElementById('poloha').value = "";
+        }
     </script>
 
-    <section class="main-container h-100">
-        <div class="container-fluid h-100">
-            <div class="row">
-                <div class="col-12 mb-4 nadpis">
-                    <h3>Ak si našiel problém na ceste alebo v jej okolí (stav vozovky, dopravné značenie, kvalita opravy
-                        alebo zeleň), daj nám o ňom vedieť!</h3>
+    <header>
+        <div class="bnr-holder">
+            <img class="bnr-image" src={{ asset('img/welcome_page_bckgrnd.jpg') }}>
+            <h1>Oči na ceste</h1>
 
-                </div>
-                <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
-
-                <div class="col-12 h-500 ">
-                    <div id="map"></div>
-                    <p class="mt-1"> *Ľavým klikom na ľubovoľné označenie otvorí okno s detailnými informáciami.
-                    </p>
-
-
+            <div class="bnr-contents">
+                <div class="bnr-logos">
+                    <img class="logo-img_fiit" src="{{ asset('img/STU-FIIT-nvf.png') }}" height="50">
+                    <img class="logo-img" src="{{ asset('img/sucttskLogo.png') }}" height="50">
                 </div>
 
+                <div class="bnr-bckgrnd"></div>
+                <div class="text-holder">
+                    <p>Zobraz všetky problémy na cestách a ich detailné informácie</p>
+                    <img src="{{ asset('img/all_problems.gif') }}">
+                    <div class="flip">
+                        <a href="#all-reports">
+                            <div class="front">Mapa všetkých hlásení</div>
+                            <div class="back">Mapa všetkých hlásení</div>
+                        </a>
+                    </div>
+                </div>
             </div>
+            <div class="bnr-contents-right">
+                <div class="bnr-bckgrnd"></div>
+                <div class="text-holder">
+                    <p>Daj nám vedieť o probléme na ceste zaznačením jeho polohy na mape</p>
+                    <img src="{{ asset('img/create_problem.gif') }}">
+                    <div class="flip">
+                        <a href="#create-report">
+                            <div class="front">Vytvor hlásenie</div>
+                            <div class="back">Vytvor hlásenie</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <!-- Authentication Links -->
+                    @guest
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">{{ __('Prihlásenie') }}</a>
+                        </li>
+                        @if (Route::has('register'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">{{ __('Registrácia') }}</a>
+                            </li>
+                        @endif
+                    @else
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                {{ Auth::user()->name }} <span class="caret"></span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                    {{ __('Odhlásenie') }}
+                                </a>
+
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                            </div>
+                        </li>
+                    @endguest
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section>
+        <div class="txt-holder">
+            <p>
+                <span class="underline">Vďaka Vám dokážeme efektívne udržiavať bezpečné a pohodlné cesty!</span>
+            </p>
+        </div>
+        <div class="button">
+            <a href="#about">
+                O projekte
+            </a>
+            <div class="mask"></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="hint_circle">?</div>
+        <h1 class="create-report" id="create-report"> Vytvor hlásenie</h1>
+        <input id="pac-input1" class="controls" type="text" placeholder="Vyhľadať">
+        <div class="map" id="map1"></div>
+
+        <div id="create-form" class="create-form">
+            <h1 class="create-form_header">Vytvorenie hlásenia</h1>
+            @if ($errors->any())
+                <div class="alert-danger">
+                    <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form class="start-form" action="{{ route('welcomePage.store') }}" method="post">
+                @csrf
+                <label for="field0"><span>Poloha <span class="required">*</span></span>
+                    <input id="poloha" class="form-input readonly" type="text" name="poloha" value="" readonly="true">
+                </label>
+
+                <label for="field1"><span>Kategória <span class="required">*</span></span>
+                    <select id="kategoria" class="select-field"
+                            name="kategoria_problemu_id">
+                        @foreach($kategorie as $kategoria)
+                            <option
+                                value="{{ $kategoria->kategoria_problemu_id }}">
+                                {{ $kategoria->nazov }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <label for="field2"><span>Stav problému <span class="required">*</span></span>
+                    <select id="stav_problemu" class="select-field"
+                            name="stav_problemu_id">
+                        @foreach($stavy as $stav)
+                            <option
+                                value="{{ $stav->stav_problemu_id }}">{{ $stav->nazov }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <label for="field5"><span>Popis problému <span class="required">*</span></span><textarea id="popis_problemu" name="popis_problemu" class="textarea-field"></textarea></label>
+                <div class="btn-form">
+                    <label><span> </span><input type="submit" value="Submit" /></label>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section>
+        <div class="hint_circle">?</div>
+        <h1 class="all-reports" id="all-reports"> Všetky hlásenia</h1>
+        <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
+        <div class="map" id="map"></div>
+    </section>
+
+    <section>
+        <h1 class="about" id="about"> O projekte</h1>
+        <div class="about-holder">
+            <img class="about-img" src="https://m.smedata.sk/api-media/media/image/sme/4/69/6988184/6988184_1200x.jpeg?rev=3&fbclid=IwAR04k7--SEKx29aC5Z_1qMDqPM47OR5T8hd61BVZyIbsVyxGOLBx9rPejzA">
         </div>
     </section>
 

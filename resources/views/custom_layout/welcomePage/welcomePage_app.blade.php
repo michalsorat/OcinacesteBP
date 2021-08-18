@@ -6,12 +6,12 @@
     @include('custom_layout.partials.head')
 </head>
 
-<body class="{{ Request::is('/') ? 'footer-top' : '' }}">
-@include('custom_layout.partials.welcomePage.welcomePage_nav')
+{{--<body class="{{ Request::is('/') ? 'footer-top' : '' }}">--}}
+{{--@include('custom_layout.partials.welcomePage.welcomePage_nav')--}}
 
-
+<body>
 <main>
-    @yield('content')
+        @yield('content')
 </main>
 
 

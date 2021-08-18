@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12 d-flex align-items-center">
                 <img src="{{ asset('img/erb-ttsk.svg') }}" height="50">
-                <p class="footer-text ml-4">Copyright © 2020 Denis Piovarči, All rights reserved</p>
+                <p class="footer-text ml-4">Copyright © 2021 Michal Sorát, All rights reserved</p>
             </div>
         </div>
     </div>
@@ -17,7 +17,7 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 
-<!--<script src="{{ asset('js/script.js') }}"></script>-->
+{{--<script src="{{ asset('js/script.js') }}"></script>--}}
 
 
 

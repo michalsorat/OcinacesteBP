@@ -14,8 +14,9 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
 <!-- Custom styles for this template -->
-<link rel="stylesheet" type="text/css" href="{{ asset('css/all.min.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
+{{--<link rel="stylesheet" type="text/css" href="{{ asset('css/all.min.css') }}">--}}
+{{--<link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">--}}
+<link rel="stylesheet" type="text/css" href="{{asset('css/style_temp.css')}}">
 
 
 <!-- stare verzie exploreru nepodporuju HTML5, toto riesi tu chybu -->
@@ -29,4 +30,5 @@
         crossorigin="anonymous"></script>
 
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete" async defer></script>
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkf657xylGn2KpKWraX_nLq0XHu6OghgQ&libraries=places&callback=initAutocomplete" async></script>
+

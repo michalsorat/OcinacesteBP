@@ -507,6 +507,9 @@ class ProblemController extends Controller
         $popisyAll = PopisStavuRieseniaProblemu::all();
 
 
+        $kategorie = KategoriaProblemu::all();
+        $stavyProblemu = StavProblemu::all();
+
         $stavy_riesenia = array();
         $popisy_stavov_riesenia = array();
 
@@ -533,6 +536,8 @@ class ProblemController extends Controller
             ->with('problems', $problems)
             ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
             ->with('stavy_riesenia', $stavy_riesenia)
+            ->with('kategorie', $kategorie)
+            ->with('stavy', $stavyProblemu)
             ->with('popisyAll', $popisyAll)
             ->with('popisyArr', $popisy_stavov_riesenia)
             ->with('counter', $counter);
@@ -544,12 +549,12 @@ class ProblemController extends Controller
     public function showAllProblemsAndroid($x, $zamestnanec, $stavProblemu, $kategoria, $datumOd, $datumDo, $vozidlo, $priorita1, $stavRiesenia, $role)
     {
             $problems = Problem::all();
-            $arr = array(); 
-        $poc = 0; 
+            $arr = array();
+        $poc = 0;
 
             foreach($problems as $problem)
 	    {
-	    
+
 	    $stav_problemu = DB::table('stav_problemu')
 		->orderBy('created_at', 'desc')
                 ->where('stav_problemu_id', '=', $problem->stav_problemu_id)
@@ -558,7 +563,7 @@ class ProblemController extends Controller
             $stav_problemu = iconv('UTF-8', 'UTF-8', $stav_problemu);
 
             $kategoria_problemu = DB::table('kategoria_problemu')
-		->orderBy('created_at', 'desc')    
+		->orderBy('created_at', 'desc')
 		->where('kategoria_problemu_id', '=', $problem->kategoria_problemu_id)
                 ->pluck('nazov')
                 ->first();
@@ -570,14 +575,14 @@ class ProblemController extends Controller
                 ->pluck('typ_stavu_riesenia_problemu_id')
                 ->first();
             $typ_stavu_riesenia_problemu = DB::table('typ_stavu_riesenia_problemu')
-		->orderBy('created_at', 'desc')    
+		->orderBy('created_at', 'desc')
 		->where('typ_stavu_riesenia_problemu_id', '=', $stav_riesenia_problemu)
                 ->pluck('nazov')
                 ->first();
             $typ_stavu_riesenia_problemu = iconv('UTF-8', 'UTF-8', $typ_stavu_riesenia_problemu);
-		
+
             $popis_stavu_riesenia_problemu = DB::table('popis_stavu_riesenia_problemu')
-		->orderBy('created_at', 'desc')    
+		->orderBy('created_at', 'desc')
 		->where('problem_id', '=', $problem->problem_id)
                 ->pluck('popis')
 		->first();
@@ -631,7 +636,7 @@ class ProblemController extends Controller
 			    ->where('vozidlo_id', '=', $priradene_vozidlo_id)
 			    ->pluck('SPZ')
 			    ->first();
-		    
+
 	    }
 	    else{
 		$priradene_vozidlo_spz = 'Nepriradene';
@@ -646,11 +651,11 @@ class ProblemController extends Controller
             }
             if ($popis_stavu_riesenia_problemu == null)
             {
-             $popis_stavu_riesenia_problemu = 'neuvedene';   
+             $popis_stavu_riesenia_problemu = 'neuvedene';
 	    }
 
 
-	    
+
 	    $created_at1 = $problem->created_at->toDateTimeString();
 
 	    if (($x != 0 && $x == $problem->problem_id) || ($x == 0))
@@ -666,13 +671,13 @@ class ProblemController extends Controller
 										    {
 
 
-                								$arr[$poc] = array( 
-                    								"position" => $problem->poloha,  
-                    								"id" => $problem->problem_id, 
+                								$arr[$poc] = array(
+                    								"position" => $problem->poloha,
+                    								"id" => $problem->problem_id,
                     								"kategoria" => $kategoria_problemu,
                     								"popis" => $problem->popis_problemu,
                     								"stav_problemu" =>$stav_problemu,
-                    								"stav_riesenia_problemu" =>$typ_stavu_riesenia_problemu,  
+                    								"stav_riesenia_problemu" =>$typ_stavu_riesenia_problemu,
             	    								"popis_riesenia_problemu" =>$popis_stavu_riesenia_problemu,
              	    								"created_at" => $created_at1,
 		    								"pouzivatel" => $problem->pouzivatel_id,
@@ -689,7 +694,7 @@ class ProblemController extends Controller
        }
 
        return json_encode($arr);
-           
+
 
     }
 
@@ -701,7 +706,7 @@ class ProblemController extends Controller
 	$url_foto_problemu = "n";
 	$url_foto_riesenia = "n";
 	$popis_stavu_riesenia_problemu_id = 0;
-	
+
 
 	foreach($fotka_problemu as $foto_problemu)
 	{
@@ -723,9 +728,9 @@ class ProblemController extends Controller
 
 	$arr[0] = array(
 		"URLproblem" => $url_foto_problemu,
-	        "URLriesenie" => $url_foto_riesenia	
+	        "URLriesenie" => $url_foto_riesenia
 	);
-	return json_encode($arr);	
+	return json_encode($arr);
     }
 
     public function deleteProblem(Request $request)
@@ -746,7 +751,7 @@ class ProblemController extends Controller
 	{
 		$fotka_problemu = FotkaProblemu::all();
 		$fotka_problemu_link = "";
-		
+
 		foreach($fotka_problemu as $foto)
 		{
 			if ($foto->problem_id == $problemID)
@@ -758,11 +763,11 @@ class ProblemController extends Controller
 					->delete();
 				Storage::delete('/public' . $fotka_problemu_link);
 
-			}	
+			}
 		}
-		
+
 		$stav_riesenia = StavRieseniaProblemu::all();
-		
+
 		foreach($stav_riesenia as $stav)
 		{
 			if ($stav->problem_id == $problemID)
@@ -837,12 +842,12 @@ class ProblemController extends Controller
 				->delete();
 		}
 
-		return 1; 
-		
+		return 1;
+
 	}
 	else{
 		return 0;
-	}  
+	}
     }
 
     public function getSpinnersAndroid(){
@@ -900,7 +905,7 @@ class ProblemController extends Controller
 		 "stavy_problemu" => $arr_stavy_problemu,
 		 "stavy_riesenia" => $arr_popis_stavu_riesenia,
 		 "vozidla" => $arr_vozidla );
-	
+
 	return json_encode($arr);
 
     }
@@ -919,7 +924,7 @@ class ProblemController extends Controller
 				"role" => $user->rola_id
 			);
 			$i++;
-		}	
+		}
 	}
 	return json_encode($arr);
 
@@ -936,7 +941,7 @@ class ProblemController extends Controller
 
 
 	    foreach ($users as $user)
-	    { 
+	    {
 		    if ($user->rola_id == 3 and $user->remember_token == $request->AuthToken)
 			    $authenticated = 1;
 		    if ($user->email == $request->email and $user->rola_id != 3)
@@ -1020,7 +1025,7 @@ class ProblemController extends Controller
 					$user1 = User::where('email', $request->email)->first();
 					$user1->rola_id = $request->rola;
 					$user1->save();
-					return 1; 
+					return 1;
 					}
 					else
 						return 3;
@@ -1052,8 +1057,8 @@ class ProblemController extends Controller
     public function unregisteredAddRecordAndroid($poloha, $popis_problemu, $kategoria_problemu, $stav_problemu, $imgId, $idOfUser)
     {
         $arr = array();
-         
-                    
+
+
             if ($poloha != null)
         {
         $kategoria_problemu_id = DB::table('kategoria_problemu')
@@ -1071,10 +1076,10 @@ class ProblemController extends Controller
             'poloha' => $poloha,
         'popis_problemu' => $popis_problemu,
         'kategoria_problemu_id' => $kategoria_problemu_id,
-        'stav_problemu_id' => $stav_problemu_id     
+        'stav_problemu_id' => $stav_problemu_id
 	);
 
-	
+
 
     	Problem::create($arr);
 	$last = DB::table('problem')->latest('problem_id')->first();
@@ -1084,20 +1089,20 @@ class ProblemController extends Controller
 		DB::table('fotka_problemu')
 			->where('fotka_problemu_id', $imgId)
 			->update(['problem_id' => $last->problem_id]);
-	
+
 	}
 
-	//return 1; 
-
- 
+	//return 1;
 
 
-   
+
+
+
 	}
-	
-	return 1; 
 
- 	
+	return 1;
+
+
     }
 
     public function storeProblemImgAndroid(Request $request){
@@ -1106,8 +1111,8 @@ class ProblemController extends Controller
 			'name' => 'string|max:40',
 			'image'=> 'mimes:jpeg,png|max:100070'
 		]);*/
-	
-		
+
+
 			$extension = $request->file('image')->extension();
 			$request->image->storeAs('/public', $request->image.".".$extension);
 			$url = Storage::url($validated['name'].".".$extension);
@@ -1115,10 +1120,10 @@ class ProblemController extends Controller
 			FotkaProblemu::create($arr);
 
 			$last = DB::table('fotka_problemu')->latest('fotka_problemu_id')->first();
-		
+
 			//return $last->fotka_problemu_id;
-			return $extension;	
-	
+			return $extension;
+
     }
 
     public function historyAndroid(Request $request){
@@ -1151,7 +1156,7 @@ class ProblemController extends Controller
 	{
 		$items = StavRieseniaProblemu::all();
 	}
-	
+
 	$i = 0;
 	$pocet = 0;
 	$date = "";
@@ -1177,7 +1182,7 @@ class ProblemController extends Controller
 					}
 				}
 			}
-				
+
 		}
 
 	}
@@ -1231,7 +1236,7 @@ class ProblemController extends Controller
 				$date = $item->created_at->toDateTimeString();
 				$vozidla = Vozidlo::all();
 				foreach ($vozidla as $vozidlo)
-				{			
+				{
 					if ($vozidlo->vozidlo_id == $item->vozidlo_id)
 					{
 						$meno = $vozidlo->SPZ;
@@ -1242,7 +1247,7 @@ class ProblemController extends Controller
 					'date' => $date,
 					'user' => "none"
 				);
-				$pocet++;	
+				$pocet++;
 			}
 		}
 	}
@@ -1317,7 +1322,7 @@ class ProblemController extends Controller
 		FotkaStavuRieseniaProblemu::create($arr);
 		return 1;
 
-	
+
 	}
 	else
 	{
@@ -1358,7 +1363,7 @@ class ProblemController extends Controller
 		return 5;
 	}
     }
-	
+
 
     public function editProblem(Request $request)
     {
@@ -1385,7 +1390,7 @@ class ProblemController extends Controller
 					PriradenyZamestnanec::create(['problem_id' => $request->problemID, 'zamestnanec_id' => $user->id]);
 				}
 			}
-		}		
+		}
 		if ($request->priorita != "n")
 		{
 			$priority = Priorita::all();
@@ -1442,12 +1447,13 @@ class ProblemController extends Controller
 
 		}
 		else
-			return 0;	
+			return 0;
 	    }
 	    else
 		    return -1;
 
     }
+    //KONIEC DRIENIK
     /**
      * Show the form for creating a new resource.
      *

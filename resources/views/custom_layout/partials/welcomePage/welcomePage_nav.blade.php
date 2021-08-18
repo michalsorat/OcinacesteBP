@@ -10,19 +10,19 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto align-items-center">
+{{--                <div class="collapse navbar-collapse" id="navbarSupportedContent">--}}
+{{--                    <ul class="navbar-nav ml-auto align-items-center">--}}
 
-                        <li class="nav-item red-border {{ Request::is('welcomePage/create') ? 'active' : '' }}">
-                            <a class="nav-link" href="/welcomePage/create">Vytvor hlásenie</a>
-                        </li>
+{{--                        <li class="nav-item red-border {{ Request::is('welcomePage/create') ? 'active' : '' }}">--}}
+{{--                            <a class="nav-link" href="/welcomePage/create">Vytvor hlásenie</a>--}}
+{{--                        </li>--}}
 
-                        <li class="nav-item {{ Request::is('/') ? 'active' : '' }}">
-                            <a class="nav-link" href="/">Mapa všetkých problémov</a>
-                        </li>
+{{--                        <li class="nav-item {{ Request::is('/') ? 'active' : '' }}">--}}
+{{--                            <a class="nav-link" href="/">Mapa všetkých problémov</a>--}}
+{{--                        </li>--}}
 
-                    </ul>
-                </div>
+{{--                    </ul>--}}
+{{--                </div>--}}
 
 
         <!-- Right Side Of Navbar -->
