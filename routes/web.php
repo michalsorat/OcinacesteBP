@@ -56,3 +56,4 @@ Route::get('/spinners', 'ProblemController@getSpinnersAndroid')->name('spinners'
 Route::get('/downloadImg/{id}', 'ProblemController@getImgsAndroid')->name('downloadImg');
 Route::get('/history/{attribute}/{problemID}/{role}', 'ProblemController@historyAndroid')->name('history');
 Route::get('/showUsersAndroid', 'ProblemController@showUsersAndroid')->name('showUsersAndroid');
+?>

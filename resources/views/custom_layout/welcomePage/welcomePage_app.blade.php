@@ -16,7 +16,7 @@
 
 
 <!-- Bootstrap core JavaScript -->
-@include('custom_layout.partials.footer-scripts')
+{{--@include('custom_layout.partials.footer-scripts')--}}
 
 <script>
     $(document).ready(function() {

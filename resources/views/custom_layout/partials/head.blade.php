@@ -12,11 +12,13 @@
 <!-- Bootstrap core CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
 <!-- Custom styles for this template -->
 {{--<link rel="stylesheet" type="text/css" href="{{ asset('css/all.min.css') }}">--}}
 {{--<link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">--}}
 <link rel="stylesheet" type="text/css" href="{{asset('css/style_temp.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/respond.css')}}">
 
 
 <!-- stare verzie exploreru nepodporuju HTML5, toto riesi tu chybu -->
