@@ -17,114 +17,114 @@
                 <div class="col-12 d-flex justify-content-center flex-column">
                     <div class="table-responsive">
                         <table class="table main-table">
-                            <thead>
+{{--                            <thead>--}}
 
-                            <form action="{{ action('ProblemController@filter') }}"
-                                  method="POST">
-                                @csrf
+{{--                            <form action="{{ action('ProblemController@filter') }}"--}}
+{{--                                  method="POST">--}}
+{{--                                @csrf--}}
 
-                                <div class="col-12 d-flex justify-content-end mb-3">
-                                    <button type="submit" class="btn btn-primary" name="submit">Filtruj</button>
-                                </div>
+{{--                                <div class="col-12 d-flex justify-content-end mb-3">--}}
+{{--                                    <button type="submit" class="btn btn-primary" name="submit">Filtruj</button>--}}
+{{--                                </div>--}}
 
-                                <tr class="filter-row">
-                                    <th scope="col"><p>#</p>
-                                    </th>
-                                    <th scope="col w-80"><p>ID</p></th>
-                                    <th scope="col"><p>Poloha</p></th>
-                                    <th scope="col"><p>Zadané</p>
-                                        <select
-                                            id="orderBy" class="input-filter form-input w-100"
-                                            name="orderBy">
+{{--                                <tr class="filter-row">--}}
+{{--                                    <th scope="col"><p>#</p>--}}
+{{--                                    </th>--}}
+{{--                                    <th scope="col w-80"><p>ID</p></th>--}}
+{{--                                    <th scope="col"><p>Poloha</p></th>--}}
+{{--                                    <th scope="col"><p>Zadané</p>--}}
+{{--                                        <select--}}
+{{--                                            id="orderBy" class="input-filter form-input w-100"--}}
+{{--                                            name="orderBy">--}}
 
-                                            <option value="" selected disabled hidden>Vyber</option>
-                                            <option value="1">Zoraď od najnovších</option>
-                                            <option value="2">Zoraď od najstarších</option>
+{{--                                            <option value="" selected disabled hidden>Vyber</option>--}}
+{{--                                            <option value="1">Zoraď od najnovších</option>--}}
+{{--                                            <option value="2">Zoraď od najstarších</option>--}}
 
-                                        </select></th>
-
-
-                                    <th scope="col"><p>Kategória</p><select
-                                            id="kategoria_problemu_id" class="input-filter form-input w-100"
-                                            name="kategoria_problemu_id">
-
-                                            <option value="" selected disabled hidden>Vyber</option>
-                                            @foreach($kategorie as $kategoria)
-                                                <option value="{{ $kategoria->kategoria_problemu_id }}"
-                                                >{{ $kategoria->nazov }}</option>
-                                            @endforeach
-                                        </select></th>
+{{--                                        </select></th>--}}
 
 
-                                    <th scope="col"><p>Stav problému</p><select
-                                            id="stav_problemu_id" class="input-filter form-input w-100"
-                                            name="stav_problemu_id">
-                                            <option value="" selected disabled hidden>Vyber</option>
-                                            @foreach($stavyProblemu as $stav)
-                                                <option value="{{ $stav->stav_problemu_id }}">
-                                                    {{ $stav->nazov}}</option>
-                                            @endforeach
-                                        </select></th>
+{{--                                    <th scope="col"><p>Kategória</p><select--}}
+{{--                                            id="kategoria_problemu_id" class="input-filter form-input w-100"--}}
+{{--                                            name="kategoria_problemu_id">--}}
 
-                                    <th scope="col"><p>Stav riešenia</p><select
-                                            id="typ_stavu_riesenia_problemu" class="input-filter form-input w-100"
-                                            name="typ_stavu_riesenia_problemu_id">
-                                            <option value="" selected disabled hidden>Vyber</option>
+{{--                                            <option value="" selected disabled hidden>Vyber</option>--}}
+{{--                                            @foreach($kategorie as $kategoria)--}}
+{{--                                                <option value="{{ $kategoria->kategoria_problemu_id }}"--}}
+{{--                                                >{{ $kategoria->nazov }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select></th>--}}
 
-                                            @foreach($typyStavovRieseniaProblemu as $stav)
-                                                <option value="{{ $stav->typ_stavu_riesenia_problemu_id}}"
-                                                >{{ $stav->nazov }}</option>
-                                            @endforeach
-                                        </select></th>
 
-                                    <th scope="col"><p>Priorita</p><select
-                                            id="priorita" class="input-filter form-input form-input w-100"
-                                            name="priorita_id">
-                                            <option value="" selected disabled hidden>Vyber</option>
-                                            @foreach($priority as $priorita)
-                                                <option value="{{ $priorita->priorita_id }}"
-                                                >{{ $priorita->priorita }}</option>
-                                            @endforeach
-                                        </select></th>
+{{--                                    <th scope="col"><p>Stav problému</p><select--}}
+{{--                                            id="stav_problemu_id" class="input-filter form-input w-100"--}}
+{{--                                            name="stav_problemu_id">--}}
+{{--                                            <option value="" selected disabled hidden>Vyber</option>--}}
+{{--                                            @foreach($stavyProblemu as $stav)--}}
+{{--                                                <option value="{{ $stav->stav_problemu_id }}">--}}
+{{--                                                    {{ $stav->nazov}}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select></th>--}}
 
-                                    <th scope="col"><p>Používateľ</p>
-                                        <select
-                                            id="user" class="input-filter form-input form-input w-100"
-                                            name="pouzivatel_id">
-                                            <option value="" selected disabled hidden>Vyber</option>
-                                            @foreach($zamestnanci as $user)
-                                                <option value="{{ $user->id }}"
-                                                >{{ $user->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </th>
-                                    <th scope="col"><p>Zamestnanec</p>
-                                        <select
-                                            id="user" class="input-filter form-input form-input w-100"
-                                            name="zamestnanec_id">
-                                            <option value="" selected disabled hidden>Vyber</option>
-                                            @foreach($VsetciZamestnanci as $user)
-                                                <option value="{{ $user->id }}"
-                                                >{{ $user->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </th>
-                                    <th scope="col"><p>Vozidlo</p><select
-                                            id="vozidla" class="input-filter form-input w-100"
-                                            name="vozidlo_id">
-                                            <option value="" selected disabled hidden>Vyber</option>
-                                            @foreach($vozidla as $vozidlo)
-                                                <option value="{{ $vozidlo->vozidlo_id }}"
-                                                >{{ $vozidlo->SPZ }}</option>
-                                            @endforeach
-                                        </select></th>
-                                    <th scope="col">Edit</th>
-                                    <th scope="col">Detail</th>
-                                    <th scope="col">Vymaž záznam</th>
+{{--                                    <th scope="col"><p>Stav riešenia</p><select--}}
+{{--                                            id="typ_stavu_riesenia_problemu" class="input-filter form-input w-100"--}}
+{{--                                            name="typ_stavu_riesenia_problemu_id">--}}
+{{--                                            <option value="" selected disabled hidden>Vyber</option>--}}
 
-                                </tr>
-                            </form>
-                            </thead>
+{{--                                            @foreach($typyStavovRieseniaProblemu as $stav)--}}
+{{--                                                <option value="{{ $stav->typ_stavu_riesenia_problemu_id}}"--}}
+{{--                                                >{{ $stav->nazov }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select></th>--}}
+
+{{--                                    <th scope="col"><p>Priorita</p><select--}}
+{{--                                            id="priorita" class="input-filter form-input form-input w-100"--}}
+{{--                                            name="priorita_id">--}}
+{{--                                            <option value="" selected disabled hidden>Vyber</option>--}}
+{{--                                            @foreach($priority as $priorita)--}}
+{{--                                                <option value="{{ $priorita->priorita_id }}"--}}
+{{--                                                >{{ $priorita->priorita }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select></th>--}}
+
+{{--                                    <th scope="col"><p>Používateľ</p>--}}
+{{--                                        <select--}}
+{{--                                            id="user" class="input-filter form-input form-input w-100"--}}
+{{--                                            name="pouzivatel_id">--}}
+{{--                                            <option value="" selected disabled hidden>Vyber</option>--}}
+{{--                                            @foreach($zamestnanci as $user)--}}
+{{--                                                <option value="{{ $user->id }}"--}}
+{{--                                                >{{ $user->name }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </th>--}}
+{{--                                    <th scope="col"><p>Zamestnanec</p>--}}
+{{--                                        <select--}}
+{{--                                            id="user" class="input-filter form-input form-input w-100"--}}
+{{--                                            name="zamestnanec_id">--}}
+{{--                                            <option value="" selected disabled hidden>Vyber</option>--}}
+{{--                                            @foreach($VsetciZamestnanci as $user)--}}
+{{--                                                <option value="{{ $user->id }}"--}}
+{{--                                                >{{ $user->name }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </th>--}}
+{{--                                    <th scope="col"><p>Vozidlo</p><select--}}
+{{--                                            id="vozidla" class="input-filter form-input w-100"--}}
+{{--                                            name="vozidlo_id">--}}
+{{--                                            <option value="" selected disabled hidden>Vyber</option>--}}
+{{--                                            @foreach($vozidla as $vozidlo)--}}
+{{--                                                <option value="{{ $vozidlo->vozidlo_id }}"--}}
+{{--                                                >{{ $vozidlo->SPZ }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select></th>--}}
+{{--                                    <th scope="col">Edit</th>--}}
+{{--                                    <th scope="col">Detail</th>--}}
+{{--                                    <th scope="col">Vymaž záznam</th>--}}
+
+{{--                                </tr>--}}
+{{--                            </form>--}}
+{{--                            </thead>--}}
                             <tbody>
                             @php
                                 $counter=1;
@@ -231,7 +231,7 @@
                             @endforeach
                             </tbody>
                         </table>
-                        @if(Request::url() === 'http://147.175.204.24/problem')
+                        @if(Request::url() === 'http://147.175.204.92/problem')
                             {{$problems->links()}}
                         @endif
                     </div>

@@ -32,5 +32,5 @@
         crossorigin="anonymous"></script>
 
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkf657xylGn2KpKWraX_nLq0XHu6OghgQ&libraries=places&callback=initAutocomplete" async></script>
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkf657xylGn2KpKWraX_nLq0XHu6OghgQ&libraries=places&callback=initAutocomplete" async defer></script>
 

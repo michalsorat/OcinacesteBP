@@ -8,7 +8,8 @@ class NezaregistrovanyObcanController extends Controller
 {
     public function index()
     {
-        return view('nezaregistrovany_obcan.home');
+        return redirect('/problem');
+//        return view('nezaregistrovany_obcan.home');
     }
 
     public function __construct()
