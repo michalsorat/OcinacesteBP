@@ -16,6 +16,7 @@ class CreateProblemTable extends Migration
         Schema::create('problem', function (Blueprint $table) {
             $table->bigIncrements('problem_id');
             $table->text('poloha');
+            $table->text('address');
             $table->text('popis_problemu');
             $table->collation = 'utf8mb4_slovak_ci';
 

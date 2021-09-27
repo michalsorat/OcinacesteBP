@@ -52,7 +52,7 @@
 
                 poc++;
             addMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->created_at}}",
-                "{{ $problem->poloha }}", "{{ $problem->popis_problemu }}",
+                "{{ $problem->address }}", "{{ $problem->popis_problemu }}",
                 "{{ $problem->KategoriaProblemu['nazov'] }}",
                 "{{ $problem->StavProblemu['nazov'] }}",
                 nazov_typu_riesenia, "{{$problem->problem_id}}", popis_stavu_riesenia);
@@ -117,9 +117,24 @@
             google.maps.event.addListener(map, 'click', function (event) {
 
                 if (markersCount < 1) {
-
-                    var lat = event.latLng.lat();
-                    var lng = event.latLng.lng();
+                    let lat = event.latLng.lat();
+                    let lng = event.latLng.lng();
+                    const KEY = "AIzaSyCkf657xylGn2KpKWraX_nLq0XHu6OghgQ";
+                    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${KEY}`;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            const addressFull = data.results[0].formatted_address;
+                            let address = "";
+                            const addressArr = addressFull.split(",");
+                            for (let i = 0; i < 2; i++)
+                            {
+                                address += addressArr[i];
+                                if (i !== 1)
+                                    address += ",";
+                            }
+                            document.getElementById('address').value = address;
+                        })
 
                     contentString.style.display = "block";
                     var infowindow = new google.maps.InfoWindow({
@@ -159,7 +174,7 @@
         }
 
         // Adds a marker to the map.
-        function addMarker(location, map, created_at, poloha, popis, kategoria, stav, typ_stavu_riesenia, id, popisRiesenia) {
+        function addMarker(location, map, created_at, address, popis, kategoria, stav, typ_stavu_riesenia, id, popisRiesenia) {
             var marker = new google.maps.Marker({
                 position: location,
                 animation: google.maps.Animation.DROP,
@@ -175,7 +190,7 @@
             var infowindow = new google.maps.InfoWindow({
                 content: "<p>" + "<b>ID: </b>" + id + "</p>" +
                     "<p>" + "<b>Vytvorené dňa: </b>" + created_at + "</p>"
-                    + "<p>" + "<b>Poloha: </b>" + poloha + "</p>"
+                    + "<p>" + "<b>Adresa: </b>" + address + "</p>"
                     + "<p>" + "<b>Popis: </b>" + popis + "</p>"
                     + "<p>" + "<b>Kategória: </b>" + kategoria + "</p>"
                     + "<p>" + "<b>Stav problému: </b>" + stav + "</p>"
@@ -324,11 +339,16 @@
 
             <form class="start-form" action="{{ route('welcomePage.store') }}" method="POST">
                 @csrf
-                <label for="field0"><span>Poloha <span class="required">*</span></span>
-                    <input id="poloha" class="form-input readonly" type="text" name="poloha" value="" readonly="true">
+                <label for="location_field">
+{{--                    <span>Poloha <span class="required">*</span></span>--}}
+                    <input id="poloha" class="form-input readonly" type="hidden" name="poloha" value="" readonly="true">
                 </label>
 
-                <label for="field1"><span>Kategória <span class="required">*</span></span>
+                <label for="address_field"><span>Adresa <span class="required">*</span></span>
+                    <input id="address" class="form-input readonly" type="text" name="address" value="" readonly="true">
+                </label>
+
+                <label for="category_field"><span>Kategória <span class="required">*</span></span>
                     <select id="kategoria" class="select-field"
                             name="kategoria_problemu_id">
                         @foreach($kategorie as $kategoria)
@@ -338,7 +358,7 @@
                         @endforeach
                     </select>
                 </label>
-                <label for="field2"><span>Stav problému <span class="required">*</span></span>
+                <label for="problemState_field"><span>Stav problému <span class="required">*</span></span>
                     <select id="stav_problemu" class="select-field"
                             name="stav_problemu_id">
                         @foreach($stavy as $stav)
@@ -347,7 +367,7 @@
                         @endforeach
                     </select>
                 </label>
-                <label for="field5"><span>Popis problému <span class="required">*</span></span><textarea id="popis_problemu" name="popis_problemu" class="textarea-field"></textarea></label>
+                <label for="description_field"><span>Popis problému <span class="required">*</span></span><textarea id="popis_problemu" name="popis_problemu" class="textarea-field"></textarea></label>
                 <div class="btn-form">
                     <label><span> </span><input type="submit" value="Submit" /></label>
                 </div>

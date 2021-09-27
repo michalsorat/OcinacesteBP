@@ -15,7 +15,8 @@ class ProblemSeeder extends Seeder
         $problemy = [
             [
                 'poloha' => '45.333, 30.888',
-                'popis_problemu' => 'vymol jak hovado',
+                'address' => 'Čajkovského 4, Trnava',
+                'popis_problemu' => 'Diera v ceste',
                 'priorita_id' => '1',
                 'cesta_id' => '1',
                 'pouzivatel_id' => '1',
@@ -27,6 +28,7 @@ class ProblemSeeder extends Seeder
         foreach ($problemy as $problem) {
             Problem::create(array(
                 'poloha' => $problem['poloha'],
+                'address' => $problem['address'],
                 'popis_problemu' => $problem['popis_problemu'],
                 'priorita_id' => $problem['priorita_id'],
                 'cesta_id' => $problem['cesta_id'],

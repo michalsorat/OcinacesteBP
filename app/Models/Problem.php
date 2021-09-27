@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Problem extends Model
 {
-    protected $fillable = ['problem_id', 'poloha', 'popis_problemu', 'priorita_id', 'cesta_id', 'pouzivatel_id',
+    protected $fillable = ['problem_id', 'poloha', 'address', 'popis_problemu', 'priorita_id', 'cesta_id', 'pouzivatel_id',
         'kategoria_problemu_id', 'stav_problemu_id',
         ];
 

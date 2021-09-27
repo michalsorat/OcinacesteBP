@@ -21,7 +21,7 @@
                             <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Poloha</th>
+                                <th scope="col">Adresa</th>
                                 <th scope="col">Vytvorené dňa</th>
                                 <th scope="col">Kategória problému</th>
                                 <th scope="col">Stav problému</th>
@@ -38,18 +38,7 @@
 
                                 <tr>
                                     <td>{{ $counter }}</td>
-                                    <td>{{ $problem->poloha }}
-{{--                                        <script type="text/javascript">--}}
-{{--                                            var KEY = "AIzaSyCkf657xylGn2KpKWraX_nLq0XHu6OghgQ"--}}
-{{--                                            var url = `https://maps.googleapis.com/maps/api/geocode/json?latlng={{ $problem->poloha }}&key=${KEY}`;--}}
-{{--                                            fetch(url)--}}
-{{--                                                .then(response => response.json())--}}
-{{--                                                .then(data => {--}}
-{{--                                                    var location = data.results[0].formatted_address;--}}
-{{--                                                    console.log(location);--}}
-{{--                                                })--}}
-{{--                                        </script>--}}
-                                    </td>
+                                    <td>{{ $problem->address }}</td>
                                     <td>{{ $problem->created_at }}</td>
                                     <td>{{ $problem->KategoriaProblemu['nazov'] }}</td>
                                     <td>{{ $problem->StavProblemu['nazov'] }}</td>
