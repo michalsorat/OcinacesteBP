@@ -19,7 +19,6 @@ class CreateProblemTable extends Migration
             $table->text('address');
             $table->text('popis_problemu');
             $table->collation = 'utf8mb4_slovak_ci';
-
         });
 
         Schema::table('problem', function (Blueprint $table) {

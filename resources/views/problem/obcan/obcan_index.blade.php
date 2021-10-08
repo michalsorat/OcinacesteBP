@@ -15,21 +15,20 @@
                 </div>
 
 
-                <div class="col-12 d-flex justify-content-center flex-column">
-                    <div class="table-responsive">
-                        <table class="table main-table">
-                            <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Poloha</th>
-                            <th scope="col">Vytvorené dňa</th>
-                            <th scope="col">Kategória problému</th>
-                            <th scope="col">Stav problému</th>
-                            <th scope="col">Stav riešenia</th>
-                            <th scope="col">Detail</th>
-                            <th scope="col">Vymaž záznam</th>
-
-                        </tr>
+            <div class="col-12 d-flex justify-content-center flex-column">
+                <div class="table-responsive">
+                    <table class="table main-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Poloha</th>
+                                <th scope="col">Vytvorené dňa</th>
+                                <th scope="col">Kategória problému</th>
+                                <th scope="col">Stav problému</th>
+                                <th scope="col">Stav riešenia</th>
+                                <th scope="col">Detail</th>
+                                <th scope="col">Vymaž záznam</th>
+                            </tr>
                         </thead>
                         <tbody>
                         @php
@@ -104,8 +103,6 @@
 
 
                         @endforeach
-
-
                         </tbody>
                     </table>
                     </div>

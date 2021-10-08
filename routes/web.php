@@ -43,6 +43,12 @@ Route::resource('cesta', 'CestaController');
 Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');
 Route::get('/allProblems', 'ProblemController@allProblems')->name('welcomePage.allProblems');
 
+Route::get('/download', function()
+{
+    $file = public_path()."/OciNaCesteAPKv1.1.apk";
+    return Response::download($file);
+}) ->name('download')
+
 //appka
 //Route::post('/uploadProblemImage', 'ProblemController@storeProblemImgAndroid')->name('uploadProblemImage');
 //Route::get('/showAllAndroid/{x}/{zamestnanec}/{stavProblemu}/{kategoria}/{datumOd}/{datumDo}/{vozidlo}/{priorita}/{stavRiesenia}/{y}', 'ProblemController@showAllProblemsAndroid')->name('showAllAndroid');

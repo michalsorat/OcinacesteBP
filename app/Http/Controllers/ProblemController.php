@@ -398,7 +398,6 @@ class ProblemController extends Controller
                 ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
                 ->with('priority', $priority)
                 ->with('VsetciZamestnanci', $zamestnanciAll);
-
     }
 
 
