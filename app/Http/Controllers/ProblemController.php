@@ -32,7 +32,7 @@ class ProblemController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     * @return \Illuminate\Http\JsonResponse
      *
      * nacitanie problemov
      * nacitanie posledneho zaznamu daneho problemu z tabulky stavy_riesenia_problemov,
@@ -41,6 +41,15 @@ class ProblemController extends Controller
      * get atribut typ_stavu_riesenia_problemu_id
      * vlozenie do pola stavy_riesenia
      */
+
+    public function autocomplete(Request $request)
+    {
+        $data = $request->all();
+        $query = $data['query'];
+        return Problem::select('address')
+            ->where('address', 'LIKE', '%'.$query.'%')
+            ->pluck('address');
+    }
 
     public function allProblems()
     {

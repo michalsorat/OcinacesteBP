@@ -110,5 +110,7 @@
     <orderEntry type="library" name="animejs" level="application" />
     <orderEntry type="library" name="all" level="application" />
     <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="bootstrap-3-typeahead" level="application" />
+    <orderEntry type="library" name="jquery-3.4.1" level="application" />
   </component>
 </module>

@@ -11,6 +11,7 @@
 |
 */
 
+
 Route::get('/', 'ProblemController@welcomePage')->name('welcome');
 
 Auth::routes();
@@ -47,7 +48,8 @@ Route::get('/download', function()
 {
     $file = public_path()."/OciNaCesteAPKv1.1.apk";
     return Response::download($file);
-}) ->name('download')
+}) ->name('download');
+Route::get('autocomplete', 'ProblemController@autocomplete')->name('autocomplete');
 
 //appka
 //Route::post('/uploadProblemImage', 'ProblemController@storeProblemImgAndroid')->name('uploadProblemImage');

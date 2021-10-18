@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{all, animejs, bootstrap, mapsjs-core, mapsjs-core-legacy, mapsjs-mapevents, mapsjs-service, mapsjs-service-legacy, mapsjs-ui}" />
+    <file url="PROJECT" libraries="{all, animejs, bootstrap, bootstrap-3-typeahead, jquery-3.4.1, mapsjs-core, mapsjs-core-legacy, mapsjs-mapevents, mapsjs-service, mapsjs-service-legacy, mapsjs-ui}" />
   </component>
 </project>
