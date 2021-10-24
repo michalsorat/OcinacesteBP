@@ -35,5 +35,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
 
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkf657xylGn2KpKWraX_nLq0XHu6OghgQ&libraries=places&callback=initAutocomplete" async defer></script>
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete" async>
+</script>
 

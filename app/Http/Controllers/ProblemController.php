@@ -44,17 +44,27 @@ class ProblemController extends Controller
 
     public function autocomplete(Request $request)
     {
-        $data = $request->all();
-        $query = $data['query'];
-        return Problem::select('address')
-            ->where('address', 'LIKE', '%'.$query.'%')
-            ->pluck('address');
+        $data = Problem::select("address")
+            ->where("address","LIKE","%{$request->get('query')}%")
+            ->get();
+        $addressArr = array();
+        foreach ($data as $obj){
+            array_push($addressArr, (json_decode($obj)->address));
+        }
+        return response()->json($addressArr);
+
+//        return Problem::select('address')
+//            ->where('address', 'LIKE', "%{$request->get('query')}%")
+//            ->pluck('address');
     }
 
     public function allProblems()
     {
         $problems = Problem::simplePaginate(10);
         $typy_stavov = TypStavuRieseniaProblemu::all();
+        $kategorie = KategoriaProblemu::all();
+        $stavyProblemu = StavProblemu::all();
+        $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
         $stavy_riesenia = array();
         foreach ($problems as $problem) {
             $typ = DB::table('stav_riesenia_problemu')
@@ -65,7 +75,104 @@ class ProblemController extends Controller
         return view('problem.nezaregistrovanyObcan.nezaregistrovanyObcan_index')
             ->with('problems', $problems)
             ->with('stavy_riesenia', $stavy_riesenia)
-            ->with('typy_stavov_riesenia', $typy_stavov);
+            ->with('typy_stavov_riesenia', $typy_stavov)
+            ->with('kategorie', $kategorie)
+            ->with('stavyProblemu', $stavyProblemu)
+            ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
+    }
+
+    public function filtering(Request $request){
+        if($request->orderBy == "1" ){
+            $final = Problem::orderBy('created_at', 'DESC')->get();
+        }
+        else{
+            $final = Problem::orderBy('created_at', 'ASC')->get();
+        }
+
+//        $final = array();
+//        foreach ($final as $problem){
+//            $R = 3958.8;
+//            $latitudeFrom = 48.6048 * (M_PI/180);
+//            $longitudeFrom = 17.826;
+//            $lanLonString = $problem->poloha;
+//            $lanLonArray = explode(',', $lanLonString);
+//            $latitudeTo = $lanLonArray[0] * (M_PI/180);
+//            $longitudeTo = $lanLonArray[1];
+//
+//            $diffLat    = $latitudeTo - $latitudeFrom;
+//            $difflon = ($longitudeTo-$longitudeFrom) * (M_PI/180);
+//            $dist = (2 * $R * asin(sqrt(sin($diffLat/2)*sin($diffLat/2)+cos($latitudeFrom)*cos($latitudeTo)*sin($difflon/2)*sin($difflon/2))))*1.609344;
+//            if ($dist < 2){
+//                array_push($final, $problem);
+//            }
+//        }
+
+        if($request->kategoria_problemu_id != null){
+            foreach($final as $problem){
+                $id = $problem->problem_id;
+                if($problem->kategoria_problemu_id != $request->kategoria_problemu_id){
+
+                    $key = $final->search(function ($item) use ($id) {
+                        return $item->problem_id == $id;
+                    });
+
+                    $final->pull($key);
+                }
+            }
+        }
+        if($request->stav_problemu_id != null){
+            foreach($final as $problem){
+                $id = $problem->problem_id;
+                if($problem->stav_problemu_id != $request->stav_problemu_id){
+
+                    $key = $final->search(function ($item) use ($id) {
+                        return $item->problem_id == $id;
+                    });
+
+                    $final->pull($key);
+                }
+            }
+        }
+        if ($request->typ_stavu_riesenia_problemu_id != null) {
+            foreach ($final as $problem) {
+                $id = $problem->problem_id;
+
+                $stav_riesenia = DB::table('stav_riesenia_problemu')
+                    ->where('problem_id', '=', $problem->problem_id)
+                    ->latest('stav_riesenia_problemu_id')->first();
+
+                if ($request->typ_stavu_riesenia_problemu_id !=
+                    $stav_riesenia->typ_stavu_riesenia_problemu_id) {
+
+                    $key = $final->search(function ($item) use ($id) {
+                        return $item->problem_id == $id;
+                    });
+
+                    $final->pull($key);
+                }
+            }
+        }
+
+        $typy_stavov = TypStavuRieseniaProblemu::all();
+        $stavy_riesenia = array();
+        $kategorie = KategoriaProblemu::all();
+        $stavyProblemu = StavProblemu::all();
+        $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
+
+        foreach ($final as $problem) {
+            $typ = DB::table('stav_riesenia_problemu')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('stav_riesenia_problemu_id')->first();
+            array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
+        }
+
+        return view('problem.nezaregistrovanyObcan.nezaregistrovanyObcan_index')
+            ->with('problems', $final)
+            ->with('stavy_riesenia', $stavy_riesenia)
+            ->with('typy_stavov_riesenia', $typy_stavov)
+            ->with('kategorie', $kategorie)
+            ->with('stavyProblemu', $stavyProblemu)
+            ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
     }
 
     public function index(Request $request)

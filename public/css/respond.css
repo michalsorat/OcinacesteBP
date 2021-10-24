@@ -1,4 +1,4 @@
-@media (min-width: 900px) {
+@media (min-width: 650px) {
     .rwd-table td:before
     {
         display: none;
@@ -16,5 +16,40 @@
     .bnr-holder .wrapper
     {
         display: unset;
+    }
+}
+
+@media (min-width:992px){
+    #mobile-filter
+    {
+        display: none;
+    }
+    .rwd-table
+    {
+        width: 78%;
+        padding: 10px;
+        margin-right: 2%;
+        margin-top: 2%;
+        margin-bottom: 5%;
+        float: right;
+    }
+}
+@media (max-width: 991px){
+    #sidebar
+    {
+        display: none;
+    }
+    .rwd-table
+    {
+        width: 96%;
+        padding: 10px;
+        margin: 0 2% 10%;
+    }
+    .filter
+    {
+        display: block;
+        margin-left: 80%;
+        margin-top: 2%;
+        margin-bottom: 1%;
     }
 }
