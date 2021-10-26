@@ -37,8 +37,9 @@
     </header>
 
     <section>
-        <div class="filter"> <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#mobile-filter" aria-expanded="false" aria-controls="mobile-filter">Filters<span class="fa fa-filter pl-1"></span></button>
-        </div>
+        <button
+            class="btn btn-default" id="expand-filter-btn" type="button" data-toggle="collapse" data-target="#mobile-filter" aria-expanded="false" aria-controls="mobile-filter">Filters<span class="fa fa-filter pl-1"></span>
+        </button>
         <form action="{{ route('filter') }}"
               method="POST">
             @csrf
@@ -91,7 +92,7 @@
                     </select>
                 </div>
                 <div class="col-6 col-sm-9 d-flex justify-content-start">
-                    <button type="button" class="btn btn-secondary my-3" data-toggle="modal" data-target="#exampleModal">
+                    <button type="button" class="btn btn-secondary my-3" data-toggle="modal" data-target="#locationModal">
                         Zvoľte polohu
                     </button>
                 </div>
@@ -145,7 +146,7 @@
                         @endforeach
                     </select>
                 </div>
-                <button type="button" class="btn btn-secondary ml-3 mt-3 w-80" data-toggle="modal" data-target="#locationModal">
+                <button type="button" id="locationModalBtn" class="btn btn-secondary ml-3 mt-4 w-80" data-toggle="modal" data-target="#locationModal">
                     Zvoľte polohu
                 </button>
                 <div>
@@ -156,13 +157,56 @@
                 <div class="modal-dialog modal-lg modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <h5 class="modal-title mt-3" id="exampleModalLabel">Zvoľte polohu podľa ktorej chcete filtrovať problémy spadajúce do daného okruhu</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            ...
+                            <div id="modalMap"></div>
+                            <div>
+                                <h6 class="mt-3 mb-2 border-bottom">Zvoľte veľkosť okruhu pre vyfiltrovanie:</h6>
+                                <input id="radiusRange" type="range" min="1" max="50" value="5" style="width: 300px;">
+                                <p>Vzdialenosť v km: <span id="radiusValue"></span></p>
+                                <script>
+                                    let map, marker, circle;
+                                    function initAutocomplete() {
+                                        const trnavaLatLon = {lat: 48.3767994, lng: 17.5835082};
+
+                                        map = new google.maps.Map(document.getElementById('modalMap'), {
+                                            center: trnavaLatLon,
+                                            zoom: 11,
+                                            mapTypeId: 'roadmap'
+                                        });
+                                        marker = new google.maps.Marker({
+                                            map: map,
+                                            position: new google.maps.LatLng(48.3767994, 17.5835082),
+                                            draggable: true,
+                                            title: 'The armpit of Cheshire'
+                                        });
+                                        circle = new google.maps.Circle({
+                                            map: map,
+                                            radius: 5000,    // metres
+                                            fillColor: '#AA0000'
+                                        });
+                                        circle.bindTo('center', marker, 'position');
+                                    }
+                                    $('#locationModalBtn').click(function (){
+                                        initAutocomplete();
+                                    })
+                                    let slider = document.getElementById("radiusRange");
+                                    let value = document.getElementById("radiusValue");
+                                    value.innerHTML = slider.value;
+
+                                    slider.oninput = function (){
+                                        value.innerHTML = this.value;
+                                        circle.setRadius(parseInt(this.value)*1000);
+                                    }
+                                </script>
+                                <script
+                                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete" async defer>
+                                </script>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

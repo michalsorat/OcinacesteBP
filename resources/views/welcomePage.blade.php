@@ -262,11 +262,11 @@
         // var geocoder;
         function findProblemOnMap(address) {
             @foreach($problems as $problem)
-                if ("{{ $problem->address}}" === address){
-                    let latLonArr = split(" {{ $problem->poloha }}");
-                    smoothZoom(map, 16, map.getZoom());
-                    map.setCenter(getLocVar(latLonArr[0], latLonArr[1]));
-                }
+            if ("{{ $problem->address}}" === address){
+                let latLonArr = split(" {{ $problem->poloha }}");
+                smoothZoom(map, 16, map.getZoom());
+                map.setCenter(getLocVar(latLonArr[0], latLonArr[1]));
+            }
             @endforeach
         }
         function smoothZoom (map, max, cnt) {
@@ -339,7 +339,7 @@
     <section>
         <div class="bnr-holder">
             <input id="pac-input" class="controls" type="text" placeholder="Vyhľadať">
-            <div class="map" id="map"></div>
+            <div id="map"></div>
         </div>
     </section>
 
@@ -394,5 +394,9 @@
             </form>
         </div>
     </section>
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete">
+    </script>
 
 @endsection

@@ -22,9 +22,14 @@ body
     height: 100%;
     position: fixed;
 }
-.map
+#map
 {
     height: 100%;
+    width: 100%;
+}
+#modalMap
+{
+    height: 50vh;
     width: 100%;
 }
 .logo_img{
@@ -157,9 +162,12 @@ body
     margin-left: 30%;
     margin-top: 20px;
 }
-.filter
+#expand-filter-btn
 {
     display: none;
 }
-
+.expand-filter-btn
+{
+    display: none;
+}
 
