@@ -22,8 +22,6 @@ class User extends Authenticatable
     protected $primaryKey ='id';
 
     protected $attributes = [
-
-
         'rola_id' => 1, //nepriradena - default zaregistrovany obcan
     ];
     /**
