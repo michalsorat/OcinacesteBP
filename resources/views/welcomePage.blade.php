@@ -285,11 +285,11 @@
     </script>
 
     <header>
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center navbar-light bg-light">
             <img class="logo_img" src="{{ asset('img/logo02.png') }}">
             <h1 class="main_header">Oči na ceste</h1>
         </div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -298,10 +298,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link">Mapa hlásení <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="{{ route('welcome') }}">Mapa <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('welcomePage.allProblems') }}">Zoznam všetkých hlásení</a>
+                        <a class="nav-link" href="{{ route('welcomePage.allProblems') }}">Zoznam hlásení</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('download') }}">Mobilná aplikácia</a>
@@ -309,20 +309,31 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">O projekte</a>
                     </li>
-                    {{--                    <li class="nav-item">--}}
-                    {{--                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>--}}
-                    {{--                    </li>--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>--}}
+{{--                    </li>--}}
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
-                    <input id="search" class="form-control mr-sm-2" size="30" type="search" placeholder="Vyhľadaj hlásenie podľa adresy" aria-label="Search" autocomplete="off">
-                    <button id="search_btn" class="btn btn-outline-success my-2 my-sm-0" type="button">Search</button>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="24" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            </svg>
+{{--                            <button id="search_btn">--}}
+{{--                                <i class="bi bi-search"></i>--}}
+{{--                            </button>--}}
+                        </span>
+                        </div>
+                        <input id="search" class="form-control mr-sm-2" size="30" type="search" placeholder="Vyhľadaj hlásenie podľa adresy" aria-label="Search" autocomplete="off">
+                        <button id="search_btn" class="btn btn-outline-success my-2 my-sm-0" type="button">Search</button>
+                    </div>
                 </form>
                 <script type="text/javascript">
                     var path = "{{ route('autocomplete') }}";
                     $('#search').typeahead({
                         source:  function (query, process) {
                             return $.get(path, { query: query }, function (data) {
-                                console.log(data);
                                 return process(data);
                             });
                         }

@@ -7,23 +7,22 @@
     @endif
 
     <header>
-        <div class="d-flex justify-content-center h-auto">
+        <div class="d-flex justify-content-center navbar-light bg-light">
             <img class="logo_img" src="{{ asset('img/logo02.png') }}">
             <h1 class="main_header">Oči na ceste</h1>
         </div>
-        <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('welcome') }}">Mapa hlásení</a>
+                        <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="{{ route('welcomePage.allProblems') }}">Zoznam všetkých hlásení <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="{{ route('welcomePage.allProblems') }}">Zoznam hlásení <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('download') }}">Mobilná aplikácia</a>
@@ -91,6 +90,17 @@
                         @endforeach
                     </select>
                 </div>
+                <div>
+                    <h6 class="ml-4 mt-3 border-bottom">Lattitude</h6>
+                    <input id="lattitude-input-mobile" class="form-input w-50 ml-3" name="lattitude" value="" readonly>
+                </div>
+                <div>
+                    <h6 class="ml-4 mt-3 border-bottom">Longitude</h6>
+                    <input id="longitude-input-mobile" class="form-input w-50 ml-3" name="longitude" value="" readonly>
+                </div>
+                <div>
+                    <input id="radius-dist-mobile" class="form-input w-50 ml-3" name="radius" value="" readonly type="hidden">
+                </div>
                 <div class="col-6 col-sm-9 d-flex justify-content-start">
                     <button type="button" class="btn btn-secondary my-3" data-toggle="modal" data-target="#locationModal">
                         Zvoľte polohu
@@ -146,6 +156,17 @@
                         @endforeach
                     </select>
                 </div>
+                <div>
+                    <h6 class="ml-4 mt-3 border-bottom">Lattitude</h6>
+                    <input id="lattitude-input" class="form-input w-50 ml-3" name="lattitude" value="" readonly>
+                </div>
+                <div>
+                    <h6 class="ml-4 mt-3 border-bottom">Longitude</h6>
+                    <input id="longitude-input" class="form-input w-50 ml-3" name="longitude" value="" readonly>
+                </div>
+                <div>
+                    <input id="radius-dist" class="form-input w-50 ml-3" name="radius" value="" readonly type="hidden">
+                </div>
                 <button type="button" id="locationModalBtn" class="btn btn-secondary ml-3 mt-4 w-80" data-toggle="modal" data-target="#locationModal">
                     Zvoľte polohu
                 </button>
@@ -168,49 +189,11 @@
                                 <h6 class="mt-3 mb-2 border-bottom">Zvoľte veľkosť okruhu pre vyfiltrovanie:</h6>
                                 <input id="radiusRange" type="range" min="1" max="50" value="5" style="width: 300px;">
                                 <p>Vzdialenosť v km: <span id="radiusValue"></span></p>
-                                <script>
-                                    let map, marker, circle;
-                                    function initAutocomplete() {
-                                        const trnavaLatLon = {lat: 48.3767994, lng: 17.5835082};
-
-                                        map = new google.maps.Map(document.getElementById('modalMap'), {
-                                            center: trnavaLatLon,
-                                            zoom: 11,
-                                            mapTypeId: 'roadmap'
-                                        });
-                                        marker = new google.maps.Marker({
-                                            map: map,
-                                            position: new google.maps.LatLng(48.3767994, 17.5835082),
-                                            draggable: true,
-                                            title: 'The armpit of Cheshire'
-                                        });
-                                        circle = new google.maps.Circle({
-                                            map: map,
-                                            radius: 5000,    // metres
-                                            fillColor: '#AA0000'
-                                        });
-                                        circle.bindTo('center', marker, 'position');
-                                    }
-                                    $('#locationModalBtn').click(function (){
-                                        initAutocomplete();
-                                    })
-                                    let slider = document.getElementById("radiusRange");
-                                    let value = document.getElementById("radiusValue");
-                                    value.innerHTML = slider.value;
-
-                                    slider.oninput = function (){
-                                        value.innerHTML = this.value;
-                                        circle.setRadius(parseInt(this.value)*1000);
-                                    }
-                                </script>
-                                <script
-                                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete" async defer>
-                                </script>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+                            <button id="clear-filter-radius" type="button" class="btn btn-secondary" data-dismiss="modal">Vymaž filter</button>
+                            <button id="save-filter-radius" type="button" class="btn btn-primary" data-dismiss="modal">Ulož filter</button>
                         </div>
                     </div>
                 </div>
@@ -254,5 +237,61 @@
             </tbody>
         </table>
     </section>
+
+    <script type="text/javascript">
+        let map, marker, circle;
+        function initAutocomplete() {
+            const trnavaLatLon = {lat: 48.3767994, lng: 17.5835082};
+
+            map = new google.maps.Map(document.getElementById('modalMap'), {
+                center: trnavaLatLon,
+                zoom: 11,
+                mapTypeId: 'roadmap'
+            });
+            marker = new google.maps.Marker({
+                map: map,
+                position: trnavaLatLon,
+                draggable: true,
+            });
+            circle = new google.maps.Circle({
+                map: map,
+                radius: 5000,    // metres
+                fillColor: '#157526'
+            });
+            circle.bindTo('center', marker, 'position');
+        }
+        $('#locationModalBtn').click(function (){
+            initAutocomplete();
+        })
+        let slider = document.getElementById("radiusRange");
+        let radValue = document.getElementById("radiusValue");
+        radValue.innerHTML = slider.value;
+
+        slider.oninput = function (){
+            radValue.innerHTML = this.value;
+            circle.setRadius(parseInt(this.value)*1000);
+        }
+
+        $('#save-filter-radius').click(function (){
+            document.getElementById("lattitude-input").value = marker.getPosition().lat();
+            document.getElementById("lattitude-input-mobile").value = marker.getPosition().lat();
+            document.getElementById("longitude-input").value = marker.getPosition().lng();
+            document.getElementById("longitude-input-mobile").value = marker.getPosition().lng();
+            document.getElementById("radius-dist").value = slider.value;
+            document.getElementById("radius-dist-mobile").value = slider.value;
+        })
+        $('#clear-filter-radius').click(function (){
+            document.getElementById("lattitude-input").value = "";
+            document.getElementById("lattitude-input-mobile").value = "";
+            document.getElementById("longitude-input").value = "";
+            document.getElementById("longitude-input-mobile").value = "";
+            document.getElementById("radius-dist").value = "";
+            document.getElementById("radius-dist-mobile").value = "";
+        })
+
+    </script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete" async defer>
+    </script>
 
 @endsection

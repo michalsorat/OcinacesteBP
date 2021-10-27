@@ -83,29 +83,29 @@ class ProblemController extends Controller
 
     public function filtering(Request $request){
         if($request->orderBy == "1" ){
-            $final = Problem::orderBy('created_at', 'DESC')->get();
+            $finalTmp = Problem::orderBy('created_at', 'DESC')->get();
         }
         else{
-            $final = Problem::orderBy('created_at', 'ASC')->get();
+            $finalTmp = Problem::orderBy('created_at', 'ASC')->get();
         }
 
-//        $final = array();
-//        foreach ($final as $problem){
-//            $R = 3958.8;
-//            $latitudeFrom = 48.6048 * (M_PI/180);
-//            $longitudeFrom = 17.826;
-//            $lanLonString = $problem->poloha;
-//            $lanLonArray = explode(',', $lanLonString);
-//            $latitudeTo = $lanLonArray[0] * (M_PI/180);
-//            $longitudeTo = $lanLonArray[1];
-//
-//            $diffLat    = $latitudeTo - $latitudeFrom;
-//            $difflon = ($longitudeTo-$longitudeFrom) * (M_PI/180);
-//            $dist = (2 * $R * asin(sqrt(sin($diffLat/2)*sin($diffLat/2)+cos($latitudeFrom)*cos($latitudeTo)*sin($difflon/2)*sin($difflon/2))))*1.609344;
-//            if ($dist < 2){
-//                array_push($final, $problem);
-//            }
-//        }
+        $final = array();
+        foreach ($finalTmp as $problem){
+            $R = 3958.8;
+            $latitudeFrom = $request->lattitude * (M_PI/180);
+            $longitudeFrom = $request->longitude;
+            $lanLonString = $problem->poloha;
+            $lanLonArray = explode(',', $lanLonString);
+            $latitudeTo = $lanLonArray[0] * (M_PI/180);
+            $longitudeTo = $lanLonArray[1];
+
+            $diffLat    = $latitudeTo - $latitudeFrom;
+            $difflon = ($longitudeTo-$longitudeFrom) * (M_PI/180);
+            $dist = (2 * $R * asin(sqrt(sin($diffLat/2)*sin($diffLat/2)+cos($latitudeFrom)*cos($latitudeTo)*sin($difflon/2)*sin($difflon/2))))*1.609344;
+            if ($dist < $request->radius){
+                array_push($final, $problem);
+            }
+        }
 
         if($request->kategoria_problemu_id != null){
             foreach($final as $problem){
