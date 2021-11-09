@@ -45,10 +45,10 @@ class ProblemController extends Controller
     public function autocomplete(Request $request)
     {
         $data = Problem::select("address")
-            ->where("address","LIKE","%{$request->get('query')}%")
+            ->where("address", "LIKE", "%{$request->get('query')}%")
             ->get();
         $addressArr = array();
-        foreach ($data as $obj){
+        foreach ($data as $obj) {
             array_push($addressArr, (json_decode($obj)->address));
         }
         return response()->json($addressArr);
@@ -81,76 +81,86 @@ class ProblemController extends Controller
             ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
     }
 
-    public function filtering(Request $request){
-        if($request->orderBy == "1" ){
-            $finalTmp = Problem::orderBy('created_at', 'DESC')->get();
-        }
-        else{
-            $finalTmp = Problem::orderBy('created_at', 'ASC')->get();
-        }
-
-        $final = array();
-        foreach ($finalTmp as $problem){
-            $R = 3958.8;
-            $latitudeFrom = $request->lattitude * (M_PI/180);
-            $longitudeFrom = $request->longitude;
-            $lanLonString = $problem->poloha;
-            $lanLonArray = explode(',', $lanLonString);
-            $latitudeTo = $lanLonArray[0] * (M_PI/180);
-            $longitudeTo = $lanLonArray[1];
-
-            $diffLat    = $latitudeTo - $latitudeFrom;
-            $difflon = ($longitudeTo-$longitudeFrom) * (M_PI/180);
-            $dist = (2 * $R * asin(sqrt(sin($diffLat/2)*sin($diffLat/2)+cos($latitudeFrom)*cos($latitudeTo)*sin($difflon/2)*sin($difflon/2))))*1.609344;
-            if ($dist < $request->radius){
-                array_push($final, $problem);
-            }
+    public function filtering(Request $request)
+    {
+        if ($request->orderBy == "1") {
+            $final = Problem::orderBy('created_at', 'DESC')->get();
+        } else {
+            $final = Problem::orderBy('created_at', 'ASC')->get();
         }
 
-        if($request->kategoria_problemu_id != null){
-            foreach($final as $problem){
-                $id = $problem->problem_id;
-                if($problem->kategoria_problemu_id != $request->kategoria_problemu_id){
+        if ($request->lattitude != null && $request->longitude != null & $request->radius != null) {
+            $finalTmp = array();
+            foreach ($final as $problem) {
+                $R = 3958.8;
+                $latitudeFrom = $request->lattitude * (M_PI / 180);
+                $longitudeFrom = $request->longitude;
+                $lanLonString = $problem->poloha;
+                $lanLonArray = explode(',', $lanLonString);
+                $latitudeTo = $lanLonArray[0] * (M_PI / 180);
+                $longitudeTo = $lanLonArray[1];
 
-                    $key = $final->search(function ($item) use ($id) {
-                        return $item->problem_id == $id;
-                    });
-
-                    $final->pull($key);
+                $diffLat = $latitudeTo - $latitudeFrom;
+                $difflon = ($longitudeTo - $longitudeFrom) * (M_PI / 180);
+                $dist = (2 * $R * asin(sqrt(sin($diffLat / 2) * sin($diffLat / 2) + cos($latitudeFrom) * cos($latitudeTo) * sin($difflon / 2) * sin($difflon / 2)))) * 1.609344;
+                if ($dist < $request->radius) {
+                    array_push($finalTmp, $problem);
                 }
             }
+            $final = $finalTmp;
         }
-        if($request->stav_problemu_id != null){
-            foreach($final as $problem){
-                $id = $problem->problem_id;
-                if($problem->stav_problemu_id != $request->stav_problemu_id){
 
-                    $key = $final->search(function ($item) use ($id) {
-                        return $item->problem_id == $id;
-                    });
-
-                    $final->pull($key);
+        if ($request->kategoria_problemu_id != null) {
+            $finalTmp = array();
+            foreach ($final as $problem) {
+//                $id = $problem->problem_id;
+                if ($problem->kategoria_problemu_id == $request->kategoria_problemu_id) {
+                    array_push($finalTmp, $problem);
+//                    $key = $final->search(function ($item) use ($id) {
+//                        return $item->problem_id == $id;
+//                    });
+//
+//                    $final->pull($key);
                 }
             }
+            $final = $finalTmp;
+        }
+        if ($request->stav_problemu_id != null) {
+            $finalTmp = array();
+            foreach ($final as $problem) {
+//                $id = $problem->problem_id;
+                if ($problem->stav_problemu_id == $request->stav_problemu_id) {
+                    array_push($finalTmp, $problem);
+
+//                    $key = $final->search(function ($item) use ($id) {
+//                        return $item->problem_id == $id;
+//                    });
+//
+//                    $final->pull($key);
+                }
+            }
+            $final = $finalTmp;
         }
         if ($request->typ_stavu_riesenia_problemu_id != null) {
+            $finalTmp = array();
             foreach ($final as $problem) {
-                $id = $problem->problem_id;
+//                $id = $problem->problem_id;
 
                 $stav_riesenia = DB::table('stav_riesenia_problemu')
                     ->where('problem_id', '=', $problem->problem_id)
                     ->latest('stav_riesenia_problemu_id')->first();
 
-                if ($request->typ_stavu_riesenia_problemu_id !=
-                    $stav_riesenia->typ_stavu_riesenia_problemu_id) {
+                if ($request->typ_stavu_riesenia_problemu_id == $stav_riesenia->typ_stavu_riesenia_problemu_id) {
+                    array_push($finalTmp, $problem);
 
-                    $key = $final->search(function ($item) use ($id) {
-                        return $item->problem_id == $id;
-                    });
-
-                    $final->pull($key);
+//                    $key = $final->search(function ($item) use ($id) {
+//                        return $item->problem_id == $id;
+//                    });
+//
+//                    $final->pull($key);
                 }
             }
+            $final = $finalTmp;
         }
 
         $typy_stavov = TypStavuRieseniaProblemu::all();
@@ -195,8 +205,7 @@ class ProblemController extends Controller
                 ->with('problems', $problems)
                 ->with('stavy_riesenia', $stavy_riesenia)
                 ->with('typy_stavov_riesenia', $typy_stavov);
-        }
-        else {
+        } else {
             $problems = Problem::simplePaginate(10);
             $users = User::all();
             $vsetky_vozidla = Vozidlo::all();
@@ -287,17 +296,16 @@ class ProblemController extends Controller
     public function filter(Request $request)
     {
 
-        if($request->orderBy == "2" ){
+        if ($request->orderBy == "2") {
             $final = Problem::orderBy('created_at', 'DESC')->get();
-        }
-        else{
+        } else {
             $final = Problem::orderBy('created_at', 'ASC')->get();
         }
 
-        if($request->kategoria_problemu_id != null){
-            foreach($final as $problem){
+        if ($request->kategoria_problemu_id != null) {
+            foreach ($final as $problem) {
                 $id = $problem->problem_id;
-                if($problem->kategoria_problemu_id != $request->kategoria_problemu_id){
+                if ($problem->kategoria_problemu_id != $request->kategoria_problemu_id) {
 
                     $key = $final->search(function ($item) use ($id) {
                         return $item->problem_id == $id;
@@ -308,10 +316,10 @@ class ProblemController extends Controller
             }
         }
 
-        if($request->stav_problemu_id != null){
-            foreach($final as $problem){
+        if ($request->stav_problemu_id != null) {
+            foreach ($final as $problem) {
                 $id = $problem->problem_id;
-                if($problem->stav_problemu_id != $request->stav_problemu_id){
+                if ($problem->stav_problemu_id != $request->stav_problemu_id) {
 
                     $key = $final->search(function ($item) use ($id) {
                         return $item->problem_id == $id;
@@ -322,10 +330,10 @@ class ProblemController extends Controller
             }
         }
 
-        if($request->priorita_id != null){
-            foreach($final as $problem){
+        if ($request->priorita_id != null) {
+            foreach ($final as $problem) {
                 $id = $problem->problem_id;
-                if($problem->priorita_id != $request->priorita_id){
+                if ($problem->priorita_id != $request->priorita_id) {
 
                     $key = $final->search(function ($item) use ($id) {
                         return $item->problem_id == $id;
@@ -337,10 +345,10 @@ class ProblemController extends Controller
         }
 
 
-        if($request->pouzivatel_id != null){
-            foreach($final as $problem){
+        if ($request->pouzivatel_id != null) {
+            foreach ($final as $problem) {
                 $id = $problem->problem_id;
-                if($problem->pouzivatel_id != $request->pouzivatel_id){
+                if ($problem->pouzivatel_id != $request->pouzivatel_id) {
 
                     $key = $final->search(function ($item) use ($id) {
                         return $item->problem_id == $id;
@@ -426,7 +434,7 @@ class ProblemController extends Controller
         }
 
         $all = Problem::all();
-        if($all->count() == $final->count()){
+        if ($all->count() == $final->count()) {
             return redirect('/problem');
         }
 
