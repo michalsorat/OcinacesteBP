@@ -14,22 +14,22 @@ class FotkaProblemuSeeder extends Seeder
     {
         $fotky = [
             [
-                'cesta_k_suboru' => 'C:\file1\file2\fotka1.png',
+                'nazov_suboru' => 'fotka1.png',
                 'problem_id' => 1
             ],
             [
-                'cesta_k_suboru' => 'C:\file1\file2\fotka2.png',
+                'nazov_suboru' => 'fotka2.png',
                 'problem_id' => 1
             ],
             [
-                'cesta_k_suboru' => 'C:\file1\file2\fotka3.png',
+                'nazov_suboru' => 'fotka3.png',
                 'problem_id' => 1
             ]
         ];
 
         foreach ($fotky as $fotka_problemu) {
             FotkaProblemu::create(array(
-                'cesta_k_suboru' => $fotka_problemu['cesta_k_suboru'],
+                'nazov_suboru' => $fotka_problemu['nazov_suboru'],
                 'problem_id' => $fotka_problemu['problem_id']
             ));
         }

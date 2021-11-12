@@ -88,7 +88,7 @@
             var popis_stavu_riesenia;
 
             @foreach($problems as $problem)
-
+                // var imageName;
                 var loc = split(" {{ $problem->poloha }}");
 
                 @foreach($typy_stavov_riesenia as $typ)
@@ -109,42 +109,20 @@
                 if (popis_stavu_riesenia == null) {
                     popis_stavu_riesenia = "Nepriradený popis";
                 }
+
+                @foreach($problem->problemImages as $image)
+                    var imageName = "{{$image['nazov_suboru']}}";
+                @endforeach
+
+
                 markerCluster.addMarker(createMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->created_at}}",
                     "{{ $problem->address }}", "{{ $problem->popis_problemu }}", "{{ $problem->KategoriaProblemu['nazov'] }}",
-                    "{{ $problem->StavProblemu['nazov'] }}", nazov_typu_riesenia, "{{$problem->problem_id}}", popis_stavu_riesenia));
+                    "{{ $problem->StavProblemu['nazov'] }}", nazov_typu_riesenia, "{{$problem->problem_id}}", popis_stavu_riesenia, imageName));
                 poc++;
-
             @endforeach
         }
 
-        // function createMarker(latlng, name, address1, address2, address3, address4, image, wwwsite) {
-        //
-        //     var image = "https://i.imgur.com/8AinVKN.png";
-        //     var marker = new google.maps.Marker({
-        //         map: map,
-        //         position: latlng,
-        //         title: name,
-        //         icon: image,
-        //         // icon: image - so shows default icon in code snippet
-        //     });
-        //
-        //     google.maps.event.addListener(marker, 'click', function() {
-        //
-        //         var iwContent = '<div id="iw_container">' +
-        //             '<div class="iw_title">' + name + '</div>' +
-        //             '<div class="iw_content">' + address1 + '<br />' +
-        //             address2 + '<br />' + address3 + '<br />' + address4 + '<br />' +
-        //             wwwsite + '</div></div>';
-        //
-        //
-        //         infoWindow.setContent(iwContent);
-        //
-        //
-        //         infoWindow.open(map, marker);
-        //     });
-        //     return marker;
-        // }
-        function createMarker(location, map, created_at, address, popis, kategoria, stav, typ_stavu_riesenia, id, popisRiesenia) {
+        function createMarker(location, map, created_at, address, popis, kategoria, stav, typ_stavu_riesenia, id, popisRiesenia, imageName) {
             var image;
             if (kategoria === 'Stav vozovky'){
                 image = "https://i.imgur.com/KlEk7Rn.png";
@@ -179,6 +157,11 @@
                     + "<p>" + "<b>Stav problému: </b>" + stav + "</p>"
                     + "<p>" + "<b>Stav riešenia problému: </b>" + typ_stavu_riesenia + "</p>"
                     + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popisRiesenia + "</p>"
+                    // + "<img src='http://ocinaceste.localhost/storage/problemImages/' + imageName alt=''/>"
+                    {{--+ '<img id='test' src='{{asset('storage/problemImages/'. $imageName)}}' alt='' title='' />'--}}
+
+                    + "<img src='{{ url('storage/problemImages/'.$problems[0]->problemImages[0]['nazov_suboru']) }}' alt=''/>"
+                    // + "<a href='{$url}' class='openModal'> Galéria obrázkov </a>"
             });
 
             marker.addListener('click', function () {
@@ -250,25 +233,14 @@
     </script>
 
     <header>
-        <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <h1 class="main_header">Oči na ceste</h1>
-            <form class="form-inline">
-                <div class="input-group d-none d-sm-flex mx-auto">
-                    <input id="search_input" class="form-control" type="search"
-                           placeholder="Vyhľadaj hlásenie podľa adresy" autocomplete="off" size="30">
-                    <span class="input-group-append">
-                        <button id="search_btn" class="btn btn-outline-success" type="button">
-                        <i class="fa fa-search"></i>
-                        </button>
-                    </span>
-                </div>
-            </form>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto mr-3">
+            <div class="collapse navbar-collapse flex-md-column" id="navbarCollapse">
+                <ul class="navbar-nav ml-auto welcomePage-nav">
                     <li class="nav-item active">
                         <a class="nav-link" href="{{ route('welcome') }}">Mapa<span class="sr-only">(current)</span></a>
                     </li>
@@ -281,104 +253,174 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">O projekte</a>
                     </li>
-                    <form class="form-inline d-sm-none">
-                        <div class="input-group">
-                            <input id="search_input" class="form-control" type="search"
-                                   placeholder="Vyhľadaj hlásenie podľa adresy" autocomplete="off" size="30">
-                            <span class="input-group-append">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Prihlásenie</a>
+                    </li>
+                </ul>
+                <form class="form-inline ml-auto mr-3">
+                    <div class="input-group">
+                        <input id="search_input" class="form-control" type="search"
+                               placeholder="Vyhľadaj hlásenie podľa adresy" autocomplete="off" size="30">
+                        <span class="input-group-append">
                                 <button id="search_btn" class="btn btn-outline-success" type="button">
                                 <i class="fa fa-search"></i>
                                 </button>
                             </span>
-                        </div>
-                    </form>
-                </ul>
+                    </div>
+                </form>
             </div>
         </nav>
-        <script type="text/javascript">
-            var path = "{{ route('autocomplete') }}";
-            $('#search_input').typeahead({
-                source: function (query, process) {
-                    return $.get(path, {query: query}, function (data) {
-                        return process(data);
-                    });
-                }
-            });
-            const search_button = document.getElementById("search_btn");
+            <script type="text/javascript">
+                var path = "{{ route('autocomplete') }}";
+                $('#search_input').typeahead({
+                    source: function (query, process) {
+                        return $.get(path, {query: query}, function (data) {
+                            return process(data);
+                        });
+                    }
+                });
+                const search_button = document.getElementById("search_btn");
 
-            search_button.addEventListener("click", function () {
-                findProblemWithAddress(document.getElementById('search_input').value);
-            });
+                search_button.addEventListener("click", function () {
+                    findProblemWithAddress(document.getElementById('search_input').value);
+                });
+            </script>
+        </header>
+
+        <section>
+            <div class="bnr-holder">
+                <div id="map"></div>
+            </div>
+        </section>
+
+        <div class="modal fade" id="imageGallery" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img class="modal-content" id="img01" src="{{ asset('img/mapa_bckgrnd.png') }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (session('status'))
+            <h6 class="alert alert-success">{{ session('status') }}</h6>
+        @endif
+
+        <section>
+            <div id="create-form" class="create-form">
+                <h1 class="create-form_header">Vytvorenie hlásenia</h1>
+                @if ($errors->any())
+                    <div class="alert-danger">
+                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form class="start-form" action="{{ route('welcomePage.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <label for="location_field">
+                        <input id="poloha" class="input-field" type="hidden" name="poloha" value="">
+                    </label>
+
+                    <label for="address_field"><span>Adresa <span class="required">*</span></span>
+                        <input id="address" class="input-field" type="text" name="address" value="" readonly>
+                    </label>
+
+                    <label for="category_field"><span>Kategória <span class="required">*</span></span>
+                        <select id="kategoria" class="input-field"
+                                name="kategoria_problemu_id">
+                            @foreach($kategorie as $kategoria)
+                                <option
+                                    value="{{ $kategoria->kategoria_problemu_id }}">
+                                    {{ $kategoria->nazov }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+                    <label for="problemState_field"><span>Stav problému <span class="required">*</span></span>
+                        <select id="stav_problemu" class="input-field"
+                                name="stav_problemu_id">
+                            @foreach($stavy as $stav)
+                                <option
+                                    value="{{ $stav->stav_problemu_id }}">{{ $stav->nazov }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+                    <label for="description_field"><span>Popis problému <span class="required">*</span></span>
+                        <textarea
+                            id="popis_problemu" name="popis_problemu" class="textarea-field">
+                        </textarea>
+                    </label>
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" id="createProblemImage" name="problemImage">
+                        <small id="imageUploadHint" class="form-text text-muted">Odfotťe problém a vložte obrázok na toto miesto</small>
+                    </div>
+                    <div class="btn-form">
+                        <label><input type="submit" value="Submit"/></label>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+{{--        <script type="text/javascript">--}}
+{{--            // $(document).on('click', '.openModal', function(e){--}}
+{{--            //     e.preventDefault();--}}
+{{--            //     var url = $(this).data('url');--}}
+{{--            //     $('.modal-body').html('');--}}
+{{--            //     $('#modal-loader').show();--}}
+{{--            //     $.ajax({--}}
+{{--            //         url: url,--}}
+{{--            //         type: 'GET',--}}
+{{--            //         dataType: 'html'--}}
+{{--            //     })--}}
+{{--            //         .done(function(data){--}}
+{{--            //             // console.log(data);--}}
+{{--            //             // $('.modal-body').html('');--}}
+{{--            //             $('.modal-body').html(data); // load response--}}
+{{--            //             $('#modal-loader').hide();        // hide ajax loader--}}
+{{--            //         })--}}
+{{--            //         .fail(function(){vv--}}
+{{--            //             $('#dynamic-content').html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');--}}
+{{--            //             $('#modal-loader').hide();--}}
+{{--            //         });--}}
+{{--            // });--}}
+
+        {{--    $(document).ready(function () {--}}
+        {{--        $('.openModal').click(function(event) {--}}
+        {{--            event.preventDefault();--}}
+
+        {{--            var url = $(this).attr('href');--}}
+
+        {{--            $('#imageGallery').toggleClass('is-active');--}}
+
+        {{--            $.ajax({--}}
+        {{--                url: url,--}}
+        {{--                type: 'GET',--}}
+        {{--                dataType: 'html',--}}
+        {{--            })--}}
+        {{--                .done(function(response) {--}}
+        {{--                    $("#imageGallery").find('.modal-body').html(response);--}}
+        {{--                });--}}
+
+        {{--        });--}}
+        {{--    });--}}
+        {{--</script>--}}
+
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete">
         </script>
-    </header>
 
-    <section>
-        <div class="bnr-holder">
-            <div id="map"></div>
-        </div>
-    </section>
-
-    <section>
-        <div id="create-form" class="create-form">
-            <h1 class="create-form_header">Vytvorenie hlásenia</h1>
-            @if ($errors->any())
-                <div class="alert-danger">
-                    <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form class="start-form" action="{{ route('welcomePage.store') }}" method="POST">
-                @csrf
-                <label for="location_field">
-                    <input id="poloha" class="input-field" type="hidden" name="poloha" value="" readonly="true">
-                </label>
-
-                <label for="address_field"><span>Adresa <span class="required">*</span></span>
-                    <input id="address" class="input-field" type="text" name="address" value="" readonly="true">
-                </label>
-
-                <label for="category_field"><span>Kategória <span class="required">*</span></span>
-                    <select id="kategoria" class="input-field"
-                            name="kategoria_problemu_id">
-                        @foreach($kategorie as $kategoria)
-                            <option
-                                value="{{ $kategoria->kategoria_problemu_id }}">
-                                {{ $kategoria->nazov }}</option>
-                        @endforeach
-                    </select>
-                </label>
-                <label for="problemState_field"><span>Stav problému <span class="required">*</span></span>
-                    <select id="stav_problemu" class="input-field"
-                            name="stav_problemu_id">
-                        @foreach($stavy as $stav)
-                            <option
-                                value="{{ $stav->stav_problemu_id }}">{{ $stav->nazov }}</option>
-                        @endforeach
-                    </select>
-                </label>
-                <label for="description_field"><span>Popis problému <span class="required">*</span></span>
-                    <textarea
-                        id="popis_problemu" name="popis_problemu" class="textarea-field">
-                    </textarea>
-                </label>
-                <div class="form-group">
-                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
-                    <small id="emailHelp" class="form-text text-muted">Odfotťe problém a vložte na toto miesto</small>
-                </div>
-                <div class="btn-form">
-                    <label><input type="submit" value="Submit"/></label>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete">
-    </script>
-
-@endsection
+    @endsection

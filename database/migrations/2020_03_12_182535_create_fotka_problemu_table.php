@@ -15,7 +15,7 @@ class CreateFotkaProblemuTable extends Migration
     {
         Schema::create('fotka_problemu', function (Blueprint $table) {
             $table->bigIncrements('fotka_problemu_id');
-            $table->text('cesta_k_suboru');
+            $table->text('nazov_suboru');
             $table->collation = 'utf8mb4_slovak_ci';
 
         });

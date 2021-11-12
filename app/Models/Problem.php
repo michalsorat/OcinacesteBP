@@ -45,4 +45,7 @@ class Problem extends Model
         return $this->belongsTo('App\Models\StavProblemu', 'stav_problemu_id');
     }
 
+    public function problemImages() {
+        return $this->hasMany(FotkaProblemu::class, 'problem_id');
+    }
 }

@@ -27,6 +27,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">O projekte</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Prihlásenie</a>
+                    </li>
                 </ul>
             </div>
         </nav>

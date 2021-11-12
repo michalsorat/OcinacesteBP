@@ -636,10 +636,11 @@ class ProblemController extends Controller
 
     public function welcomePage()
     {
-        $problems = Problem::all();
+//        $problems = Problem::all();
+        $problems = Problem::with('problemImages')->get();
+//        dd($problems->toArray());
         $typy_stavov_riesenia = TypStavuRieseniaProblemu::all();
         $popisyAll = PopisStavuRieseniaProblemu::all();
-
 
         $kategorie = KategoriaProblemu::all();
         $stavyProblemu = StavProblemu::all();
@@ -1654,7 +1655,8 @@ class ProblemController extends Controller
     {
         $request->validate([
             'poloha' => 'required',
-            'popis_problemu' => 'required'
+            'popis_problemu' => 'required',
+            'problemImage' => 'required','mimes:jpeg,bmp,png'
         ]);
 
         $request->request->add(['pouzivatel_id' => '1']);
@@ -1663,10 +1665,16 @@ class ProblemController extends Controller
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
 
+        if ($request->hasFile('problemImage')) {
+            $file = $request->file('problemImage');
+            $filename = $file->getClientOriginalName();
+//            $file->move('uploads/problemImages/', $filename);
+            $file->store('problemImages', 'public');
+            FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $file->hashName()]);
+        }
 
-        return redirect('/');
-        //->with('success', 'Hlasenie bolo prijate!');
-
+        return redirect('/')
+            ->with('status', 'Hlasenie bolo úspešne prijaté!');
     }
 
     /**
