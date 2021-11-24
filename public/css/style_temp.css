@@ -28,6 +28,7 @@ body
 #map
 {
     height: 100%;
+    min-height: 300px;
     width: 100%;
 }
 #modalMap
@@ -44,7 +45,11 @@ body
 .welcomePage-nav {
     font-size: 0.9rem;
 }
-.main_header
+.typeahead a{
+    font-size: 0.9rem;
+    padding: 0.25rem 1rem;
+}
+.main_header a
 {
     font-family: 'Poppins', sans-serif;
     display: inline-block;
@@ -52,9 +57,15 @@ body
     margin-right: 30px;
     margin-left: 20px;
     color: #ffffff;
+    text-decoration: none;
     font-weight: 700;
     font-size: calc(1.3rem + 1vw);
     text-transform: uppercase;
+}
+.main_header a:hover
+{
+    transform: scale(1.02);
+    transition: 0.2s ease-in-out;
 }
 .create-form
 {
@@ -182,8 +193,44 @@ body
     margin-left: 15px;
 }
 
-/*#expand-filter-btn*/
-/*{*/
-/*    display: none;*/
+.prev-ref {
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+.pagination li {
+    padding: 20px;
+}
+
+.pagination li a i, .pagination span, .pagination a {
+    border-radius: 6px;
+    color: #dcdcdc;
+    background: #8a8a8a;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.pagination li span {
+    color: #ffffff;
+}
+
+.pagination li {
+    margin: 0 4px;
+    padding: 0 4px;
+}
+/*@media (hover: hover) {*/
+/*&:hover {*/
+/*// ose darken qysh te dush*/
+/*background: lighten(#202020, 3%);*/
+/*}*/
+/*}*/
+/*&:active {*/
+/*     background: lighten(#202020, 3%);*/
+/* }*/
 /*}*/
 

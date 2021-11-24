@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Problem extends Model
 {
     protected $fillable = ['problem_id', 'poloha', 'address', 'popis_problemu', 'priorita_id', 'cesta_id', 'pouzivatel_id',
-        'kategoria_problemu_id', 'stav_problemu_id',
-        ];
+        'kategoria_problemu_id', 'stav_problemu_id'
+    ];
 
     protected $table = 'problem';
     protected $primaryKey = 'problem_id';
@@ -45,7 +45,7 @@ class Problem extends Model
         return $this->belongsTo('App\Models\StavProblemu', 'stav_problemu_id');
     }
 
-    public function problemImages() {
-        return $this->hasMany(FotkaProblemu::class, 'problem_id');
+    public function problemImage() {
+        return $this->hasOne(FotkaProblemu::class, 'problem_id');
     }
 }

@@ -43,10 +43,10 @@ Route::resource('cesta', 'CestaController');
 //Route::get('/welcomePage/create', 'ProblemController@welcomePageCreate')->name('welcomePage.create');
 Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');
 Route::get('/allProblems', 'ProblemController@allProblems')->name('welcomePage.allProblems');
-Route::post('/allProblems/filter', 'ProblemController@filtering')-> name('filter');
-Route::get('/allProblems/filter', function () {
-    return redirect('/allProblems');
-});
+//Route::get('/allProblems/filter', 'ProblemController@filtering')-> name('filter');
+//Route::get('/allProblems/filter', function () {
+//    return redirect('/allProblems');
+//});
 Route::get('/download', function()
 {
     $file = public_path()."/OciNaCesteAPKv1.1.apk";
@@ -54,6 +54,7 @@ Route::get('/download', function()
 }) ->name('download');
 Route::get('/autocomplete', 'ProblemController@autocomplete')->name('autocomplete');
 
+Route::get('/image/{id}', 'ProblemController@image');
 //appka
 //Route::post('/uploadProblemImage', 'ProblemController@storeProblemImgAndroid')->name('uploadProblemImage');
 //Route::get('/showAllAndroid/{x}/{zamestnanec}/{stavProblemu}/{kategoria}/{datumOd}/{datumDo}/{vozidlo}/{priorita}/{stavRiesenia}/{y}', 'ProblemController@showAllProblemsAndroid')->name('showAllAndroid');

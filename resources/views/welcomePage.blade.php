@@ -88,7 +88,6 @@
             var popis_stavu_riesenia;
 
             @foreach($problems as $problem)
-                // var imageName;
                 var loc = split(" {{ $problem->poloha }}");
 
                 @foreach($typy_stavov_riesenia as $typ)
@@ -110,20 +109,15 @@
                     popis_stavu_riesenia = "Nepriradený popis";
                 }
 
-                @foreach($problem->problemImages as $image)
-                    var imageName = "{{$image['nazov_suboru']}}";
-                @endforeach
-
-
                 markerCluster.addMarker(createMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->created_at}}",
                     "{{ $problem->address }}", "{{ $problem->popis_problemu }}", "{{ $problem->KategoriaProblemu['nazov'] }}",
-                    "{{ $problem->StavProblemu['nazov'] }}", nazov_typu_riesenia, "{{$problem->problem_id}}", popis_stavu_riesenia, imageName));
+                    "{{ $problem->StavProblemu['nazov'] }}", nazov_typu_riesenia, "{{$problem->problem_id}}", popis_stavu_riesenia));
                 poc++;
             @endforeach
         }
 
-        function createMarker(location, map, created_at, address, popis, kategoria, stav, typ_stavu_riesenia, id, popisRiesenia, imageName) {
-            var image;
+        function createMarker(location, map, created_at, address, popis, kategoria, stav, typ_stavu_riesenia, id, popisRiesenia) {
+            let image;
             if (kategoria === 'Stav vozovky'){
                 image = "https://i.imgur.com/KlEk7Rn.png";
             }
@@ -141,34 +135,64 @@
                 image = "https://i.imgur.com/nHmUmuy.png";
             }
 
-            var marker = new google.maps.Marker({
+            let marker = new google.maps.Marker({
                 position: location,
                 animation: google.maps.Animation.DROP,
                 map: map,
                 icon: image,
             });
 
-            var infowindow = new google.maps.InfoWindow({
-                content: "<p>" + "<b>ID: </b>" + id + "</p>" +
-                    "<p>" + "<b>Vytvorené dňa: </b>" + created_at + "</p>"
+            let infoWindow = new google.maps.InfoWindow({
+                content: "<p>" + "<b>ID: </b>" + id + "</p>"
+                    + "<p>" + "<b>Vytvorené dňa: </b>" + created_at + "</p>"
                     + "<p>" + "<b>Adresa: </b>" + address + "</p>"
                     + "<p>" + "<b>Popis: </b>" + popis + "</p>"
                     + "<p>" + "<b>Kategória: </b>" + kategoria + "</p>"
                     + "<p>" + "<b>Stav problému: </b>" + stav + "</p>"
                     + "<p>" + "<b>Stav riešenia problému: </b>" + typ_stavu_riesenia + "</p>"
                     + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popisRiesenia + "</p>"
-                    // + "<img src='http://ocinaceste.localhost/storage/problemImages/' + imageName alt=''/>"
-                    {{--+ '<img id='test' src='{{asset('storage/problemImages/'. $imageName)}}' alt='' title='' />'--}}
-
-                    + "<img src='{{ url('storage/problemImages/'.$problems[0]->problemImages[0]['nazov_suboru']) }}' alt=''/>"
-                    // + "<a href='{$url}' class='openModal'> Galéria obrázkov </a>"
+                    + "<a href='#' data-target='#imageGallery' data-toggle='modal' onclick='showImage(" + id + ")'>Galeria obrazkov</a>"
             });
 
             marker.addListener('click', function () {
-                infowindow.open(map, marker);
+                infoWindow.open(map, marker);
+                // this.setIcon(image);
             });
+            // marker.addListener('mouseout', function () {
+            //     window.setTimeout(() => {
+            //         infowindow.close(map, marker);
+            //     }, 2000);
+            // });
+            // marker.addListener('rightclick', function () {
+            //     this.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/purple.png'});
+            // });
 
             return marker;
+        }
+
+        function showImage(id) {
+            let modalTitle = document.getElementById("problem-image-title");
+            let modalImg = document.getElementById("img01");
+            $.ajax({
+                url: '/image/' + id,
+                type: 'get',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length === 0) {
+                        //throw error
+                        console.log("Something went wrong")
+                    } else {
+                        if (response[0].problem_image != null){
+                            modalImg.src = '/storage/problemImages/' + response[0].problem_image['nazov_suboru'];
+                            modalTitle.innerHTML = "Problém ID -> " + response[0].problem_id;
+                        }
+                        else {
+                            modalImg.src = '/img/no_image_available.jpg';
+                            modalTitle.innerHTML = "Problém ID -> " + response[0].problem_id;
+                        }
+                    }
+                }
+            });
         }
 
         function split(str) {
@@ -234,13 +258,13 @@
 
     <header>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-            <h1 class="main_header">Oči na ceste</h1>
+            <h1 class="main_header"><a href="{{ route('welcome') }}">Oči na ceste</a></h1>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse flex-md-column" id="navbarCollapse">
-                <ul class="navbar-nav ml-auto welcomePage-nav">
+                <ul class="navbar-nav ml-auto welcomePage-nav mr-3">
                     <li class="nav-item active">
                         <a class="nav-link" href="{{ route('welcome') }}">Mapa<span class="sr-only">(current)</span></a>
                     </li>
@@ -257,22 +281,22 @@
                         <a class="nav-link" href="#">Prihlásenie</a>
                     </li>
                 </ul>
-                <form class="form-inline ml-auto mr-3">
+                <form class="form-inline ml-auto mr-4">
                     <div class="input-group">
-                        <input id="search_input" class="form-control" type="search"
+                        <input id="search-input" class="typeahead form-control" type="search"
                                placeholder="Vyhľadaj hlásenie podľa adresy" autocomplete="off" size="30">
                         <span class="input-group-append">
                                 <button id="search_btn" class="btn btn-outline-success" type="button">
-                                <i class="fa fa-search"></i>
+                                    <i class="fa fa-search"></i>
                                 </button>
-                            </span>
+                        </span>
                     </div>
                 </form>
             </div>
         </nav>
             <script type="text/javascript">
                 var path = "{{ route('autocomplete') }}";
-                $('#search_input').typeahead({
+                $('#search-input').typeahead({
                     source: function (query, process) {
                         return $.get(path, {query: query}, function (data) {
                             return process(data);
@@ -282,10 +306,10 @@
                 const search_button = document.getElementById("search_btn");
 
                 search_button.addEventListener("click", function () {
-                    findProblemWithAddress(document.getElementById('search_input').value);
+                    findProblemWithAddress(document.getElementById('search-input').value);
                 });
             </script>
-        </header>
+    </header>
 
         <section>
             <div class="bnr-holder">
@@ -297,13 +321,13 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <h5 class="modal-title" id="problem-image-title"></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <img class="modal-content" id="img01" src="{{ asset('img/mapa_bckgrnd.png') }}">
+                        <img class="modal-content" id="img01" src="">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -318,7 +342,7 @@
 
         <section>
             <div id="create-form" class="create-form">
-                <h1 class="create-form_header">Vytvorenie hlásenia</h1>
+                <h1 id="test" class="create-form_header">Vytvorenie hlásenia</h1>
                 @if ($errors->any())
                     <div class="alert-danger">
                         <strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -365,7 +389,7 @@
                         </textarea>
                     </label>
                     <div class="form-group">
-                        <input type="file" class="form-control-file" id="createProblemImage" name="problemImage">
+                        <input type="file" class="form-control-file" id="createProblemImage" name="uploaded_image">
                         <small id="imageUploadHint" class="form-text text-muted">Odfotťe problém a vložte obrázok na toto miesto</small>
                     </div>
                     <div class="btn-form">
@@ -374,50 +398,6 @@
                 </form>
             </div>
         </section>
-
-{{--        <script type="text/javascript">--}}
-{{--            // $(document).on('click', '.openModal', function(e){--}}
-{{--            //     e.preventDefault();--}}
-{{--            //     var url = $(this).data('url');--}}
-{{--            //     $('.modal-body').html('');--}}
-{{--            //     $('#modal-loader').show();--}}
-{{--            //     $.ajax({--}}
-{{--            //         url: url,--}}
-{{--            //         type: 'GET',--}}
-{{--            //         dataType: 'html'--}}
-{{--            //     })--}}
-{{--            //         .done(function(data){--}}
-{{--            //             // console.log(data);--}}
-{{--            //             // $('.modal-body').html('');--}}
-{{--            //             $('.modal-body').html(data); // load response--}}
-{{--            //             $('#modal-loader').hide();        // hide ajax loader--}}
-{{--            //         })--}}
-{{--            //         .fail(function(){vv--}}
-{{--            //             $('#dynamic-content').html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');--}}
-{{--            //             $('#modal-loader').hide();--}}
-{{--            //         });--}}
-{{--            // });--}}
-
-        {{--    $(document).ready(function () {--}}
-        {{--        $('.openModal').click(function(event) {--}}
-        {{--            event.preventDefault();--}}
-
-        {{--            var url = $(this).attr('href');--}}
-
-        {{--            $('#imageGallery').toggleClass('is-active');--}}
-
-        {{--            $.ajax({--}}
-        {{--                url: url,--}}
-        {{--                type: 'GET',--}}
-        {{--                dataType: 'html',--}}
-        {{--            })--}}
-        {{--                .done(function(response) {--}}
-        {{--                    $("#imageGallery").find('.modal-body').html(response);--}}
-        {{--                });--}}
-
-        {{--        });--}}
-        {{--    });--}}
-        {{--</script>--}}
 
         <script
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete">

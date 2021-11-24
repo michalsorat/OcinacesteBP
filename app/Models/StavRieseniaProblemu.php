@@ -14,7 +14,7 @@ class StavRieseniaProblemu extends Model
         return $this->belongsTo('App\Models\TypStavuRieseniaProblemu', 'typ_stavu_riesenia_problemu_id');
     }
 
-    public function Problem(){
-        return $this->HasMany('App\Models\Problem', 'problem_id');
-    }
+//    public function Problem(){
+//        return $this->HasMany('App\Models\Problem', 'problem_id');
+//    }
 }

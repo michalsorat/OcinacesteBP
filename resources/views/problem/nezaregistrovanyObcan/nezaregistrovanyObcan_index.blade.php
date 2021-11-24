@@ -8,7 +8,7 @@
 
     <header>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-            <h1 class="main_header">Oči na ceste</h1>
+            <h1 class="main_header"><a href="{{ route('welcome') }}">Oči na ceste</a></h1>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -37,15 +37,14 @@
 
     <section>
         <div class="container-fluid">
-            <div class="row mt-5">
+            <div class="row mt-lg-5 mt-3">
                 <div class="col-xl-2 col-lg-3 col-12 px-0">
-                    <button
-                        class="btn btn-default" id="expand-filter-btn" type="button" data-toggle="collapse" data-target="#filter" aria-expanded="false" aria-controls="filter">Filters<span class="fa fa-filter pl-1"></span>
-                    </button>
-                    <form action="{{ route('filter') }}" method="POST">
-                        @csrf
+{{--                    <button--}}
+{{--                        class="btn btn-default" id="expand-filter-btn" type="button" data-toggle="collapse" data-target="#filter" aria-expanded="false" aria-controls="filter">Filters<span class="fa fa-filter pl-1"></span>--}}
+{{--                    </button>--}}
+                    <form action="{{ route('welcomePage.allProblems') }}" method="GET">
                         <div class="row mx-1" id="filter">
-                            <div class="col-6 col-lg-12 pr-0">
+                            <div class="col-6 col-lg-12">
                                 <h6 class="p-1 border-bottom">Zadané</h6>
                                 <select
                                     id="orderBy" class="input-filter form-input w-100"
@@ -55,7 +54,7 @@
                                     <option value="2">Zoraď od najstarších</option>
                                 </select>
                             </div>
-                            <div class="col-6 col-lg-12 pr-0">
+                            <div class="col-6 col-lg-12">
                                 <h6 class="p-1 border-bottom">Kategória problému</h6>
                                 <select
                                     id="kategoria_problemu_id" class="input-filter form-input w-100"
@@ -68,7 +67,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6 col-lg-12 pr-0">
+                            <div class="col-6 col-lg-12">
                                 <h6 class="p-1 border-bottom">Stav problému</h6>
                                 <select
                                     id="stav_problemu_id" class="input-filter form-input w-100"
@@ -80,7 +79,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6 col-lg-12 pr-0">
+                            <div class="col-6 col-lg-12">
                                 <h6 class="p-1 border-bottom">Stav riešenia problému</h6>
                                 <select
                                     id="typ_stavu_riesenia_problemu" class="input-filter form-input w-100"
@@ -92,11 +91,11 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6 pr-0">
+                            <div class="col-6">
                                 <h6 class="mt-3 border-bottom">Lattitude</h6>
                                 <input id="lattitude-input" class="form-input w-100" name="lattitude" value="" readonly>
                             </div>
-                            <div class="col-6 pr-0">
+                            <div class="col-6">
                                 <h6 class="mt-3 border-bottom">Longitude</h6>
                                 <input id="longitude-input" class="form-input w-100" name="longitude" value="" readonly>
                             </div>
@@ -136,7 +135,7 @@
                                 <td data-th="Adresa">{{ $problem->address }}</td>
                                 <td data-th="Vytvorené dňa">{{ $problem->created_at }}</td>
                                 <td data-th="Kategória problému">{{ $problem->KategoriaProblemu['nazov'] }}</td>
-                                <td data-th="Stav problému">{{ $problem->StavProblemu['nazov'] }}</td>
+                                <td data-th="Stav problému">{{ $problem->StavProblemu->nazov }}</td>
                                 @foreach($typy_stavov_riesenia as $typ)
                                     @if($stavy_riesenia[$counter-1] == $typ->typ_stavu_riesenia_problemu_id)
                                         <td data-th="Stav riešenia">{{ $typ->nazov }}</td>
@@ -152,6 +151,51 @@
                 </div>
             </div>
         </div>
+        <div class="d-flex justify-content-end mr-4 my-3">
+            @if ($problems->hasPages())
+                <ul class="pagination">
+                    {{-- Previous Page Link --}}
+                    @if ($problems->onFirstPage())
+                        <li class="d-none"><span>Previous</span></li>
+                    @else
+                        <li><a class="prev-ref" href="{{ $problems->previousPageUrl() }}" rel="prev"><i class="fas fa-chevron-left"></i></a></li>
+                    @endif
+
+                    @if($problems->currentPage() > 3)
+                        <li class="hidden"><a href="{{ $problems->url(1) }}">1</a></li>
+                    @endif
+                    @if($problems->currentPage() > 4)
+                        <li><span>...</span></li>
+                    @endif
+                    @foreach(range(1, $problems->lastPage()) as $i)
+                        @if($i >= $problems->currentPage() - 1 && $i <= $problems->currentPage() + 1)
+                            @if ($i == $problems->currentPage())
+                                <li><span>{{ $i }}</span></li>
+                            @else
+                                <li><a href="{{ $problems->url($i) }}">{{ $i }}</a></li>
+                            @endif
+                        @endif
+                    @endforeach
+                    @if($problems->currentPage() < $problems->lastPage() - 2)
+                        <li><span>...</span></li>
+                    @endif
+                    @if($problems->currentPage() < $problems->lastPage() - 1)
+                        <li class="hidden"><a href="{{ $problems->url($problems->lastPage()) }}">{{ $problems->lastPage() }}</a></li>
+                    @endif
+
+                    {{-- Next Page Link --}}
+                    @if ($problems->hasMorePages())
+                        <li><a href="{{ $problems->nextPageUrl() }}" rel="next"><i class="fas fa-chevron-right"></i></a></li>
+                    @else
+                        <li class="disabled"><span><i class="fas fa-chevron-right"></i></span></li>
+                    @endif
+                </ul>
+            @endif
+        </div>
+
+{{--        <div class="d-flex justify-content-end my-3 mr-4">--}}
+{{--            {{  $problems->links() }}--}}
+{{--        </div>--}}
     </section>
 
     <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

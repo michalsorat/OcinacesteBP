@@ -6,6 +6,7 @@ use App\Models\PopisStavuRieseniaProblemu;
 use App\Models\PriradeneVozidlo;
 use App\Models\PriradenyZamestnanec;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
@@ -58,40 +59,58 @@ class ProblemController extends Controller
 //            ->pluck('address');
     }
 
-    public function allProblems()
+    public function image($id)
     {
-        $problems = Problem::simplePaginate(10);
-        $typy_stavov = TypStavuRieseniaProblemu::all();
-        $kategorie = KategoriaProblemu::all();
-        $stavyProblemu = StavProblemu::all();
-        $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
-        $stavy_riesenia = array();
-        foreach ($problems as $problem) {
-            $typ = DB::table('stav_riesenia_problemu')
-                ->where('problem_id', '=', $problem->problem_id)
-                ->latest('stav_riesenia_problemu_id')->first();
-            array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
-        }
-        return view('problem.nezaregistrovanyObcan.nezaregistrovanyObcan_index')
-            ->with('problems', $problems)
-            ->with('stavy_riesenia', $stavy_riesenia)
-            ->with('typy_stavov_riesenia', $typy_stavov)
-            ->with('kategorie', $kategorie)
-            ->with('stavyProblemu', $stavyProblemu)
-            ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
+        $problem = Problem::with('problemImage')->where('problem_id', $id)->get();
+
+        echo json_encode($problem);
     }
 
-    public function filtering(Request $request)
+    private function getPaginator(Request $request, $items)
+    {
+        $total = count($items); // total count of the set, this is necessary so the paginator will know the total pages to display
+        $page = $request->page ?? 1; // get current page from the request, first page is null
+        $perPage = 10; // how many items you want to display per page?
+        $offset = ($page - 1) * $perPage; // get the offset, how many items need to be "skipped" on this page
+        $items = array_slice($items, $offset, $perPage); // the array that we actually pass to the paginator is sliced
+
+        return new LengthAwarePaginator($items, $total, $perPage, $page, [
+            'path' => $request->url(),
+            'query' => $request->query()
+        ]);
+    }
+
+    public function allProblems(Request $request)
     {
         if ($request->orderBy == "1") {
-            $final = Problem::orderBy('created_at', 'DESC')->get();
-        } else {
-            $final = Problem::orderBy('created_at', 'ASC')->get();
+            $finalTmp = Problem::orderBy('created_at', 'DESC')->get();
+        }
+        else {
+            $finalTmp = Problem::orderBy('created_at', 'ASC')->get();
         }
 
-        if ($request->lattitude != null && $request->longitude != null & $request->radius != null) {
-            $finalTmp = array();
-            foreach ($final as $problem) {
+        $final = array();
+        foreach ($finalTmp as $problem) {
+            if ($request->kategoria_problemu_id != null) {
+                if ($problem->kategoria_problemu_id != $request->kategoria_problemu_id) {
+                    continue;
+                }
+            }
+            if ($request->stav_problemu_id != null) {
+                if ($problem->stav_problemu_id != $request->stav_problemu_id) {
+                    continue;
+                }
+            }
+            if ($request->typ_stavu_riesenia_problemu_id != null) {
+                $stav_riesenia = DB::table('stav_riesenia_problemu')
+                    ->where('problem_id', '=', $problem->problem_id)
+                    ->latest('stav_riesenia_problemu_id')->first();
+
+                if ($request->typ_stavu_riesenia_problemu_id != $stav_riesenia->typ_stavu_riesenia_problemu_id) {
+                    continue;
+                }
+            }
+            if ($request->lattitude != null && $request->longitude != null & $request->radius != null) {
                 $R = 3958.8;
                 $latitudeFrom = $request->lattitude * (M_PI / 180);
                 $longitudeFrom = $request->longitude;
@@ -101,67 +120,16 @@ class ProblemController extends Controller
                 $longitudeTo = $lanLonArray[1];
 
                 $diffLat = $latitudeTo - $latitudeFrom;
-                $difflon = ($longitudeTo - $longitudeFrom) * (M_PI / 180);
-                $dist = (2 * $R * asin(sqrt(sin($diffLat / 2) * sin($diffLat / 2) + cos($latitudeFrom) * cos($latitudeTo) * sin($difflon / 2) * sin($difflon / 2)))) * 1.609344;
-                if ($dist < $request->radius) {
-                    array_push($finalTmp, $problem);
+                $diffLon = ($longitudeTo - $longitudeFrom) * (M_PI / 180);
+                $dist = (2 * $R * asin(sqrt(sin($diffLat / 2) * sin($diffLat / 2) + cos($latitudeFrom) * cos($latitudeTo) * sin($diffLon / 2) * sin($diffLon / 2)))) * 1.609344;
+                if ($dist > $request->radius) {
+                    continue;
                 }
             }
-            $final = $finalTmp;
+            array_push($final, $problem);
         }
 
-        if ($request->kategoria_problemu_id != null) {
-            $finalTmp = array();
-            foreach ($final as $problem) {
-//                $id = $problem->problem_id;
-                if ($problem->kategoria_problemu_id == $request->kategoria_problemu_id) {
-                    array_push($finalTmp, $problem);
-//                    $key = $final->search(function ($item) use ($id) {
-//                        return $item->problem_id == $id;
-//                    });
-//
-//                    $final->pull($key);
-                }
-            }
-            $final = $finalTmp;
-        }
-        if ($request->stav_problemu_id != null) {
-            $finalTmp = array();
-            foreach ($final as $problem) {
-//                $id = $problem->problem_id;
-                if ($problem->stav_problemu_id == $request->stav_problemu_id) {
-                    array_push($finalTmp, $problem);
-
-//                    $key = $final->search(function ($item) use ($id) {
-//                        return $item->problem_id == $id;
-//                    });
-//
-//                    $final->pull($key);
-                }
-            }
-            $final = $finalTmp;
-        }
-        if ($request->typ_stavu_riesenia_problemu_id != null) {
-            $finalTmp = array();
-            foreach ($final as $problem) {
-//                $id = $problem->problem_id;
-
-                $stav_riesenia = DB::table('stav_riesenia_problemu')
-                    ->where('problem_id', '=', $problem->problem_id)
-                    ->latest('stav_riesenia_problemu_id')->first();
-
-                if ($request->typ_stavu_riesenia_problemu_id == $stav_riesenia->typ_stavu_riesenia_problemu_id) {
-                    array_push($finalTmp, $problem);
-
-//                    $key = $final->search(function ($item) use ($id) {
-//                        return $item->problem_id == $id;
-//                    });
-//
-//                    $final->pull($key);
-                }
-            }
-            $final = $finalTmp;
-        }
+        $paginator = $this->getPaginator($request, $final);
 
         $typy_stavov = TypStavuRieseniaProblemu::all();
         $stavy_riesenia = array();
@@ -169,7 +137,7 @@ class ProblemController extends Controller
         $stavyProblemu = StavProblemu::all();
         $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
 
-        foreach ($final as $problem) {
+        foreach ($paginator as $problem) {
             $typ = DB::table('stav_riesenia_problemu')
                 ->where('problem_id', '=', $problem->problem_id)
                 ->latest('stav_riesenia_problemu_id')->first();
@@ -177,12 +145,82 @@ class ProblemController extends Controller
         }
 
         return view('problem.nezaregistrovanyObcan.nezaregistrovanyObcan_index')
-            ->with('problems', $final)
+            ->with('problems', $paginator)
             ->with('stavy_riesenia', $stavy_riesenia)
             ->with('typy_stavov_riesenia', $typy_stavov)
             ->with('kategorie', $kategorie)
             ->with('stavyProblemu', $stavyProblemu)
             ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
+    }
+
+    public function filtering(Request $request)
+    {
+//        if ($request->orderBy == "1") {
+//            $finalTmp = Problem::orderBy('created_at', 'DESC')->get();
+//        } else {
+//            $finalTmp = Problem::orderBy('created_at', 'ASC')->get();
+//        }
+//
+//        $final = array();
+//        foreach ($finalTmp as $problem) {
+//            if ($request->kategoria_problemu_id != null) {
+//                if ($problem->kategoria_problemu_id != $request->kategoria_problemu_id) {
+//                    continue;
+//                }
+//            }
+//            if ($request->stav_problemu_id != null) {
+//                if ($problem->stav_problemu_id != $request->stav_problemu_id) {
+//                    continue;
+//                }
+//            }
+//            if ($request->typ_stavu_riesenia_problemu_id != null) {
+//                $stav_riesenia = DB::table('stav_riesenia_problemu')
+//                    ->where('problem_id', '=', $problem->problem_id)
+//                    ->latest('stav_riesenia_problemu_id')->first();
+//
+//                if ($request->typ_stavu_riesenia_problemu_id != $stav_riesenia->typ_stavu_riesenia_problemu_id) {
+//                    continue;
+//                }
+//            }
+//            if ($request->lattitude != null && $request->longitude != null & $request->radius != null) {
+//                $R = 3958.8;
+//                $latitudeFrom = $request->lattitude * (M_PI / 180);
+//                $longitudeFrom = $request->longitude;
+//                $lanLonString = $problem->poloha;
+//                $lanLonArray = explode(',', $lanLonString);
+//                $latitudeTo = $lanLonArray[0] * (M_PI / 180);
+//                $longitudeTo = $lanLonArray[1];
+//
+//                $diffLat = $latitudeTo - $latitudeFrom;
+//                $diffLon = ($longitudeTo - $longitudeFrom) * (M_PI / 180);
+//                $dist = (2 * $R * asin(sqrt(sin($diffLat / 2) * sin($diffLat / 2) + cos($latitudeFrom) * cos($latitudeTo) * sin($diffLon / 2) * sin($diffLon / 2)))) * 1.609344;
+//                if ($dist > $request->radius) {
+//                    continue;
+//                }
+//            }
+//            array_push($final, $problem);
+//        }
+//
+//        $typy_stavov = TypStavuRieseniaProblemu::all();
+//        $stavy_riesenia = array();
+//        $kategorie = KategoriaProblemu::all();
+//        $stavyProblemu = StavProblemu::all();
+//        $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
+//
+//        foreach ($final as $problem) {
+//            $typ = DB::table('stav_riesenia_problemu')
+//                ->where('problem_id', '=', $problem->problem_id)
+//                ->latest('stav_riesenia_problemu_id')->first();
+//            array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
+//        }
+//
+//        return view('problem.nezaregistrovanyObcan.nezaregistrovanyObcan_index')
+//            ->with('problems', $final)
+//            ->with('stavy_riesenia', $stavy_riesenia)
+//            ->with('typy_stavov_riesenia', $typy_stavov)
+//            ->with('kategorie', $kategorie)
+//            ->with('stavyProblemu', $stavyProblemu)
+//            ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
     }
 
     public function index(Request $request)
@@ -295,7 +333,6 @@ class ProblemController extends Controller
 
     public function filter(Request $request)
     {
-
         if ($request->orderBy == "2") {
             $final = Problem::orderBy('created_at', 'DESC')->get();
         } else {
@@ -636,8 +673,7 @@ class ProblemController extends Controller
 
     public function welcomePage()
     {
-//        $problems = Problem::all();
-        $problems = Problem::with('problemImages')->get();
+        $problems = Problem::all();
 //        dd($problems->toArray());
         $typy_stavov_riesenia = TypStavuRieseniaProblemu::all();
         $popisyAll = PopisStavuRieseniaProblemu::all();
@@ -1656,7 +1692,7 @@ class ProblemController extends Controller
         $request->validate([
             'poloha' => 'required',
             'popis_problemu' => 'required',
-            'problemImage' => 'required','mimes:jpeg,bmp,png'
+            'uploaded_image' => 'mimes:jpeg,bmp,png'
         ]);
 
         $request->request->add(['pouzivatel_id' => '1']);
@@ -1665,12 +1701,11 @@ class ProblemController extends Controller
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
 
-        if ($request->hasFile('problemImage')) {
-            $file = $request->file('problemImage');
-            $filename = $file->getClientOriginalName();
-//            $file->move('uploads/problemImages/', $filename);
-            $file->store('problemImages', 'public');
-            FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $file->hashName()]);
+        if ($request->hasFile('uploaded_image')) {
+            $file = $request->file('uploaded_image');
+            $fileName = date('Y-m-d-') . $file->hashName();
+            $file->storeAs('problemImages', $fileName, 'public');
+            FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $fileName]);
         }
 
         return redirect('/')
