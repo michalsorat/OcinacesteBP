@@ -171,7 +171,7 @@
             let modalImg = document.getElementById("img01");
             $.ajax({
                 url: '/image/' + id,
-                type: 'GET',
+                type: 'get',
                 dataType: 'json',
                 success: function (response) {
                     if (response.length === 0) {
@@ -303,7 +303,7 @@
                 </div>
             @endif
 
-            <form class="start-form" action="{{ route('citizen.store') }}" method="POST"
+            <form class="start-form" action="{{ route('welcomePage.store') }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
                 <label for="location_field">

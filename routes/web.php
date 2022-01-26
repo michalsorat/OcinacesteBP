@@ -11,15 +11,17 @@
 |
 */
 
-
-Route::get('/', 'ProblemController@welcomePage')->name('welcome');
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Auth::routes();
+
+Route::get('/', 'ProblemController@welcomePage')->name('welcome');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/zaregistrovanyObcan', 'ZaregistrovanyObcanController@index')->name('zaregistrovanyObcan');
-Route::get('/nezaregistrovanyObcan', 'NezaregistrovanyObcanController@index')->name('nezaregistrovanyObcan');
+Route::get('/unregisteredCitizen', 'NezaregistrovanyObcanController@index')->name('unregisteredCitizen');
 Route::get('/admin', 'AdminController@index')->name('admin');
 Route::get('/dispecer', 'DispecerController@index')->name('dispecer');
 Route::get('/manazer', 'ManazerController@index')->name('manazer');

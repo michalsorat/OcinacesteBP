@@ -15,6 +15,6 @@ class NezaregistrovanyObcanController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:nezaregistrovany obcan');
+        $this->middleware('role:nezaregistrovany registeredCitizen');
     }
 }

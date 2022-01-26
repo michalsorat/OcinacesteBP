@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+//android appka
 class LoginController extends Controller
 {
 		use AuthenticatesUsers;
@@ -23,7 +24,7 @@ class LoginController extends Controller
 
 		if($user != null && Hash::check($data['password'], $user->getAuthPassword()))
 		{
-			
+
 			$user->remember_token = Str::random(60);
 			$user->save();
 
@@ -35,7 +36,7 @@ class LoginController extends Controller
 					"name" => $user->name,
 					"email" => $user->email,
 					"rola_id" => $user->rola_id
-				]	
+				]
 			];
 			return response()->json($response_data);
 		}
@@ -48,10 +49,10 @@ class LoginController extends Controller
 					"id" => "0",
 					"name" => "",
 					"email" => "",
-					"rola_id" => "2"	
+					"rola_id" => "2"
 				]
 			];
 			return response()->json($response_data);
-		}	
+		}
 	}
 }

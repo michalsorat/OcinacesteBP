@@ -6,46 +6,17 @@
         <div class="alert alert-info">{{ Session::get('message') }}</div>
     @endif
 
-    <header>
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-            <h1 class="main_header"><a href="{{ route('welcome') }}">Oči na ceste</a></h1>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto mr-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ route('welcomePage.allProblems') }}">Zoznam hlásení <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('download') }}">Mobilná aplikácia</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">O projekte</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Prihlásenie</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-
     <section>
         <div class="container-fluid">
             <div class="row mt-lg-5 mt-3">
-                <div class="col-xl-2 col-lg-3 col-12 px-0">
+                <div class="filter-holder col-xl-2 col-lg-3 col-12 px-0">
 {{--                    <button--}}
 {{--                        class="btn btn-default" id="expand-filter-btn" type="button" data-toggle="collapse" data-target="#filter" aria-expanded="false" aria-controls="filter">Filters<span class="fa fa-filter pl-1"></span>--}}
 {{--                    </button>--}}
-                    <form action="{{ route('welcomePage.allProblems') }}" method="GET">
+                    <form action="{{ route('problem.index') }}" method="GET">
                         <div class="row mx-1" id="filter">
-                            <div class="col-6 col-lg-12">
-                                <h6 class="p-1 border-bottom">Zadané</h6>
+                            <div class="filter-option col-6 col-lg-12">
+                                <h6 class="p-1 border-bottom">Zoradiť podľa</h6>
                                 <select
                                     id="orderBy" class="input-filter form-input w-100"
                                     name="orderBy">
@@ -54,7 +25,7 @@
                                     <option value="2">Zoraď od najstarších</option>
                                 </select>
                             </div>
-                            <div class="col-6 col-lg-12">
+                            <div class="filter-option col-6 col-lg-12">
                                 <h6 class="p-1 border-bottom">Kategória problému</h6>
                                 <select
                                     id="kategoria_problemu_id" class="input-filter form-input w-100"
@@ -67,7 +38,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6 col-lg-12">
+                            <div class="filter-option col-6 col-lg-12">
                                 <h6 class="p-1 border-bottom">Stav problému</h6>
                                 <select
                                     id="stav_problemu_id" class="input-filter form-input w-100"
@@ -79,7 +50,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6 col-lg-12">
+                            <div class="filter-option col-6 col-lg-12">
                                 <h6 class="p-1 border-bottom">Stav riešenia problému</h6>
                                 <select
                                     id="typ_stavu_riesenia_problemu" class="input-filter form-input w-100"
@@ -91,18 +62,18 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6">
-                                <h6 class="mt-3 border-bottom">Lattitude</h6>
+                            <div class="filter-option col-6">
+                                <h6 class="p-1 border-bottom">Lattitude</h6>
                                 <input id="lattitude-input" class="form-input w-100" name="lattitude" value="" readonly>
                             </div>
-                            <div class="col-6">
-                                <h6 class="mt-3 border-bottom">Longitude</h6>
+                            <div class="filter-option col-6">
+                                <h6 class="p-1 border-bottom">Longitude</h6>
                                 <input id="longitude-input" class="form-input w-100" name="longitude" value="" readonly>
                             </div>
                             <div>
                                 <input id="radius-dist" class="form-input w-100" name="radius" value="" readonly type="hidden">
                             </div>
-                            <div class=" col-6 my-3">
+                            <div class="col-6 my-3">
                                 <button type="button" class="btn btn-secondary w-100" data-toggle="modal" data-target="#locationModal">
                                     Zvoľte polohu
                                 </button>
@@ -113,6 +84,7 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="col-xl-10 col-lg-9 col-12">
                     <table class="rwd-table">
                         <thead>
@@ -187,15 +159,11 @@
                     @if ($problems->hasMorePages())
                         <li><a href="{{ $problems->nextPageUrl() }}" rel="next"><i class="fas fa-chevron-right"></i></a></li>
                     @else
-                        <li class="disabled"><span><i class="fas fa-chevron-right"></i></span></li>
+                        <li class="d-none"><span><i class="fas fa-chevron-right"></i></span></li>
                     @endif
                 </ul>
             @endif
         </div>
-
-{{--        <div class="d-flex justify-content-end my-3 mr-4">--}}
-{{--            {{  $problems->links() }}--}}
-{{--        </div>--}}
     </section>
 
     <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -269,8 +237,8 @@
         })
 
     </script>
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete" async defer>
-    </script>
+{{--    <script--}}
+{{--        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete" async defer>--}}
+{{--    </script>--}}
 
 @endsection

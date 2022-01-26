@@ -3,7 +3,7 @@
 <html manifest="MANIFEST">
 
 <head>
-    @include('custom_layout.partials.head')
+    @include('partials.head')
 </head>
 
 <body>

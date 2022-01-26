@@ -29,29 +29,39 @@ class LoginController extends Controller
      * @var string
      */
 
-    protected $redirectTo;
-    public function redirectTo(){
-        $id = Auth::user()->rola_id;
 
-        if($id == 1){
-            $this->redirectTo = RouteServiceProvider::ZObcanHome;
-            return $this->redirectTo;
-        }
-        if($id == 2){
-            $this->redirectTo = RouteServiceProvider::NObcanHome;
-            return $this->redirectTo;
-        }
-        if($id == 3){
-            $this->redirectTo = RouteServiceProvider::AdminHome;
-            return $this->redirectTo;
-        }
-        if($id == 4){
-            $this->redirectTo = RouteServiceProvider::DispecerHome;
-            return $this->redirectTo;
-        }
-        if($id == 5){
-            $this->redirectTo = RouteServiceProvider::ManazerHome;
-            return $this->redirectTo;
+    protected $redirectTo = RouteServiceProvider::HOME;
+//    protected $redirectTo;
+//    public function redirectTo()
+//    {
+//        $id = Auth::user()->rola_id;
+//
+//        if ($id == 1) {
+//            $this->redirectTo = RouteServiceProvider::RegCitizenHOME;
+//            return $this->redirectTo;
+//        }
+//        if ($id == 3) {
+//            $this->redirectTo = RouteServiceProvider::AdminHome;
+//            return $this->redirectTo;
+//        }
+//        if ($id == 4) {
+//            $this->redirectTo = RouteServiceProvider::DispecerHome;
+//            return $this->redirectTo;
+//        }
+//        if ($id == 5) {
+//            $this->redirectTo = RouteServiceProvider::ManazerHome;
+//            return $this->redirectTo;
+//        }
+//    }
+
+    protected function authenticated(\Illuminate\Http\Request $request, $user)
+    {
+        if ($request->ajax()){
+            return response()->json([
+                'auth' => auth()->check(),
+                'user' => $user,
+                'redirectPath' => $this->redirectPath(),
+            ]);
         }
     }
 
@@ -65,7 +75,8 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        $this->redirectTo = url()->previous();
     }
 
-  
+
 }

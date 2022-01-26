@@ -22,7 +22,7 @@ class User extends Authenticatable
     protected $primaryKey ='id';
 
     protected $attributes = [
-        'rola_id' => 1, //nepriradena - default zaregistrovany obcan
+        'rola_id' => 1, //nepriradena - default zaregistrovany registeredCitizen
     ];
     /**
      * The attributes that should be hidden for arrays.
