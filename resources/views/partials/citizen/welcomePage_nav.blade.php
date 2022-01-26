@@ -19,42 +19,9 @@
                 <a class="nav-link" href="#">O projekte</a>
             </li>
             @guest
-                <li class="nav-item dropdown active">
-                    <button class="nav-link dropdown-toggle btn btn-success" id="welcome-page-login-link" data-toggle="dropdown">Prihlásiť sa</button>
-                    @include('auth.login')
-{{--                    <div class="dropdown-menu dropdown-menu-right p-3" role="menu" style="width: 300px">--}}
-{{--                        <form class="loginForm" method="POST" action="{{ route('login') }}">--}}
-{{--                            @csrf--}}
-
-{{--                            <div class="form-group mt-2">--}}
-{{--                                <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" placeholder="Emailová adresa" value="" required>--}}
-
-{{--                                @error('email')--}}
-{{--                                <span class="invalid-feedback" role="alert">--}}
-{{--                                                    <strong>{{ $message }}</strong>--}}
-{{--                                </span>--}}
-{{--                                @enderror--}}
-{{--                            </div>--}}
-
-{{--                            <div class="form-group">--}}
-{{--                                <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="Heslo" required>--}}
-
-{{--                                @error('password')--}}
-{{--                                <span class="invalid-feedback" role="alert">--}}
-{{--                                                    <strong>{{ $message }}</strong>--}}
-{{--                                                </span>--}}
-{{--                                @enderror--}}
-{{--                            </div>--}}
-
-{{--                            <div class="form-group">--}}
-{{--                                <input type="submit" name="login-submit" id="login-submit" class="form-control btn btn-success" value="Prihlásiť sa">--}}
-{{--                            </div>--}}
-
-{{--                            <div class="form-group mb-0 text-center">--}}
-{{--                                <span class="outer-link">Ešte nemáte účet? <a href="{{ route('register') }}">Zaregistrujte sa</a></span>--}}
-{{--                            </div>--}}
-{{--                        </form>--}}
-{{--                    </div>--}}
+                <li class="nav-item active">
+{{--                    <button class="nav-link dropdown-toggle btn btn-success" id="welcome-page-login-link" data-toggle="dropdown">Prihlásiť sa</button>--}}
+                    <button class="nav-link btn btn-success" id="welcome-page-login-link" data-toggle="modal" data-target="#loginModal">Prihlásiť sa</button>
                 </li>
             @else
                 <li class="nav-item dropdown">
@@ -77,15 +44,15 @@
                 </li>
             @endguest
         </ul>
-        <form class="form-inline ml-auto mr-4">
+        <form class="form-inline ml-auto mr-3">
             <div class="input-group">
                 <input id="search-input" class="typeahead form-control" type="search"
                        placeholder="Vyhľadaj hlásenie podľa adresy" autocomplete="off" size="30">
                 <span class="input-group-append">
-                                <button id="search_btn" class="btn btn-outline-success" type="button">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                        </span>
+                    <button id="search_btn" class="btn btn-outline-success" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
             </div>
         </form>
     </div>

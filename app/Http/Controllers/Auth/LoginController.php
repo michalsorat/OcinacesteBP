@@ -54,16 +54,16 @@ class LoginController extends Controller
 //        }
 //    }
 
-    protected function authenticated(\Illuminate\Http\Request $request, $user)
-    {
-        if ($request->ajax()){
-            return response()->json([
-                'auth' => auth()->check(),
-                'user' => $user,
-                'redirectPath' => $this->redirectPath(),
-            ]);
-        }
-    }
+//    protected function authenticated(\Illuminate\Http\Request $request, $user)
+//    {
+//        if ($request->ajax()){
+//            return response()->json([
+//                'auth' => auth()->check(),
+//                'user' => $user,
+//                'redirectPath' => $this->redirectPath(),
+//            ]);
+//        }
+//    }
 
 
 
@@ -75,7 +75,7 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
-        $this->redirectTo = url()->previous();
+//        $this->redirectTo = url()->previous();
     }
 
 

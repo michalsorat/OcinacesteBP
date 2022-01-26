@@ -48,15 +48,11 @@ body {
 
 #welcome-page-login-link {
     font-size: 0.9rem;
+    margin: 2px 0 10px;
+    padding: 5px;
 }
 
-.dropdown-toggle {
-    /*font-size: 0.9rem;*/
-    margin: 3px 0 10px;
-    padding: 5px 0;
-}
-
-.dropdown-menu .form-group {
+.modal-body .form-group {
     font-size: 0.9rem;
 }
 

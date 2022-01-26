@@ -20,8 +20,7 @@
             </li>
             @guest
                 <li class="nav-item dropdown active">
-                    <button class="nav-link dropdown-toggle btn btn-success" data-toggle="dropdown">Prihlásiť sa</button>
-                    @include('auth.login')
+                    <button class="nav-link btn btn-success" data-toggle="modal" data-target="#loginModal">Prihlásiť sa</button>
                 </li>
             @else
                 <li class="nav-item dropdown">

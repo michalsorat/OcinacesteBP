@@ -14,6 +14,8 @@
             @else
                 @include('partials.citizen.allProblems_nav')
             @endif
+            @include('auth.login')
+            @include('auth.register')
         </header>
 
         <main>
