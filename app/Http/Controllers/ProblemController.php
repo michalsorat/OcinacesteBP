@@ -146,7 +146,7 @@ class ProblemController extends Controller
         $final = array();
         foreach ($finalTmp as $problem) {
             if ($request->myProblems != null && Auth::user() != null) {
-                if ($problem->pouzivatel_id != Auth::user()->rola_id) {
+                if ($problem->pouzivatel_id != Auth::user()->id) {
                     continue;
                 }
             }
@@ -204,26 +204,44 @@ class ProblemController extends Controller
         }
 
         if (Auth::user() == null) {
-            return view('problem.unregisteredCitizen.unregisteredCitizen_index')
-                ->with('problems', $paginator)
-                ->with('stavy_riesenia', $stavy_riesenia)
-                ->with('typy_stavov_riesenia', $typy_stavov)
-                ->with('kategorie', $kategorie)
-                ->with('stavyProblemu', $stavyProblemu)
-                ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
-        }
-        else {
-            $rola = Auth::user()->rola_id;
-
-            //registered user
-            if ($rola == 1) {
-                return view('problem.registeredCitizen.registeredCitizen_index')
+            if ($request->ajax()){
+                return view('problem.childComponents.citizenProblemTable')
+                    ->with('problems', $paginator)
+                    ->with('stavy_riesenia', $stavy_riesenia)
+                    ->with('typy_stavov_riesenia', $typy_stavov)
+                    ->with('stavyProblemu', $stavyProblemu);
+            }
+            else {
+                return view('problem.unregisteredCitizen.unregisteredCitizen_index')
                     ->with('problems', $paginator)
                     ->with('stavy_riesenia', $stavy_riesenia)
                     ->with('typy_stavov_riesenia', $typy_stavov)
                     ->with('kategorie', $kategorie)
                     ->with('stavyProblemu', $stavyProblemu)
                     ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
+            }
+        }
+        else {
+            $rola = Auth::user()->rola_id;
+
+            //registered user
+            if ($rola == 1) {
+                if ($request->ajax()){
+                    return view('problem.childComponents.citizenProblemTable')
+                        ->with('problems', $paginator)
+                        ->with('stavy_riesenia', $stavy_riesenia)
+                        ->with('typy_stavov_riesenia', $typy_stavov)
+                        ->with('stavyProblemu', $stavyProblemu);
+                }
+                else {
+                    return view('problem.registeredCitizen.registeredCitizen_index')
+                        ->with('problems', $paginator)
+                        ->with('stavy_riesenia', $stavy_riesenia)
+                        ->with('typy_stavov_riesenia', $typy_stavov)
+                        ->with('kategorie', $kategorie)
+                        ->with('stavyProblemu', $stavyProblemu)
+                        ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
+                }
             }
             else {
                 $problems = Problem::simplePaginate(10);
@@ -1638,7 +1656,13 @@ class ProblemController extends Controller
             'uploaded_image' => 'mimes:jpeg,bmp,png'
         ]);
 
-        $request->request->add(['pouzivatel_id' => '2']);
+        if (Auth::user() != null) {
+            $request->request->add(['pouzivatel_id' => Auth::user()->id]);
+        }
+        else {
+            $request->request->add(['pouzivatel_id' => '1']);
+        }
+
         Problem::create($request->all());
 
         $last = DB::table('problem')->latest('problem_id')->first();
