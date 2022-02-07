@@ -15,7 +15,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index()
     {
@@ -24,7 +24,9 @@ class UserController extends Controller
         if($rola == 3) {
             $users = User::all();
             $roles = Rola::all();
-            return view('pouzivatelia.admin_index')->with('users', $users)->with('roly', $roles);
+            return view('pouzivatelia.admin_index')
+                ->with('users', $users)
+                ->with('roly', $roles);
         }
         else if($rola == 5){
 
@@ -89,7 +91,7 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $id)
     {
@@ -132,14 +134,14 @@ class UserController extends Controller
         if(Auth::user()->rola_id == 3)
             return redirect('pouzivatelia');
         else
-            return redirect('problem');
+            return redirect('/');
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param User $user
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function destroy($id)
     {

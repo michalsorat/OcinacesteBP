@@ -6,8 +6,8 @@
     </button>
     <div class="collapse navbar-collapse flex-md-column" id="navbarCollapse">
         <ul class="navbar-nav ml-auto welcomePage-nav mr-3">
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ route('welcome') }}">Mapa<span class="sr-only">(current)</span></a>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('problem.index') }}">Zoznam hlásení</a>
@@ -31,6 +31,10 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <button class="dropdown-item" data-toggle="modal"
+                                data-target="#edit-modal-{{Auth::user()->id}}">Nastavenia
+                        </button>
+
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -56,7 +60,6 @@
             </div>
         </form>
     </div>
-
 </nav>
 
 <script type="text/javascript">

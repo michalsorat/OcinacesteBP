@@ -4,9 +4,6 @@
         @include('partials.head')
     </head>
 
-{{--    <body class="{{ Request::is('/') ? 'footer-top' : '' }}">--}}
-{{--    @include('custom_layout.partials.welcomePage.welcomePage_nav')--}}
-
     <body>
         <header>
             @if(\Illuminate\Support\Facades\Request::is('/'))
@@ -14,8 +11,10 @@
             @else
                 @include('partials.citizen.allProblems_nav')
             @endif
-            @include('auth.login')
-            @include('auth.register')
+            @guest
+                @include('auth.login')
+                @include('auth.register')
+            @endguest
         </header>
 
         <main>

@@ -1,4 +1,4 @@
-@extends('custom_layout.welcomePage.welcomePage_app')
+@extends('layouts.citizen_app')
 
 @section('content')
 
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="tableHolder col-xl-10 col-lg-9 col-12">
-                    @include('problem.childComponents.citizenProblemTable')
+                    @include('components.citizen.citizenProblemsTable')
                 </div>
             </div>
         </div>

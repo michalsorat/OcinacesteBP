@@ -1,5 +1,5 @@
 {{--@extends('custom_layout.obcan.obcan_app')--}}
-@extends('custom_layout.welcomePage.welcomePage_app')
+@extends('layouts.citizen_app')
 
 @section('content')
     <script type="text/javascript">

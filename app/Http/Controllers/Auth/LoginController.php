@@ -30,29 +30,30 @@ class LoginController extends Controller
      */
 
 
-    protected $redirectTo = RouteServiceProvider::HOME;
-//    protected $redirectTo;
-//    public function redirectTo()
-//    {
-//        $id = Auth::user()->rola_id;
-//
-//        if ($id == 1) {
-//            $this->redirectTo = RouteServiceProvider::RegCitizenHOME;
-//            return $this->redirectTo;
-//        }
-//        if ($id == 3) {
-//            $this->redirectTo = RouteServiceProvider::AdminHome;
-//            return $this->redirectTo;
-//        }
-//        if ($id == 4) {
-//            $this->redirectTo = RouteServiceProvider::DispecerHome;
-//            return $this->redirectTo;
-//        }
-//        if ($id == 5) {
-//            $this->redirectTo = RouteServiceProvider::ManazerHome;
-//            return $this->redirectTo;
-//        }
-//    }
+//    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo;
+
+    public function redirectTo()
+    {
+        $id = Auth::user()->rola_id;
+
+        if ($id == 1) {
+            $this->redirectTo = RouteServiceProvider::RegCitizenHOME;
+            return $this->redirectTo;
+        }
+        if ($id == 3) {
+            $this->redirectTo = RouteServiceProvider::AdminHOME;
+            return $this->redirectTo;
+        }
+        if ($id == 4) {
+            $this->redirectTo = RouteServiceProvider::DispecerHOME;
+            return $this->redirectTo;
+        }
+        if ($id == 5) {
+            $this->redirectTo = RouteServiceProvider::ManazerHOME;
+            return $this->redirectTo;
+        }
+    }
 
 //    protected function authenticated(\Illuminate\Http\Request $request, $user)
 //    {

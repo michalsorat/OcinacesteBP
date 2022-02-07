@@ -31,32 +31,29 @@ class RegisterController extends Controller
      * @var string
      */
 
-    protected $redirectTo = RouteServiceProvider::HOME;
-//    protected $redirectTo;
-//    public function redirectTo(){
-//        $id = Auth::user()->rola_id;
-//
-//        if($id == 1){
-//            $this->redirectTo = RouteServiceProvider::ZObcanHome;
-//            return $this->redirectTo;
-//        }
-//        if($id == 2){
-//            $this->redirectTo = RouteServiceProvider::NObcanHome;
-//            return $this->redirectTo;
-//        }
-//        if($id == 3){
-//            $this->redirectTo = RouteServiceProvider::AdminHome;
-//            return $this->redirectTo;
-//        }
-//        if($id == 4){
-//            $this->redirectTo = RouteServiceProvider::DispecerHome;
-//            return $this->redirectTo;
-//        }
-//        if($id == 5){
-//            $this->redirectTo = RouteServiceProvider::ManazerHome;
-//            return $this->redirectTo;
-//        }
-//    }
+    protected $redirectTo;
+
+    public function redirectTo()
+    {
+        $id = Auth::user()->rola_id;
+
+        if ($id == 1) {
+            $this->redirectTo = RouteServiceProvider::RegCitizenHOME;
+            return $this->redirectTo;
+        }
+        if ($id == 3) {
+            $this->redirectTo = RouteServiceProvider::AdminHOME;
+            return $this->redirectTo;
+        }
+        if ($id == 4) {
+            $this->redirectTo = RouteServiceProvider::DispecerHOME;
+            return $this->redirectTo;
+        }
+        if ($id == 5) {
+            $this->redirectTo = RouteServiceProvider::ManazerHOME;
+            return $this->redirectTo;
+        }
+    }
 
     /**
      * Create a new controller instance.
@@ -71,7 +68,7 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -86,12 +83,12 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \App\User
      */
     protected function create(array $data)
     {
-        if(User::all()->count() == 1){
+        if (User::all()->count() == 1) {
             return User::create([
                 'rola_id' => 3,
                 'name' => $data['name'],

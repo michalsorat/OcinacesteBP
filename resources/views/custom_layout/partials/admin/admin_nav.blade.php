@@ -13,7 +13,6 @@
             <img src="{{ asset('img/fiitLogo.png') }}" height="50" class="ml-3">
             <img src="{{ asset('img/sucttskLogo2.png') }}" height="50" class="ml-3">
         </div>
-
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto align-items-center">
                 <li class="nav-item {{ Request::is('problem/create') ? 'active' : '' }}">

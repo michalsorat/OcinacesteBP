@@ -22,7 +22,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/zaregistrovanyObcan', 'ZaregistrovanyObcanController@index')->name('zaregistrovanyObcan');
 Route::get('/unregisteredCitizen', 'NezaregistrovanyObcanController@index')->name('unregisteredCitizen');
-Route::get('/admin', 'AdminController@index')->name('admin');
+//Route::get('/admin', 'AdminController@index')->name('admin');
 Route::get('/dispecer', 'DispecerController@index')->name('dispecer');
 Route::get('/manazer', 'ManazerController@index')->name('manazer');
 
@@ -44,19 +44,23 @@ Route::resource('cesta', 'CestaController');
 
 //Route::get('/welcomePage/create', 'ProblemController@welcomePageCreate')->name('welcomePage.create');
 Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');
-Route::get('/allProblems', 'ProblemController@allProblems')->name('welcomePage.allProblems');
-//Route::get('/allProblems/filter', 'ProblemController@filtering')-> name('filter');
-//Route::get('/allProblems/filter', function () {
-//    return redirect('/allProblems');
-//});
+
 Route::get('/download', function()
 {
     $file = public_path()."/OciNaCesteAPKv1.1.apk";
     return Response::download($file);
 }) ->name('download');
+
 Route::get('/autocomplete', 'ProblemController@autocomplete')->name('autocomplete');
 
 Route::get('/image/{id}', 'ProblemController@image');
+
+Route::middleware(['auth', 'isAdmin'])->group(function () {
+    Route::resource('admin', 'AdminController');
+    Route::get('/autocompleteUser', 'AdminController@autocomplete')->name('autocompleteUser');
+    Route::get('/filter', 'AdminController@filter')->name('adminFilter');
+});
+
 //appka
 //Route::post('/uploadProblemImage', 'ProblemController@storeProblemImgAndroid')->name('uploadProblemImage');
 //Route::get('/showAllAndroid/{x}/{zamestnanec}/{stavProblemu}/{kategoria}/{datumOd}/{datumDo}/{vozidlo}/{priorita}/{stavRiesenia}/{y}', 'ProblemController@showAllProblemsAndroid')->name('showAllAndroid');

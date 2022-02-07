@@ -61,6 +61,10 @@ body {
     padding: 0.25rem 1rem;
 }
 
+.typeahead {
+    width: 80%;
+}
+
 .main_header a {
     font-family: 'Poppins', sans-serif;
     display: inline-block;
@@ -258,5 +262,9 @@ body {
     transform: scale(1.05);
     transition: 0.2s ease-in-out;
     filter: brightness(1.1);
+}
+
+.resultNumber {
+    font-size: 2rem;
 }
 
