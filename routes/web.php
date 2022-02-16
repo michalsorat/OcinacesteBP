@@ -55,10 +55,25 @@ Route::get('/autocomplete', 'ProblemController@autocomplete')->name('autocomplet
 
 Route::get('/image/{id}', 'ProblemController@image');
 
+Route::get('/userDetails/{id}', 'UserController@getUserDetails');
+
+Route::get('/problemsJsonPagination', 'ProblemController@allProblemsJsonPagination');
+Route::get('/problemsJson', 'ProblemController@allProblemsJson');
+
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::resource('admin', 'AdminController');
     Route::get('/autocompleteUser', 'AdminController@autocomplete')->name('autocompleteUser');
     Route::get('/filter', 'AdminController@filter')->name('adminFilter');
+    Route::get('/updateCounts', 'AdminController@countProblemsOrUsers')->name('adminCounts');
+});
+
+Route::middleware(['auth', 'isManager'])->group(function () {
+    Route::resource('manager', 'ManagerController');
+
+});
+
+Route::middleware(['auth', 'isDispatcher'])->group(function () {
+    Route::resource('dispatcher', 'DispatcherController');
 });
 
 //appka

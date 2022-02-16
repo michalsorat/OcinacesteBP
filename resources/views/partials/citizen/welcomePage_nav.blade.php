@@ -31,6 +31,9 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+
+                        <a class="dropdown-item" id="userDetails" href="{{Auth::user()->id}}">Môj účet</a>
+
                         <button class="dropdown-item" data-toggle="modal"
                                 data-target="#edit-modal-{{Auth::user()->id}}">Nastavenia
                         </button>

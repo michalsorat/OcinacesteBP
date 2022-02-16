@@ -16,6 +16,7 @@
         @include('auth.register')
     @else
         @include('partials.settings')
+        @include('partials.myAccountDetails')
     @endguest
 </header>
 

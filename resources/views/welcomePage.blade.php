@@ -147,7 +147,7 @@
                     + "<p>" + "<b>Stav problému: </b>" + stav + "</p>"
                     + "<p>" + "<b>Stav riešenia problému: </b>" + typ_stavu_riesenia + "</p>"
                     + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popisRiesenia + "</p>"
-                    + "<a href='#' data-target='#imageGallery' data-toggle='modal' onclick='showImage(" + id + ")'>Galeria obrazkov</a>"
+                    + "<a href='#' data-target='#imageGallery' data-toggle='modal' onclick='showImage(" + id + ")'>Galéria obrázkov</a>"
             });
 
             marker.addListener('click', function () {
@@ -271,7 +271,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <img class="modal-content" id="img01" src="">
+                    <img class="modal-content" id="img01" src="" alt="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

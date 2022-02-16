@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Problem;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\User;
 use App\Rola;
@@ -74,7 +76,7 @@ class UserController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function edit($id)
     {
@@ -100,6 +102,8 @@ class UserController extends Controller
         if($request->rola_id != null) {
             $user->rola_id = $request->rola_id;
             $user->save();
+            return redirect()->back()
+                ->with('status', 'Používateľská rola úspešne zmenená!');
         }
 
         if($request->name != $user->name){
@@ -129,12 +133,7 @@ class UserController extends Controller
         }
         $user->save();
 
-
-
-        if(Auth::user()->rola_id == 3)
-            return redirect('pouzivatelia');
-        else
-            return redirect('/');
+        return redirect()->back();
     }
 
     /**
@@ -145,10 +144,40 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-
         $users = User::find($id);
         $users->delete();
 
-        return redirect('pouzivatelia');
+        return redirect()->back()
+            ->with('status', 'Účet úspešne zmazaný!');
+    }
+
+    public function getUserDetails($id) {
+        $createdProblemsCount = Problem::where('pouzivatel_id', '=', $id)->count();
+        $solvedProblemsCount = Problem::where('pouzivatel_id', '=', $id)
+            ->whereHas('StavRieseniaProblemu', function ($query) {
+                    $query->where('typ_stavu_riesenia_problemu_id', '=', '4');
+                })
+            ->count();
+        $acceptedProblemsCount = Problem::where('pouzivatel_id', '=', $id)
+            ->whereHas('StavRieseniaProblemu', function ($query) {
+                $query->where('typ_stavu_riesenia_problemu_id', '=', '1');
+            })
+            ->count();
+        $inProgressProblemsCount = Problem::where('pouzivatel_id', '=', $id)
+            ->whereHas('StavRieseniaProblemu', function ($query) {
+                $query->where('typ_stavu_riesenia_problemu_id', '=', '3');
+            })
+            ->count();
+
+        $user = User::find($id);
+
+        $newDateFormat = Carbon::parse($user->created_at)->format('d. m. Y, H:i:s');
+
+        $returnArr = array('createdProblemsCount' => $createdProblemsCount,
+                            'solvedProblemsCount' => $solvedProblemsCount,
+                            'acceptedProblemsCount' => $acceptedProblemsCount,
+                            'inProgressProblemsCount' => $inProgressProblemsCount,
+                            'regDate' => $newDateFormat);
+        return response()->json($returnArr);
     }
 }

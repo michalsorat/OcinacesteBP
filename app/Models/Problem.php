@@ -45,6 +45,10 @@ class Problem extends Model
         return $this->belongsTo('App\Models\StavProblemu', 'stav_problemu_id');
     }
 
+    public function StavRieseniaProblemu() {
+        return $this->hasOne(StavRieseniaProblemu::class, 'problem_id');
+    }
+
     public function problemImage() {
         return $this->hasOne(FotkaProblemu::class, 'problem_id');
     }

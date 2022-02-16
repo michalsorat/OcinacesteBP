@@ -28,6 +28,15 @@
         </div>
     </div>
 
+    @if (session('status'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ session('status') }}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
     <section class="main-container h-100">
         <div class="container-fluid">
             <h5 class="mt-lg-3 mt-2 ml-4 font-weight-bolder">Zoznam používateľov</h5>
@@ -56,7 +65,7 @@
                                 @endif
                             @endforeach
                         </div>
-                        <div class="filter-option col-6 col-lg-12">
+                        <div class="filter-option col-12 col-md-6 col-lg-12">
                             <h6 class="p-1 border-bottom">Zoradiť podľa registrácie</h6>
                             <select id="adminOrderBy" class="input-filter form-input w-100" name="orderBy">
                                 <option value="" selected disabled hidden>Vyberte možnosť</option>
@@ -64,43 +73,43 @@
                                 <option value="2">Od najnovšie registrovaných</option>
                             </select>
                         </div>
-                        <div class="filter-option col-6 col-lg-12">
+                        <div class="filter-option col-12 col-md-6 col-lg-12">
                             <h6 class="p-1 border-bottom">Počet zaregistrovaných</h6>
-                            <select id="regUsersCount" class="input-filter form-input w-100" name="orderBy">
+                            <select id="regUsersCount" class="countSelect input-filter form-input w-100" name="orderBy">
                                 <option value="1">Za posledných 24 hodín</option>
-                                <option value="2">Za posledných 7 dní</option>
-                                <option value="3">Za posledných 30 dní</option>
-                                <option value="4">Za posledný rok</option>
-                                <option value="5" selected>Spolu</option>
+                                <option value="7">Za posledných 7 dní</option>
+                                <option value="30">Za posledných 30 dní</option>
+                                <option value="365">Za posledný rok</option>
+                                <option value="" selected>Spolu</option>
                             </select>
                             <div class="pt-2 pl-2">
-                                <b class="resultNumber">{{$usersCount}}</b>
+                                <b class="resultNumber" id="usersNr">{{$usersCount}}</b>
                             </div>
                         </div>
-                        <div class="filter-option col-6 col-lg-12">
+                        <div class="filter-option col-12 col-md-6 col-lg-12">
                             <h6 class="p-1 border-bottom">Počet zaznamenaných problémov</h6>
-                            <select id="problemCount" class="input-filter form-input w-100" name="orderBy">
+                            <select id="problemsCount" class="countSelect input-filter form-input w-100" name="orderBy">
                                 <option value="1">Za posledných 24 hodín</option>
-                                <option value="2">Za posledných 7 dní</option>
-                                <option value="3">Za posledných 30 dní</option>
-                                <option value="4">Za posledný rok</option>
-                                <option value="5" selected>Spolu</option>
+                                <option value="7">Za posledných 7 dní</option>
+                                <option value="30">Za posledných 30 dní</option>
+                                <option value="365">Za posledný rok</option>
+                                <option value="" selected>Spolu</option>
                             </select>
                             <div class="pt-2 pl-2">
-                                <b class="resultNumber">{{$problemsCount}}</b>
+                                <b class="resultNumber" id="problemsNr">{{$problemsCount}}</b>
                             </div>
                         </div>
-                        <div class="filter-option col-6 col-lg-12">
+                        <div class="filter-option col-12 col-md-6 col-lg-12">
                             <h6 class="p-1 border-bottom">Počet vyriešených problémov</h6>
-                            <select id="problemSolvedCount" class="input-filter form-input w-100" name="orderBy">
+                            <select id="solvedProblemsCount" class="countSelect input-filter form-input w-100" name="orderBy">
                                 <option value="1">Za posledných 24 hodín</option>
-                                <option value="2">Za posledných 7 dní</option>
-                                <option value="3">Za posledných 30 dní</option>
-                                <option value="4">Za posledný rok</option>
-                                <option value="5" selected>Spolu</option>
+                                <option value="7">Za posledných 7 dní</option>
+                                <option value="30">Za posledných 30 dní</option>
+                                <option value="365">Za posledný rok</option>
+                                <option value="" selected>Spolu</option>
                             </select>
                             <div class="pt-2 pl-2">
-                                <b class="resultNumber">{{$problemsSolvedCount}}</b>
+                                <b class="resultNumber" id="solvedProblemsNr">{{$solvedProblemsCount}}</b>
                             </div>
                         </div>
 
@@ -187,5 +196,29 @@
                 }
             });
         });
+
+        $('.countSelect').on('change', function() {
+            let problemDate = $('#problemsCount').val();
+            let problemSolvedDate = $('#solvedProblemsCount').val();
+            let userDate = $('#regUsersCount').val();
+
+            $.ajax({
+                url:'/updateCounts',
+                type:'GET',
+                data:{problemDate: problemDate, problemSolvedDate: problemSolvedDate, userDate: userDate},
+                success:function(data){
+                    $('#problemsNr').html(data.problemsCount);
+                    $('#usersNr').html(data.usersCount);
+                    $('#solvedProblemsNr').html(data.solvedProblemsCount);
+                },
+                error: function () {
+                    console.log("Something went wrong");
+                }
+            });
+        });
+
+        setInterval(function () {
+            $(".alert").fadeOut();
+        }, 3000);
     </script>
 @endsection

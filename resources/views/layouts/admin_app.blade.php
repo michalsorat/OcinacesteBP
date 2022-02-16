@@ -8,6 +8,7 @@
     <header>
         @include('partials.admin.admin_nav')
         @include('partials.settings')
+        @include('partials.myAccountDetails')
     </header>
 
     <main>

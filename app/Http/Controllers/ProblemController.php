@@ -113,6 +113,16 @@ class ProblemController extends Controller
 //            ->pluck('address');
     }
 
+    public function allProblemsJsonPagination(Request $request) {
+        $problem = Problem::paginate(15);
+        return response()->json($problem->toArray());
+    }
+
+    public function allProblemsJson(Request $request) {
+        $problem = Problem::all();
+        return response()->json($problem);
+    }
+
     public function image($id)
     {
         $problem = Problem::with('problemImage')->where('problem_id', $id)->get();

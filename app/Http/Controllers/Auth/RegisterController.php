@@ -38,7 +38,7 @@ class RegisterController extends Controller
         $id = Auth::user()->rola_id;
 
         if ($id == 1) {
-            $this->redirectTo = RouteServiceProvider::RegCitizenHOME;
+            $this->redirectTo = RouteServiceProvider::HOME;
             return $this->redirectTo;
         }
         if ($id == 3) {

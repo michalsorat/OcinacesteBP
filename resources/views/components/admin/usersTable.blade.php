@@ -1,5 +1,5 @@
 @if($users != null)
-<table class="table main-table">
+<table class="adminTable table main-table">
     <thead>
     <tr>
         <th scope="col">#</th>
@@ -31,24 +31,16 @@
             <td>{{ $user->Rola['nazov'] }}</td>
             <td>{{ $user->created_at }}</td>
             <td>
-                <p class="text-center">
-                    @if($user->id != 2)
-                        <button type="submit" class="border-0" data-toggle="modal"
-                                data-target="#edit-modal-{{ $user->id }}"><i
-                                class="fas fa-edit"></i>
-                        </button>
-                    @endif
-                </p>
+                @if($user->rola_id != 3)
+                    <label for="editUserIcon" class="btn"><i class="fas fa-edit"></i></label>
+                    <input id="editUserIcon" type="submit" data-toggle="modal" data-target="#editUserRole-modal-{{ $user->id }}" hidden />
+                @endif
             </td>
             <td>
-                <p class="text-center">
-                    @if($user->id != 2)
-                        <button type="submit" class="border-0" data-toggle="modal"
-                                data-target="#delete-modal-{{ $user->id }}"><i
-                                class="far fa-trash-alt"></i>
-                        </button>
-                    @endif
-                </p>
+                @if($user->rola_id != 3)
+                    <label for="deleteUserIcon" class="btn"><i class="far fa-trash-alt"></i></label>
+                    <input id="deleteUserIcon" type="submit" data-toggle="modal" data-target="#delete-modal-{{ $user->id }}" hidden />
+                @endif
             </td>
         </tr>
         @php
@@ -56,36 +48,90 @@
         @endphp
 
 
-        <div id="delete-modal-{{ $user->id }}" class="modal delete-modal" tabindex="-1"
-             role="dialog">
+        <div id="delete-modal-{{ $user->id }}" class="modal delete-modal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Vymazať používateľa</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     <div class="modal-body">
+                        <p>Ste si istý, že chcete vymazať tento účet?</p>
+                        <div class="form-group d-flex justify-content-center mt-4">
+                            <button type="button" class="btn btn-primary cancel mr-4"
+                                    data-dismiss="modal"
+                                    aria-label="Close">Zrušiť
+                            </button>
 
-                        <p>Ste si istý, že chcete vymazať používateľa?</p>
-                        <ul class="d-flex align-items-center justify-content-center mt-4">
-                            <li>
-                                <button type="button" class="btn btn-primary cancel mr-4"
+                            <form action="{{ route('pouzivatelia.destroy', $user->id) }}"
+                                  method="POST">
+                                @method('DELETE')
+                                @csrf
+                                <button type="submit" class="btn btn-danger">
+                                    Vymazať
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="editUserRole-modal-{{ $user->id }}" class="modal edit-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Zmeň rolu používateľovi</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <form action="{{ route('pouzivatelia.update', $user->id) }}" method="POST" class="row w-100">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="form-group row">
+                                <label for="actualRole" class="col-md-4 col-form-label text-md-right">Aktuálna rola</label>
+
+                                <div class="col-md-6">
+                                    <span id="actualRole" class="form-control">{{$user->Rola['nazov']}}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="changeRole" class="col-md-4 col-form-label text-md-right">Zmeniť na</label>
+
+                                <div class="col-md-6">
+                                    <select id="rola_id" class="form-control" name="rola_id">
+                                        @foreach($roles as $role)
+
+                                            @if($role->rola_id == $user->rola_id)
+                                                <option value="{{ $role->rola_id }}"
+                                                        selected>{{ $role->nazov }}</option>
+
+                                            @elseif($role->rola_id != 2 && $role->rola_id != 3)
+                                                <option
+                                                    value="{{ $role->rola_id }}">{{ $role->nazov }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group d-flex justify-content-center mt-4">
+                                <button type="button" class="btn btn-primary mr-4"
                                         data-dismiss="modal"
                                         aria-label="Close">Zrušiť
                                 </button>
-                            </li>
-                            <li>
-                                <form action="{{ route('pouzivatelia.destroy', $user->id) }}"
-                                      method="POST">
-                                    @method('DELETE')
-                                    @csrf
-                                    <p class="text-center">
-                                        <button type="submit" class="btn btn-danger delete">
-                                            Vymazať
-                                        </button>
-                                    </p>
-                                </form>
-                            </li>
-                        </ul>
+
+                                <button type="submit" class="btn btn-success">
+                                    Aktualizovať rolu
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -96,53 +142,7 @@
 
 </table>
 
-<div id="edit-modal-{{ $user->id }}" class="modal edit-modal" tabindex="-1"
-     role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Zmeň rolu používateľovi</h5>
-            </div>
-            <div class="modal-body text-center">
-                <form action="{{ route('pouzivatelia.update', $user->id) }}"
-                      method="POST" class="row w-100">
-                    @csrf
-                    @method('PUT')
-                    <label class="update-label">Rola požívateľa:</label>
-                    <select id="rola_id" class="form-select form-input m-auto"
-                            name="rola_id">
-                        @foreach($roles as $role)
 
-                            @if($role->rola_id == $user->Rola['nazov'])
-                                <option value="{{ $role->rola_id }}"
-                                        selected>{{ $role->nazov }}</option>
-
-                            @else
-                                <option
-                                    value="{{ $role->rola_id }}">{{ $role->nazov }}</option>
-                            @endif
-                        @endforeach
-                    </select>
-
-
-                    <ul class="d-flex align-items-center justify-content-center mt-4">
-                        <li>
-                            <button type="button" class="btn btn-primary cancel mr-4"
-                                    data-dismiss="modal"
-                                    aria-label="Close">Zrušiť
-                            </button>
-                        </li>
-                        <li>
-                            <button type="submit"
-                                    class="btn btn-primary update-btn mr-3">Aktualizovať
-                            </button>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 @else
     <h1>Žiadne výsledky</h1>
 @endif

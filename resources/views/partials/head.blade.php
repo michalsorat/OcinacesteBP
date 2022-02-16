@@ -25,9 +25,7 @@
 
 <!-- Custom styles for this template -->
 {{--<link rel="stylesheet" type="text/css" href="{{ asset('css/all.min.css') }}">--}}
-{{--<link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">--}}
-<link rel="stylesheet" type="text/css" href="{{asset('css/style_temp.css')}}">
-{{--<link rel="stylesheet" type="text/css" href="{{asset('css/app.css')}}">--}}
+<link rel="stylesheet" type="text/css" href="{{asset('css/style.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('css/respond.css')}}">
 
 <!-- stare verzie exploreru nepodporuju HTML5, toto riesi tu chybu -->

@@ -22,6 +22,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     public const RegCitizenHOME = '/';
+    public const HOME = '/';
     public const AdminHOME = '/admin';
     public const DispecerHOME = '/problem';
     public const ManazerHOME = '/problem';
