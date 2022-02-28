@@ -1,5 +1,5 @@
 @if($users != null)
-<table class="adminTable table main-table">
+<table class="adminTable table main-table table-hover">
     <thead>
     <tr>
         <th scope="col">#</th>
@@ -32,14 +32,18 @@
             <td>{{ $user->created_at }}</td>
             <td>
                 @if($user->rola_id != 3)
-                    <label for="editUserIcon" class="btn"><i class="fas fa-edit"></i></label>
-                    <input id="editUserIcon" type="submit" data-toggle="modal" data-target="#editUserRole-modal-{{ $user->id }}" hidden />
+                    <button type="submit" class="editUserRoleBtn" data-toggle="modal" data-target="#editUserRole-modal-{{ $user->id }}">
+                        <i class="fas fa-edit"></i>
+                    </button>
                 @endif
             </td>
             <td>
                 @if($user->rola_id != 3)
-                    <label for="deleteUserIcon" class="btn"><i class="far fa-trash-alt"></i></label>
-                    <input id="deleteUserIcon" type="submit" data-toggle="modal" data-target="#delete-modal-{{ $user->id }}" hidden />
+                    <button type="submit" class="deleteUserBtn" data-toggle="modal" data-target="#delete-modal-{{ $user->id }}">
+                        <i class="far fa-trash-alt"></i>
+                    </button>
+{{--                    <label for="deleteUserIcon" class="btn"><i class="far fa-trash-alt"></i></label>--}}
+{{--                    <input id="deleteUserIcon" type="submit" data-toggle="modal" data-target="#delete-modal-{{ $user->id }}" hidden />--}}
                 @endif
             </td>
         </tr>
@@ -89,7 +93,7 @@
                         </button>
                     </div>
                     <div class="modal-body text-center">
-                        <form action="{{ route('pouzivatelia.update', $user->id) }}" method="POST" class="row w-100">
+                        <form action="{{ route('admin.update', $user->id) }}" method="POST" class="row w-100">
                             @csrf
                             @method('PUT')
 

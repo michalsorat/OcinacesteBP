@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-    public function autocomplete(Request $request)
+    public function autocomplete(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = User::select("name")
             ->where("name", "LIKE", "%{$request->get('query')}%")
@@ -125,7 +125,11 @@ class AdminController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $user->rola_id = $request->rola_id;
+        $user->save();
+        return redirect()->back()
+            ->with('status', 'Používateľská rola úspešne zmenená!');
     }
 
     public function destroy($id)

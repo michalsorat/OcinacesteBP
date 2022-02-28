@@ -1,4 +1,3 @@
-{{--@extends('custom_layout.obcan.obcan_app')--}}
 @extends('layouts.citizen_app')
 
 @section('content')

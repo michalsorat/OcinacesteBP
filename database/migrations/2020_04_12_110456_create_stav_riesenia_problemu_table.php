@@ -16,7 +16,6 @@ class CreateStavRieseniaProblemuTable extends Migration
         Schema::create('stav_riesenia_problemu', function (Blueprint $table) {
             $table->bigIncrements('stav_riesenia_problemu_id');
             $table->collation = 'utf8mb4_slovak_ci';
-
         });
 
         Schema::table('stav_riesenia_problemu', function (Blueprint $table) {

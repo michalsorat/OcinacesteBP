@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <h1 class="main_header"><a href="{{ route('welcome') }}">Oči na ceste</a></h1>
+    <h1 class="main_header"><a href="{{ route('manager.index') }}">Oči na ceste</a></h1>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -7,16 +7,19 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto mr-3">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>
+                <a class="nav-link" href="#">Mapa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('problem.index') }}">Zoznam problémov</a>
+                <a class="nav-link" href="#">Zoznam problémov</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('download') }}">Mobilná aplikácia</a>
+                <a class="nav-link" href="{{ route('manager.index') }}">Prideľ problémy čate</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">O projekte</a>
+                <a class="nav-link" href="{{ route('manageWorkingGroups') }}">Spravuj pracovné čaty</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Na schválenie</a>
             </li>
             @guest
                 <li class="nav-item dropdown active">
@@ -37,9 +40,8 @@
                                 data-target="#edit-modal-{{Auth::user()->id}}">Nastavenia
                         </button>
 
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                           onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                           document.getElementById('logout-form').submit();">
                             {{ __('Odhlásenie') }}
                         </a>
 

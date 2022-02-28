@@ -24,7 +24,6 @@ class CreateFotkaProblemuTable extends Migration
 
             $table->bigInteger('problem_id')->unsigned();
 
-
             $table->foreign('problem_id')
                 ->references('problem_id')->on('problem')
                 ->onDelete('cascade');

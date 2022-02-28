@@ -18,13 +18,8 @@ Auth::routes();
 
 Route::get('/', 'ProblemController@welcomePage')->name('welcome');
 
-Route::get('/home', 'HomeController@index')->name('home');
-
 Route::get('/zaregistrovanyObcan', 'ZaregistrovanyObcanController@index')->name('zaregistrovanyObcan');
 Route::get('/unregisteredCitizen', 'NezaregistrovanyObcanController@index')->name('unregisteredCitizen');
-//Route::get('/admin', 'AdminController@index')->name('admin');
-Route::get('/dispecer', 'DispecerController@index')->name('dispecer');
-Route::get('/manazer', 'ManazerController@index')->name('manazer');
 
 Route::post('filtrovaneProblemy', 'ProblemController@filter')->name('filtered');
 Route::post('/moje', 'ProblemController@priradeneProblemyDispecerovi')->name('problem.priradeneDispecerovi');
@@ -40,7 +35,6 @@ Route::get('/mapa', 'ProblemController@mapa')->name('mapa');
 
 Route::resource('problem', 'ProblemController');
 Route::resource('pouzivatelia', 'UserController');
-Route::resource('cesta', 'CestaController');
 
 //Route::get('/welcomePage/create', 'ProblemController@welcomePageCreate')->name('welcomePage.create');
 Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');
@@ -59,6 +53,7 @@ Route::get('/userDetails/{id}', 'UserController@getUserDetails');
 
 Route::get('/problemsJsonPagination', 'ProblemController@allProblemsJsonPagination');
 Route::get('/problemsJson', 'ProblemController@allProblemsJson');
+Route::post('/createBump', 'ProblemController@storeBump');
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::resource('admin', 'AdminController');
@@ -69,7 +64,10 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
 
 Route::middleware(['auth', 'isManager'])->group(function () {
     Route::resource('manager', 'ManagerController');
-
+    Route::get('/manageGroupProblems/{id}', 'ManagerController@manageGroupProblems')->name('manageGroupProblems');
+    Route::put('/assignProblemsToGroup', 'ManagerController@assignProblemsToGroup')->name('assignProblemsToGroup');
+    Route::put('/removeProblemsFromGroup', 'ManagerController@removeProblemsFromGroup')->name('removeProblemsFromGroup');
+    Route::get('/workingGroups', 'ManagerController@manageWorkingGroups')->name('manageWorkingGroups');
 });
 
 Route::middleware(['auth', 'isDispatcher'])->group(function () {

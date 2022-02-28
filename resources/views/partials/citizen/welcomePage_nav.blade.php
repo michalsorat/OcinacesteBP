@@ -10,7 +10,7 @@
                 <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('problem.index') }}">Zoznam hlásení</a>
+                <a class="nav-link" href="{{ route('problem.index') }}">Zoznam problémov</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('download') }}">Mobilná aplikácia</a>

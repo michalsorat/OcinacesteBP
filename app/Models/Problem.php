@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Problem extends Model
 {
     protected $fillable = ['problem_id', 'poloha', 'address', 'popis_problemu', 'priorita_id', 'cesta_id', 'pouzivatel_id',
-        'kategoria_problemu_id', 'stav_problemu_id'
+        'kategoria_problemu_id', 'stav_problemu_id', 'isBump', 'working_group_id'
     ];
 
     protected $table = 'problem';
@@ -16,6 +16,7 @@ class Problem extends Model
     protected $attributes = [
         'priorita_id' => 1, //nepriradena
         'cesta_id' => 1, // default
+        'working_group_id' => 0, // default- nepriradena
     ];
 
     //A Problem can only have one Priorita

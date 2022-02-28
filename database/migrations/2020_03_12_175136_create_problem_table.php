@@ -18,6 +18,7 @@ class CreateProblemTable extends Migration
             $table->text('poloha');
             $table->text('address');
             $table->text('popis_problemu');
+            $table->Boolean('isBump');
             $table->collation = 'utf8mb4_slovak_ci';
         });
 
@@ -28,6 +29,7 @@ class CreateProblemTable extends Migration
             $table->bigInteger('pouzivatel_id')->unsigned();
             $table->bigInteger('kategoria_problemu_id')->unsigned();
             $table->bigInteger('stav_problemu_id')->unsigned();
+            $table->bigInteger('working_group_id')->unsigned();
 
 
 

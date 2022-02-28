@@ -9,9 +9,9 @@
 {{--            <li class="nav-item">--}}
 {{--                <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>--}}
 {{--            </li>--}}
-{{--            <li class="nav-item">--}}
-{{--                <a class="nav-link" href="{{ route('problem.index') }}">Zoznam hlásení</a>--}}
-{{--            </li>--}}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('problem.index') }}">Zoznam problémov</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.index') }}">Používatelia</a>
             </li>

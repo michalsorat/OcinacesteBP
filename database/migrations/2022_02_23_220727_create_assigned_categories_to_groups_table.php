@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVozidloTable extends Migration
+class CreateAssignedCategoriesToGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreateVozidloTable extends Migration
      */
     public function up()
     {
-        Schema::create('vozidlo', function (Blueprint $table) {
-            $table->bigIncrements('vozidlo_id');
-            $table->text('oznacenie');
-            $table->text('SPZ');
-            $table->integer('pocet_najazdenych_km');
-            $table->text('poznamka');
+        Schema::create('assigned_categories_to_groups', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->bigInteger('working_group_id')->unsigned();
-            $table->collation = 'utf8mb4_slovak_ci';
+            $table->bigInteger('kategoria_problemu_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreateVozidloTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vozidlo');
+        Schema::dropIfExists('assigned_categories_to_groups');
     }
 }

@@ -20,6 +20,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
 	    'http://147.175.204.92/uploadProblemImage',
-	    'http://147.175.204.92/api/loginAndroid'
+	    'http://147.175.204.92/api/loginAndroid',
+	    'http://147.175.204.92/createBump'
     ];
 }

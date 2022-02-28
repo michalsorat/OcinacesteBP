@@ -99,13 +99,6 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        if($request->rola_id != null) {
-            $user->rola_id = $request->rola_id;
-            $user->save();
-            return redirect()->back()
-                ->with('status', 'Používateľská rola úspešne zmenená!');
-        }
-
         if($request->name != $user->name){
             $request->validate([
                 'name' => ['required', 'min:5', 'string', 'max:255']

@@ -22,6 +22,7 @@ class ProblemSeeder extends Seeder
                 'pouzivatel_id' => '1',
                 'kategoria_problemu_id' => '1',
                 'stav_problemu_id' => '1',
+                'isBump' => false,
             ]
         ];
 
@@ -35,6 +36,7 @@ class ProblemSeeder extends Seeder
                 'pouzivatel_id' => $problem['pouzivatel_id'],
                 'kategoria_problemu_id' => $problem['kategoria_problemu_id'],
                 'stav_problemu_id' => $problem['stav_problemu_id'],
+                'isBump' => $problem['isBump'],
             ));
         }
     }

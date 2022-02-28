@@ -17,6 +17,9 @@
     {
         display: unset;
     }
+    .group-problems-table {
+        font-size: 0.8rem;
+    }
 }
 
 /*@media (max-width:650px){*/

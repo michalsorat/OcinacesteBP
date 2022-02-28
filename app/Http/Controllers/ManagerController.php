@@ -2,20 +2,125 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AssignedCategoriesToGroup;
+use App\Models\KategoriaProblemu;
+use App\Models\Priorita;
+use App\Models\Problem;
+use App\Models\StavProblemu;
+use App\Models\StavRieseniaProblemu;
+use App\Models\TypStavuRieseniaProblemu;
+use App\Models\Vozidlo;
+use App\Models\WorkingGroup;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ManagerController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index()
     {
-        //
+        $users = User::where('rola_id', '=', '4')->get();
+        $availVehicles = Vozidlo::where('working_group_id', '=', '0')->get();
+        $vehicles = Vozidlo::where('working_group_id', '!=', '0')->get();
+        $workingGroups = WorkingGroup::with('users')->with('vehicle')->with('assignedCategories')->with('assignedProblems')->get();
+        $categories = KategoriaProblemu::all();
+        $groupProblems = null;
+        $problemsToAssign = null;
+
+        return view('views.manager.manager_assignProblems')
+            ->with('users', $users)
+            ->with('availVehicles', $availVehicles)
+            ->with('vehicles', $vehicles)
+            ->with('workingGroups', $workingGroups)
+            ->with('categories', $categories)
+            ->with('groupProblems', $groupProblems)
+            ->with('problemsToAssign', $problemsToAssign);
     }
 
+    public function manageGroupProblems($id) {
+        $solStatusAssignedProblems = array();
+        $solStatusProblemsToAssign = array();
+        $solStatusTypes = TypStavuRieseniaProblemu::all();
+        $priorities = Priorita::all();
+
+        $groupProblems = WorkingGroup::whereHas('vehicle', function ($query) use ($id) {
+                $query->where('vozidlo_id', '=', $id);
+            })
+            ->with('assignedCategories')
+            ->with('assignedProblems')
+            ->get();
+
+        $problemsToAssign = Problem::where('working_group_id', '=', '0')
+            ->where(function($query) use ($groupProblems) {
+                foreach ($groupProblems[0]->assignedCategories as $assignedCategory) {
+                    $query->orWhere('kategoria_problemu_id', '=', $assignedCategory->kategoria_problemu_id);
+                }
+            })->get();
+
+        foreach ($problemsToAssign as $problem) {
+            $typ = DB::table('stav_riesenia_problemu')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('stav_riesenia_problemu_id')->first();
+            array_push($solStatusProblemsToAssign, $typ->typ_stavu_riesenia_problemu_id);
+        }
+
+        foreach ($groupProblems[0]->assignedProblems as $problem) {
+            $typ = DB::table('stav_riesenia_problemu')
+                ->where('problem_id', '=', $problem->problem_id)
+                ->latest('stav_riesenia_problemu_id')->first();
+            array_push($solStatusAssignedProblems, $typ->typ_stavu_riesenia_problemu_id);
+        }
+
+        return view('components.manager.manageGroupProblems')
+            ->with('groupProblems', $groupProblems)
+            ->with('problemsToAssign', $problemsToAssign)
+            ->with('solStatusProblemsToAssign', $solStatusProblemsToAssign)
+            ->with('solStatusAssignedProblems', $solStatusAssignedProblems)
+            ->with('solStatusTypes', $solStatusTypes)
+            ->with('priorities', $priorities);
+    }
+
+    public function assignProblemsToGroup(Request $request) {
+        for ($i = 0; $i < count($request->problemsToAssign); $i++) {
+            $problem = Problem::find($request->problemsToAssign[$i]);
+            $problem->working_group_id = $request->workingGroupID;
+            $problem->priorita_id = $request->prioritiesToAssign[$i];
+            $problem->save();
+            StavRieseniaProblemu::create(['problem_id' => $request->problemsToAssign[$i], 'typ_stavu_riesenia_problemu_id' => 3]); //v procese
+        }
+        return $this->manageGroupProblems($request->workingGroupID);
+    }
+
+    public function removeProblemsFromGroup(Request $request) {
+        for ($i = 0; $i < count($request->problemsToAssign); $i++) {
+            $problem = Problem::find($request->problemsToAssign[$i]);
+            $problem->working_group_id = 0;
+            $problem->priorita_id = 1;
+            $problem->save();
+            StavRieseniaProblemu::create(['problem_id' => $request->problemsToAssign[$i], 'typ_stavu_riesenia_problemu_id' => 5]); //odložené
+        }
+        return $this->manageGroupProblems($request->workingGroupID);
+    }
+
+    public function manageWorkingGroups() {
+        $users = User::where('rola_id', '=', '4')->where('working_group_id', '=', '0')->get();
+        $availVehicles = Vozidlo::where('working_group_id', '=', '0')->get();
+        $vehicles = Vozidlo::where('working_group_id', '!=', '0')->get();
+        $workingGroups = WorkingGroup::with('users')->with('vehicle')->with('assignedCategories')->with('assignedProblems')->get();
+        $categories = KategoriaProblemu::all();
+
+        return view('views.manager.manager_workingGroups')
+            ->with('users', $users)
+            ->with('availVehicles', $availVehicles)
+            ->with('vehicles', $vehicles)
+            ->with('workingGroups', $workingGroups)
+            ->with('categories', $categories);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -30,11 +135,28 @@ class ManagerController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'selectedVehicle' => 'required',
+            'selected_users' => 'required',
+            'checkedCategories' => 'required',
+        ]);
+        WorkingGroup::create();
+        $createdGroup = DB::table('working_groups')->latest('id')->first();
+        Vozidlo::where('vozidlo_id', '=', $request->selectedVehicle)->update(['working_group_id' => $createdGroup->id]);
+        foreach ($request->selected_users as $id) {
+            User::where('id', '=', $id)->update(['working_group_id' => $createdGroup->id]);
+        }
+
+        foreach ($request->checkedCategories as $categoryId) {
+            AssignedCategoriesToGroup::create(['working_group_id' => $createdGroup->id, 'kategoria_problemu_id' => $categoryId]);
+        }
+
+        return redirect()->back()
+            ->with('status', 'Pracovná čata úspešne vytvorená!');
     }
 
     /**

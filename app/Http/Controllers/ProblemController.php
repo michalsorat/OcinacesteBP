@@ -202,7 +202,7 @@ class ProblemController extends Controller
         $stavy_riesenia = array();
         $kategorie = KategoriaProblemu::all();
         $stavyProblemu = StavProblemu::all();
-        $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
+        $typyStavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
 
         $paginator = $this->getPaginator($request, $final);
 
@@ -228,7 +228,7 @@ class ProblemController extends Controller
                     ->with('typy_stavov_riesenia', $typy_stavov)
                     ->with('kategorie', $kategorie)
                     ->with('stavyProblemu', $stavyProblemu)
-                    ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
+                    ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu);
             }
         }
         else {
@@ -250,7 +250,7 @@ class ProblemController extends Controller
                         ->with('typy_stavov_riesenia', $typy_stavov)
                         ->with('kategorie', $kategorie)
                         ->with('stavyProblemu', $stavyProblemu)
-                        ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu);
+                        ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu);
                 }
             }
             else {
@@ -263,7 +263,7 @@ class ProblemController extends Controller
 
                 $kategorie = KategoriaProblemu::all();
                 $stavyProblemu = StavProblemu::all();
-                $typySTavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
+                $typyStavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
                 $priority = Priorita::all();
                 $zamestnanciAll = User::where('rola_id', '>', '2')->get();
 
@@ -293,9 +293,8 @@ class ProblemController extends Controller
                         array_push($priradene_vozidla, 0);
                 }
 
-
                 if ($rola == 3)
-                    return view('problem.admin.admin_index')
+                    return view('views.admin.admin_allProblemsTableFilter')
                         ->with('problems', $problems)
                         ->with('stavy_riesenia', $stavy_riesenia)
                         ->with('typy_stavov_riesenia', $typy_stavov)
@@ -305,7 +304,7 @@ class ProblemController extends Controller
                         ->with('vozidla', $vsetky_vozidla)
                         ->with('kategorie', $kategorie)
                         ->with('stavyProblemu', $stavyProblemu)
-                        ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                        ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu)
                         ->with('priority', $priority)
                         ->with('VsetciZamestnanci', $zamestnanciAll);
                 if ($rola == 4)
@@ -319,12 +318,12 @@ class ProblemController extends Controller
                         ->with('vozidla', $vsetky_vozidla)
                         ->with('kategorie', $kategorie)
                         ->with('stavyProblemu', $stavyProblemu)
-                        ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                        ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu)
                         ->with('priority', $priority)
                         ->with('VsetciZamestnanci', $zamestnanciAll);
 
                 if ($rola == 5)
-                    return view('problem.manazer.manazer_index')
+                    return view('views.manager.manager_allProblemsTableFilter')
                         ->with('problems', $problems)
                         ->with('stavy_riesenia', $stavy_riesenia)
                         ->with('typy_stavov_riesenia', $typy_stavov)
@@ -334,7 +333,7 @@ class ProblemController extends Controller
                         ->with('vozidla', $vsetky_vozidla)
                         ->with('kategorie', $kategorie)
                         ->with('stavyProblemu', $stavyProblemu)
-                        ->with('typyStavovRieseniaProblemu', $typySTavovRieseniaProblemu)
+                        ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu)
                         ->with('priority', $priority)
                         ->with('VsetciZamestnanci', $zamestnanciAll);
             }
@@ -1397,7 +1396,7 @@ class ProblemController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      *
      * validacia povinnych polí
      * pridanie user id tvorcu problemu do requestu
@@ -1421,9 +1420,23 @@ class ProblemController extends Controller
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
 
-
         return redirect('problem');
         //->with('success', 'Hlasenie bolo prijate!');
+    }
+
+    public function storeBump(Request $request) {
+        $request->request->add(['kategoria_problemu_id' => '1']);
+        $request->request->add(['stav_problemu_id' => '2']);
+        $request->request->add(['popis_problemu' => 'Automaticky detekovaný výtlk na ceste']);
+        $request->request->add(['isBump' => true]);
+        $request->request->add(['pouzivatel_id' => '1']);
+
+        Problem::create($request->all());
+
+        $last = DB::table('problem')->latest('problem_id')->first();
+        StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
+
+        return response()->json('ok');
     }
 
     public function welcomePageStore(Request $request)
@@ -1440,6 +1453,8 @@ class ProblemController extends Controller
         else {
             $request->request->add(['pouzivatel_id' => '1']);
         }
+
+        $request->request->add(['isBump' => false]);
 
         Problem::create($request->all());
 

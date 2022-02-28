@@ -205,6 +205,12 @@ body {
     color: #dd5;
 }
 
+.table-wrapper {
+    overflow:hidden;
+    overflow-y: scroll;
+    height: 300px;
+}
+
 #sidebar {
     width: 20%;
     padding: 10px;
@@ -285,5 +291,30 @@ body {
 
 .modal-footer label, .modal-footer span {
     font-size: 0.9rem;
+}
+
+#selectUsersTable, #selectGroupTable {
+    overflow-y:scroll;
+    height:200px;
+    display:block;
+}
+
+.working-group-table tr, #selectUsersTable tr {
+    cursor: pointer;
+}
+
+.working-group-table tr:hover, .working-group-table .active {
+    color: #212529;
+    background-color: rgba(0,0,0,.075);
+}
+
+.editUserRoleBtn, .deleteUserBtn {
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+#addVehicleToGroup {
+    display: none;
 }
 
