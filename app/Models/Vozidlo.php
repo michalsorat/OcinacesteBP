@@ -10,7 +10,6 @@ class Vozidlo extends Model
 
     protected $attributes = [
         'working_group_id' => 0, //nepriradená pracovná čata
-        'poznamka' => 'Žiadna poznámka', //default
     ];
 
     protected $table='vozidlo';

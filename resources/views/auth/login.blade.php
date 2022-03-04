@@ -76,23 +76,3 @@
 
     </div>
 </div>
-
-{{--<script>--}}
-{{--     var loginForm = $(".loginForm");--}}
-{{--     loginForm.submit(function(e){--}}
-{{--         e.preventDefault();--}}
-{{--         var formData = loginForm.serialize();--}}
-{{--    --}}
-{{--         $.ajax({--}}
-{{--             url:'/login',--}}
-{{--             type:'POST', --}}
-{{--             data:formData,--}}
-{{--             success:function(response){--}}
-{{--                 window.location = response.redirectPath;--}}
-{{--             },--}}
-{{--             error: function (response) {--}}
-{{--                 console.log("zle je");--}}
-{{--             }--}}
-{{--         });--}}
-{{--    });--}}
-{{--</script>--}}

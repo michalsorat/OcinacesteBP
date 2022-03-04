@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                @if ($errors->any())
+                @if ($errors->has('selectedVehicle') || $errors->has('selected_users') || $errors->has('checkedCategories'))
                     <script>
                         $(function() {
                             $('#createWorkingGroup').modal({

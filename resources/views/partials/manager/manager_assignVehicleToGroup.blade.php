@@ -2,8 +2,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Vyber pracovnú čatu na priradenie vozidla</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title">Vyber pracovnú čatu na priradenie vozidla</h5>
+                <button type="button" id="closeModalAssignVehicle" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -38,7 +38,7 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    <input type="checkbox" class="select-group-cb" value="{{$workingGroup->id}}">
+                                    <input type="checkbox" class="select-group-cb" value="{{$workingGroup->id}}-{{$workingGroup->vehicle->vozidlo_id}}">
                                 </td>
                             </tr>
                         @endforeach
@@ -47,23 +47,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary">Priraď vozidlo</button>
+                <button type="button" class="btn btn-secondary" id="assignVehicle">Priraď vozidlo</button>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    $('.group-row').on('click', function() {
-        $('#selectGroupTable').find('.active').removeClass('active');
-        let cb = $(this).find('.select-group-cb');
-        if (cb.is(':checked')) {
-            cb.prop('checked', false);
-        }
-        else {
-            $('.add-vehicle-cb').not(this).prop('checked', false);
-            cb.prop('checked', true);
-            $(this).toggleClass('active');
-        }
-    });
-</script>
+

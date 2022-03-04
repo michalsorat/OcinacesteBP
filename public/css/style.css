@@ -293,10 +293,16 @@ body {
     font-size: 0.9rem;
 }
 
-#selectUsersTable, #selectGroupTable {
+#selectUsersTable, #selectGroupTable, #vehicleTableHolder {
     overflow-y:scroll;
     height:200px;
     display:block;
+}
+
+#vehicleTableHolder thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
 }
 
 .working-group-table tr, #selectUsersTable tr {
@@ -314,7 +320,7 @@ body {
     cursor: pointer;
 }
 
-#addVehicleToGroup {
+#addVehicleToGroup, #assignVehicle {
     display: none;
 }
 

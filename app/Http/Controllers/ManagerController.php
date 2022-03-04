@@ -108,19 +108,49 @@ class ManagerController extends Controller
     }
 
     public function manageWorkingGroups() {
-        $users = User::where('rola_id', '=', '4')->where('working_group_id', '=', '0')->get();
+        $availUsers = User::where('rola_id', '=', '4')->where('working_group_id', '=', '0')->get();
         $availVehicles = Vozidlo::where('working_group_id', '=', '0')->get();
-        $vehicles = Vozidlo::where('working_group_id', '!=', '0')->get();
         $workingGroups = WorkingGroup::with('users')->with('vehicle')->with('assignedCategories')->with('assignedProblems')->get();
         $categories = KategoriaProblemu::all();
 
         return view('views.manager.manager_workingGroups')
-            ->with('users', $users)
+            ->with('users', $availUsers)
             ->with('availVehicles', $availVehicles)
-            ->with('vehicles', $vehicles)
             ->with('workingGroups', $workingGroups)
             ->with('categories', $categories);
     }
+
+    public function changeAssignedVehicle(Request $request) {
+        Vozidlo::where('vozidlo_id', '=', $request->oldVehicleID)->update(['working_group_id' => '0']);
+        Vozidlo::where('vozidlo_id', '=', $request->newVehicleID)->update(['working_group_id' => $request->workingGroupID]);
+
+        return json_encode(['res'=>true]);
+    }
+
+    public function createVehicle(Request $request) {
+        $request->validate([
+            'spz' => ['required', 'unique:Vozidlo,SPZ', 'size:7'],
+            'vehName' => 'required',
+            'kmCount' => ['required', 'integer']
+        ]);
+        if ($request->note) {
+            $note = $request->note;
+        }
+        else {
+            $note = 'Žiadna poznámka';
+        }
+
+        Vozidlo::create([
+            'oznacenie' => $request->vehName,
+            'SPZ' => $request->spz,
+            'pocet_najazdenych_km' =>  $request->kmCount,
+            'poznamka' => $note
+        ]);
+
+        return redirect()->back()
+            ->with('status', 'Vozidlo úspešne pridané do evidencie!');
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -190,7 +220,7 @@ class ManagerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**

@@ -68,6 +68,8 @@ Route::middleware(['auth', 'isManager'])->group(function () {
     Route::put('/assignProblemsToGroup', 'ManagerController@assignProblemsToGroup')->name('assignProblemsToGroup');
     Route::put('/removeProblemsFromGroup', 'ManagerController@removeProblemsFromGroup')->name('removeProblemsFromGroup');
     Route::get('/workingGroups', 'ManagerController@manageWorkingGroups')->name('manageWorkingGroups');
+    Route::put('/changeAssignedVehicle', 'ManagerController@changeAssignedVehicle')->name('changeAssignedVehicle');
+    Route::post('/createVehicle', 'ManagerController@createVehicle')->name('createVehicle');
 });
 
 Route::middleware(['auth', 'isDispatcher'])->group(function () {
