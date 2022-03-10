@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Charts\WorkingGroupChart;
 use App\Models\AssignedCategoriesToGroup;
 use App\Models\KategoriaProblemu;
 use App\Models\Priorita;
@@ -13,7 +14,9 @@ use App\Models\Vozidlo;
 use App\Models\WorkingGroup;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use SplFixedArray;
 
 class ManagerController extends Controller
 {
@@ -25,6 +28,7 @@ class ManagerController extends Controller
     public function index()
     {
         $users = User::where('rola_id', '=', '4')->get();
+        $availUsers = User::where('rola_id', '=', '4')->where('working_group_id', '=', '0')->get();
         $availVehicles = Vozidlo::where('working_group_id', '=', '0')->get();
         $vehicles = Vozidlo::where('working_group_id', '!=', '0')->get();
         $workingGroups = WorkingGroup::with('users')->with('vehicle')->with('assignedCategories')->with('assignedProblems')->get();
@@ -33,7 +37,7 @@ class ManagerController extends Controller
         $problemsToAssign = null;
 
         return view('views.manager.manager_assignProblems')
-            ->with('users', $users)
+            ->with('users', $availUsers)
             ->with('availVehicles', $availVehicles)
             ->with('vehicles', $vehicles)
             ->with('workingGroups', $workingGroups)
@@ -149,6 +153,65 @@ class ManagerController extends Controller
 
         return redirect()->back()
             ->with('status', 'Vozidlo úspešne pridané do evidencie!');
+    }
+
+    public function workingGroupChart($id) {
+        $groupProblems = WorkingGroup::whereHas('vehicle', function ($query) use ($id) {
+            $query->where('vozidlo_id', '=', $id);
+        })
+            ->with('assignedProblems')
+            ->get();
+
+        $inProcessProbMonths = new SplFixedArray(12);
+        $finishedProbMonths = new SplFixedArray(12);
+
+        foreach ($groupProblems[0]->assignedProblems as $assignedProblem) {
+            $state = StavRieseniaProblemu::where('problem_id', '=', $assignedProblem->problem_id)
+                ->latest('stav_riesenia_problemu_id')->first();
+
+            $index = intval(Carbon::parse($state->created_at)->format('m')) - 1;
+
+            if ($state->typ_stavu_riesenia_problemu_id == 3) {
+
+                $inProcessProbMonths[$index] += 1;
+            }
+            else if ($state->typ_stavu_riesenia_problemu_id == 4) {
+                $finishedProbMonths[$index] += 1;
+            }
+        }
+
+        return response()->json([
+            'inProcessProbMonths' => $inProcessProbMonths,
+            'finishedProbMonths' => $finishedProbMonths
+        ]);
+    }
+
+    public function workingGroupUsers($id) {
+        $selGroup = WorkingGroup::whereHas('vehicle', function ($query) use ($id) {
+            $query->where('vozidlo_id', '=', $id);
+        })
+            ->with('users')
+            ->with('assignedCategories')
+            ->get();
+        $categories = KategoriaProblemu::all();
+
+        return view('components.manager.workingGroupUsersCat')
+            ->with('selGroup', $selGroup)
+            ->with('categories', $categories);
+    }
+
+    public function changeAssignedCategories(Request $request, $id) {
+        $request->validate([
+            'newCategories' => 'required',
+        ]);
+
+        AssignedCategoriesToGroup::where('working_group_id', '=', $id)->delete();
+        foreach ($request->newCategories as $categoryId) {
+            AssignedCategoriesToGroup::create(['working_group_id' => $id, 'kategoria_problemu_id' => $categoryId]);
+        }
+
+        return redirect()->back()
+            ->with('status', 'Kategórie riešených problémov úspešne zmenené!');
     }
 
     /**

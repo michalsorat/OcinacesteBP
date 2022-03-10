@@ -166,10 +166,10 @@ class UserController extends Controller
 
         $newDateFormat = Carbon::parse($user->created_at)->format('d. m. Y, H:i:s');
 
-        $returnArr = array('createdProblemsCount' => $createdProblemsCount,
-                            'solvedProblemsCount' => $solvedProblemsCount,
-                            'acceptedProblemsCount' => $acceptedProblemsCount,
-                            'inProgressProblemsCount' => $inProgressProblemsCount,
+        $returnArr = array('countsArr' => array(0 => $createdProblemsCount,
+                                                1 => $solvedProblemsCount,
+                                                2 => $acceptedProblemsCount,
+                                                3 => $inProgressProblemsCount),
                             'regDate' => $newDateFormat);
         return response()->json($returnArr);
     }

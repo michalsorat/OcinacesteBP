@@ -23,7 +23,7 @@ class RolaSeeder extends Seeder
                 'nazov' => 'Administrátor',
             ],
             [
-                'nazov' => 'Dispečer',
+                'nazov' => 'Zamestnanec',
             ],
             [
                 'nazov' => 'Manažér'

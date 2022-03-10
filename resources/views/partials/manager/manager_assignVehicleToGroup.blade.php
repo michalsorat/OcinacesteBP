@@ -2,7 +2,11 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Vyber pracovnú čatu na priradenie vozidla</h5>
+                <h5 class="modal-title pt-0">Vyber pracovnú čatu</h5>
+                <button type="button" class="hint" data-toggle="popover" data-trigger="focus" data-content="Pre zmenu vozidla vyber pracovnú čatu zo zoznamu existujúcich">
+                    <i class="fa-solid fa-circle-question"></i>
+                </button>
+
                 <button type="button" id="closeModalAssignVehicle" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -47,7 +51,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="assignVehicle">Priraď vozidlo</button>
+                <button type="button" class="btn btn-secondary" id="assignVehicle">Zmeň vozidlo</button>
             </div>
         </div>
     </div>

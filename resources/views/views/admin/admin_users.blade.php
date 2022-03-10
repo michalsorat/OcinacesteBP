@@ -41,7 +41,7 @@
         <div class="container-fluid">
             <h5 class="mt-lg-3 mt-2 ml-4 font-weight-bolder">Zoznam používateľov</h5>
             <div class="row">
-                <div class="col-xl-2 col-lg-3 col-12 px-0 pb-3 bg-light">
+                <div class="col-xl-2 col-12 px-0 pb-3 bg-light">
                     <div class="row mx-1">
                         <div class="filter-option col-12 input-group">
                             <input id="search-user-input" class="typeahead form-control" type="search"
@@ -52,7 +52,7 @@
                                 </button>
                             </span>
                         </div>
-                        <div class="filter-option col-6 col-lg-12">
+                        <div class="filter-option col-12">
                             <h6 class="p-1 border-bottom">Používateľské roly</h6>
                             @foreach($roles as $role)
                                 @if($role->rola_id != 2)
@@ -65,7 +65,7 @@
                                 @endif
                             @endforeach
                         </div>
-                        <div class="filter-option col-12 col-md-6 col-lg-12">
+                        <div class="filter-option col-12 col-md-6 col-xl-12">
                             <h6 class="p-1 border-bottom">Zoradiť podľa registrácie</h6>
                             <select id="adminOrderBy" class="input-filter form-input w-100" name="orderBy">
                                 <option value="" selected disabled hidden>Vyberte možnosť</option>
@@ -73,7 +73,7 @@
                                 <option value="2">Od najnovšie registrovaných</option>
                             </select>
                         </div>
-                        <div class="filter-option col-12 col-md-6 col-lg-12">
+                        <div class="filter-option col-12 col-md-6 col-xl-12">
                             <h6 class="p-1 border-bottom">Počet zaregistrovaných</h6>
                             <select id="regUsersCount" class="countSelect input-filter form-input w-100" name="orderBy">
                                 <option value="1">Za posledných 24 hodín</option>
@@ -86,7 +86,7 @@
                                 <b class="resultNumber" id="usersNr">{{$usersCount}}</b>
                             </div>
                         </div>
-                        <div class="filter-option col-12 col-md-6 col-lg-12">
+                        <div class="filter-option col-12 col-md-6 col-xl-12">
                             <h6 class="p-1 border-bottom">Počet zaznamenaných problémov</h6>
                             <select id="problemsCount" class="countSelect input-filter form-input w-100" name="orderBy">
                                 <option value="1">Za posledných 24 hodín</option>
@@ -99,7 +99,7 @@
                                 <b class="resultNumber" id="problemsNr">{{$problemsCount}}</b>
                             </div>
                         </div>
-                        <div class="filter-option col-12 col-md-6 col-lg-12">
+                        <div class="filter-option col-12 col-md-6 col-xl-12">
                             <h6 class="p-1 border-bottom">Počet vyriešených problémov</h6>
                             <select id="solvedProblemsCount" class="countSelect input-filter form-input w-100" name="orderBy">
                                 <option value="1">Za posledných 24 hodín</option>
@@ -116,7 +116,7 @@
                     </div>
                 </div>
 
-                <div class="table-responsive col-xl-10 col-lg-9 col-12">
+                <div class="table-responsive col-xl-10 col-12">
                     @include('components.admin.usersTable')
                 </div>
 

@@ -12,23 +12,27 @@
                 <h4 class="mb-0">{{Auth::user()->name}}</h4>
                 <span class="text-muted mb-2">{{Auth::user()->email}}</span>
 
-                <div class="d-flex justify-content-between align-items-center mt-4 px-5">
-                    <div class="stats">
-                        <label for="createdProblemsCount">Počet zaznačených problémov</label> <span id="createdProblemsCount"></span>
-                    </div>
-                    <div class="stats">
-                        <label for="solvedProblemsCount">Počet vyriešených problémov</label> <span id="solvedProblemsCount"></span>
-                    </div>
+                <div class="canvas-holder my-3">
+
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mt-4 px-5">
-                    <div class="stats">
-                        <label for="acceptedProblemsCount">Počet problémov prijatých na riešenie</label> <span id="acceptedProblemsCount"></span>
-                    </div>
-                    <div class="stats">
-                        <label for="inProgressProblemsCount">Počet problémov v procese riešenia</label> <span id="inProgressProblemsCount"></span>
-                    </div>
-                </div>
+{{--                <div class="d-flex justify-content-between align-items-center mt-4 px-5">--}}
+{{--                    <div class="stats">--}}
+{{--                        <label for="createdProblemsCount">Počet zaznačených problémov</label> <span id="createdProblemsCount"></span>--}}
+{{--                    </div>--}}
+{{--                    <div class="stats">--}}
+{{--                        <label for="solvedProblemsCount">Počet vyriešených problémov</label> <span id="solvedProblemsCount"></span>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+
+{{--                <div class="d-flex justify-content-between align-items-center mt-4 px-5">--}}
+{{--                    <div class="stats">--}}
+{{--                        <label for="acceptedProblemsCount">Počet problémov prijatých na riešenie</label> <span id="acceptedProblemsCount"></span>--}}
+{{--                    </div>--}}
+{{--                    <div class="stats">--}}
+{{--                        <label for="inProgressProblemsCount">Počet problémov v procese riešenia</label> <span id="inProgressProblemsCount"></span>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
             </div>
 
             <div class="modal-footer d-flex justify-content-start">
@@ -44,15 +48,58 @@
         let id = $(this).attr('href');
         $("#userDetails-modal").modal('show');
 
+        $('.canvas-holder').html('<canvas id="userChart"></canvas>');
+
         $.ajax({
             url:'/userDetails/'+ id,
             type:'GET',
             success:function(data){
-                $('#createdProblemsCount').html(data.createdProblemsCount);
-                $('#solvedProblemsCount').html(data.solvedProblemsCount);
-                $('#acceptedProblemsCount').html(data.acceptedProblemsCount);
-                $('#inProgressProblemsCount').html(data.inProgressProblemsCount);
                 $('#regDate').html(data.regDate);
+
+                let types = ['Zaznačené problémy', 'Vyriešené problémy', 'Prijaté na riešenie', 'V procese riešenia'];
+                let chartData = types.map((type, index) => {
+                    let dataObj = {};
+                    dataObj.typeName = type;
+                    dataObj.countNr = data.countsArr[index];
+                    return dataObj;
+                });
+
+                let ctx = $('#userChart');
+                var config = {
+                    type: 'bar',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Graf',
+                                labels: chartData,
+                                maxBarThickness: 10,
+                                data: chartData,
+                                backgroundColor: [
+                                    'rgb(255,188,55)',
+                                    'rgb(21,117,38)',
+                                    'rgb(112,111,111)',
+                                    'rgba(0, 63, 250, 0.61)'],
+                                parsing: {
+                                    xAxisKey: 'typeName',
+                                    yAxisKey: 'countNr'
+                                }
+                            },
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    },
+                }
+                new Chart(ctx, config);
+                // $('#createdProblemsCount').html(data.createdProblemsCount);
+                // $('#solvedProblemsCount').html(data.solvedProblemsCount);
+                // $('#acceptedProblemsCount').html(data.acceptedProblemsCount);
+                // $('#inProgressProblemsCount').html(data.inProgressProblemsCount);
+
             },
             error: function () {
                 $('#userDetails-modal').find('.modal-body').html('Something went wrong');

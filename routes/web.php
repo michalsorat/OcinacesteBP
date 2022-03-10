@@ -68,12 +68,15 @@ Route::middleware(['auth', 'isManager'])->group(function () {
     Route::put('/assignProblemsToGroup', 'ManagerController@assignProblemsToGroup')->name('assignProblemsToGroup');
     Route::put('/removeProblemsFromGroup', 'ManagerController@removeProblemsFromGroup')->name('removeProblemsFromGroup');
     Route::get('/workingGroups', 'ManagerController@manageWorkingGroups')->name('manageWorkingGroups');
+    Route::get('/workingGroupChart/{id}', 'ManagerController@workingGroupChart')->name('workingGroupChart');
+    Route::get('/workingGroupUsers/{id}', 'ManagerController@workingGroupUsers')->name('workingGroupUsers');
     Route::put('/changeAssignedVehicle', 'ManagerController@changeAssignedVehicle')->name('changeAssignedVehicle');
+    Route::put('/changeAssignedCategories/{id}', 'ManagerController@changeAssignedCategories')->name('changeAssignedCategories');
     Route::post('/createVehicle', 'ManagerController@createVehicle')->name('createVehicle');
 });
 
-Route::middleware(['auth', 'isDispatcher'])->group(function () {
-    Route::resource('dispatcher', 'DispatcherController');
+Route::middleware(['auth', 'isWorker'])->group(function () {
+    Route::resource('worker', 'WorkerController');
 });
 
 //appka

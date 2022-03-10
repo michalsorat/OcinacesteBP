@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class DispatcherController extends Controller
+class WorkerController extends Controller
 {
     /**
      * Display a listing of the resource.

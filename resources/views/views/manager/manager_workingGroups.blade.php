@@ -26,7 +26,7 @@
                         </thead>
                         <tbody>
                         @foreach($workingGroups as $workingGroup)
-                            <tr class="text-center" id="vehicleId-{{$workingGroup->vehicle->vozidlo_id}}">
+                            <tr class="text-center group-row-main" id="vehicleId-{{$workingGroup->vehicle->vozidlo_id}}">
                                 <td>
                                     <div>
                                         {{$workingGroup->vehicle->oznacenie}}
@@ -87,9 +87,16 @@
                         Pridať vozidlo
                     </button>
 
-                    <button type="button" class="btn btn-sm btn-info mr-3 float-md-right mt-3" id="addVehicleToGroup" data-toggle="modal" data-target="#assignVehToGroupModal">
-                        Priradiť vozidlo pracovnej čate
-                    </button>
+                    <div class="mr-3 float-md-right mt-3" id="hiddenButtons">
+                        <button type="button" class="btn btn-sm btn-info btn-block" data-toggle="modal" data-target="#assignVehToGroupModal">
+                            Zmeniť vozidlo pracovnej čate
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#assignVehToGroupModal">
+                            Odstrániť vozidlo z evidencie
+                        </button>
+                    </div>
+
                 </div>
 
                 {{--                right side--}}
@@ -111,9 +118,24 @@
                         </div>
                     </div>
 
-                    <div class="row manage-group-problems">
-                        {{--                        @include('components.manager.manageGroupProblems')--}}
+                    <div class="row group-detail-users-categories mx-1">
+                        <div class="col-12 px-4">
+                            @if ($errors->has('newCategories'))
+                                <div class="alert alert-danger mt-3">
+                                    <span>Zvoľte aspoň jednu katégóriu riešených problémov čaty!</span>
+                                </div>
+                            @endif
+                            <h4 class="text-center my-5">Vyberte pracovnú čatu na zobrazenie detailov</h4>
+                        </div>
                     </div>
+
+                    <div class="row group-detail-chart mx-5">
+
+{{--                        <div class="col-9 group-detail-chart">--}}
+
+{{--                        </div>--}}
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -130,19 +152,108 @@
             $(".alert").fadeOut();
         }, 6000);
 
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        });
+
+        $('#vehicleProblems').on('change', function() {
+            let vehicleID = $('#vehicleProblems').val();
+            $('#workingGroupsTable').find('.active').removeClass('active');
+            $('#vehicleId-'+vehicleID).toggleClass('active');
+
+            $('.group-detail-chart').html('<canvas id="groupChart"></canvas>');
+
+            $.ajax({
+                url:'/workingGroupUsers/'+ vehicleID,
+                type:'GET',
+                success:function(data){
+                    $('.group-detail-users-categories').html(data);
+                },
+                error: function () {
+                    $('.group-detail-users-categories').html('Something went wrong');
+                }
+            });
+
+            $.ajax({
+                url:'/workingGroupChart/'+ vehicleID,
+                type:'GET',
+                success:function(data) {
+                    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
+                    let inProcessProbData = months.map((month, index) => {
+                        let dataObj = {};
+                        dataObj.monthName = month;
+                        dataObj.countNr = data.inProcessProbMonths[index];
+                        return dataObj;
+                    });
+
+                    let endedProbData = months.map((month, index) => {
+                        let dataObj = {};
+                        dataObj.monthName = month;
+                        dataObj.countNr = data.finishedProbMonths[index];
+                        return dataObj;
+                    });
+
+                    let ctx = $('#groupChart');
+                    var config = {
+                        type: 'bar',
+                        data: {
+                            datasets: [
+                                {
+                                    label: 'Počet vyriešených problémov',
+                                    maxBarThickness: 10,
+                                    data: endedProbData,
+                                    backgroundColor: 'rgb(13,134,72)',
+                                    parsing: {
+                                        xAxisKey: 'monthName',
+                                        yAxisKey: 'countNr'
+                                    }
+                                },
+                                {
+                                    label: 'Počet problémov v procese riešenia',
+                                    maxBarThickness: 10,
+                                    data: inProcessProbData,
+                                    backgroundColor: 'rgb(255,172,0)',
+                                    parsing: {
+                                        xAxisKey: 'monthName',
+                                        yAxisKey: 'countNr'
+                                    }
+                                }
+                            ],
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                        },
+                    }
+                    new Chart(ctx, config);
+                },
+                error: function () {
+                    $('.group-details').html('Something went wrong');
+                }
+            });
+        });
+
+        $('.group-row-main').on('click', function() {
+            let vehicleID = ($(this).attr('id')).split('-')[1];
+            $('#vehicleProblems').val(vehicleID).change();
+        });
+
         $('.vehicle-row').on('click', function() {
             $('#vehiclesTable').find('.active').removeClass('active');
             // let vehicleID = ($(this).attr('id')).split('-')[1];
             let cb = $(this).find('.add-vehicle-cb');
             if (cb.is(':checked')) {
                 cb.prop('checked', false);
-                $('#addVehicleToGroup').hide();
+                $('#hiddenButtons').hide();
             }
             else {
                 $('.add-vehicle-cb').not(this).prop('checked', false);
                 cb.prop('checked', true);
                 $(this).toggleClass('active');
-                $('#addVehicleToGroup').show();
+                $('#hiddenButtons').show();
             }
         });
 
@@ -162,9 +273,10 @@
         });
 
         $('#assignVehToGroupModal').on('hidden.bs.modal', function () {
-            $('#assignVehicle').hide();
-            $('#selectGroupTable').find('.active').removeClass('active');
-            $(this).find('form').trigger('reset');
+            $('#assignVehicle').hide().find('.select-group-cb');
+            let selGroup = $('#selectGroupTable').find('.active');
+            selGroup.find('.select-group-cb').prop('checked', false);
+            selGroup.find('.active').removeClass('active');
         });
 
         $('#assignVehicle').on('click', function() {
@@ -196,7 +308,6 @@
                     }
                 });
             }
-
         });
     </script>
 @endsection

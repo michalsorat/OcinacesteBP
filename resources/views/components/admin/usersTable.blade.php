@@ -30,20 +30,18 @@
             <td>{{ $user->email }}</td>
             <td>{{ $user->Rola['nazov'] }}</td>
             <td>{{ $user->created_at }}</td>
-            <td>
+            <td class="pl-5">
                 @if($user->rola_id != 3)
-                    <button type="submit" class="editUserRoleBtn" data-toggle="modal" data-target="#editUserRole-modal-{{ $user->id }}">
+                    <button type="button" class="editUserRoleBtn" data-toggle="modal" data-target="#editUserRole-modal-{{ $user->id }}">
                         <i class="fas fa-edit"></i>
                     </button>
                 @endif
             </td>
-            <td>
+            <td class="pl-5">
                 @if($user->rola_id != 3)
-                    <button type="submit" class="deleteUserBtn" data-toggle="modal" data-target="#delete-modal-{{ $user->id }}">
+                    <button type="button" class="deleteUserBtn" data-toggle="modal" data-target="#delete-modal-{{ $user->id }}">
                         <i class="far fa-trash-alt"></i>
                     </button>
-{{--                    <label for="deleteUserIcon" class="btn"><i class="far fa-trash-alt"></i></label>--}}
-{{--                    <input id="deleteUserIcon" type="submit" data-toggle="modal" data-target="#delete-modal-{{ $user->id }}" hidden />--}}
                 @endif
             </td>
         </tr>

@@ -314,13 +314,18 @@ body {
     background-color: rgba(0,0,0,.075);
 }
 
-.editUserRoleBtn, .deleteUserBtn {
+.editUserRoleBtn, .deleteUserBtn, .hint {
     border: 0;
     background-color: transparent;
     cursor: pointer;
 }
 
-#addVehicleToGroup, #assignVehicle {
+.hint {
+    margin: 0 10px 3px 10px;
+    font-size: 1.3rem;
+}
+
+#hiddenButtons, #assignVehicle, #cancelChangeCat {
     display: none;
 }
 
