@@ -1425,6 +1425,34 @@ class ProblemController extends Controller
     }
 
     public function storeBump(Request $request) {
+
+        $radius_meters = 10;
+
+        $coordinates = $request->get("poloha");
+        $coordinates_array = explode(',', $coordinates);
+        $latitude = $coordinates_array[0];
+        $longitude = $coordinates_array[1];
+
+        // Find any problems which are closer than specified radius
+        $problems = Problem::selectRaw("problem_id,
+                         ( 6371000 * acos( cos( radians(?) ) *
+                           cos( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) )
+                           * cos( radians( CAST(SUBSTRING_INDEX(poloha,',',-1) AS DOUBLE) ) - radians(?)
+                           ) + sin( radians(?) ) *
+                           sin( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) ) )
+                         ) AS distance", [$latitude, $longitude, $latitude])
+            ->where('isBump', '=', 1)
+            ->having("distance", "<", $radius_meters)
+            ->orderBy("distance",'asc')
+            ->offset(0)
+            ->limit(1)
+            ->get();
+
+        if($problems->count() > 0) {
+            Problem::find($problems->get(0)['problem_id'])->increment('detection_count', 1);
+            return response()->json('ok');
+        }
+
         $request->request->add(['kategoria_problemu_id' => '1']);
         $request->request->add(['stav_problemu_id' => '2']);
         $request->request->add(['popis_problemu' => 'Automaticky detekovaný výtlk na ceste']);
