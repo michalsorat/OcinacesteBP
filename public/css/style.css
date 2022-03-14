@@ -293,19 +293,19 @@ body {
     font-size: 0.9rem;
 }
 
-#selectUsersTable, #selectGroupTable, #vehicleTableHolder {
+#selectUsersTable, #selectGroupTable, .tableHolderSlider {
     overflow-y:scroll;
     height:200px;
     display:block;
 }
 
-#vehicleTableHolder thead th {
+.tableHolderSlider thead th {
     position: sticky;
     top: 0;
     background-color: #f8f9fa;
 }
 
-.working-group-table tr, #selectUsersTable tr {
+.working-group-table tr, #selectUsersTable tr, .usersTable tr {
     cursor: pointer;
 }
 
@@ -325,7 +325,17 @@ body {
     font-size: 1.3rem;
 }
 
-#hiddenButtons, #assignVehicle, #cancelChangeCat {
+#hiddenButtons, #assignVehicle, #cancelChangeCat, #removeUsersBtn, #removeProblemsBtn, #assignProblemsBtn, #addUsersBtn {
     display: none;
 }
+
+.group-detail-chart {
+    position: absolute;
+    width: 45vw;
+    top: 56%;
+    right: 50px;
+}
+
+
+
 

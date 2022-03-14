@@ -69,9 +69,11 @@ Route::middleware(['auth', 'isManager'])->group(function () {
     Route::put('/removeProblemsFromGroup', 'ManagerController@removeProblemsFromGroup')->name('removeProblemsFromGroup');
     Route::get('/workingGroups', 'ManagerController@manageWorkingGroups')->name('manageWorkingGroups');
     Route::get('/workingGroupChart/{id}', 'ManagerController@workingGroupChart')->name('workingGroupChart');
-    Route::get('/workingGroupUsers/{id}', 'ManagerController@workingGroupUsers')->name('workingGroupUsers');
+    Route::get('/workingGroupDetail/{id}', 'ManagerController@workingGroupDetail')->name('workingGroupDetail');
     Route::put('/changeAssignedVehicle', 'ManagerController@changeAssignedVehicle')->name('changeAssignedVehicle');
     Route::put('/changeAssignedCategories/{id}', 'ManagerController@changeAssignedCategories')->name('changeAssignedCategories');
+    Route::put('/removeGroupUsers/{id}', 'ManagerController@removeGroupUsers')->name('removeGroupUsers');
+    Route::put('/addGroupUsers/{id}', 'ManagerController@addGroupUsers')->name('addGroupUsers');
     Route::post('/createVehicle', 'ManagerController@createVehicle')->name('createVehicle');
 });
 

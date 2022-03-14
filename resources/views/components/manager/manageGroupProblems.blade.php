@@ -40,7 +40,7 @@
                                 {{$priorities[$problem->priorita_id - 1]->priorita}}
                             </td>
                             <td data-th="Zvoľ">
-                                <input type="checkbox" class="removeCb" value="{{$problem->problem_id}}">
+                                <input type="checkbox" class="remove-problems-cb" value="{{$problem->problem_id}}">
                             </td>
                         </tr>
                         @php
@@ -104,7 +104,7 @@
                                 </select>
                             </td>
                             <td data-th="Zvoľ">
-                                <input type="checkbox" class="addCb" value="{{$problem->problem_id}}">
+                                <input type="checkbox" class="add-problems-cb" value="{{$problem->problem_id}}">
                             </td>
                         </tr>
                         @php
@@ -126,7 +126,7 @@
         let sel_problems = [];
         let sel_problems_priorities = [];
         let vehicleID = $('#vehicleProblems').val();
-        $('.addCb[type="checkbox"]:checked').each(function() {
+        $('.add-problems-cb[type="checkbox"]:checked').each(function() {
             let id = $(this).val();
             sel_problems.push(id);
             sel_problems_priorities.push($('#priority' + id).val());
@@ -151,7 +151,7 @@
     $('#removeProblemsBtn').on('click', function() {
         let sel_problems = [];
         let vehicleID = $('#vehicleProblems').val();
-        $('.removeCb[type="checkbox"]:checked').each(function() {
+        $('.remove-problems-cb[type="checkbox"]:checked').each(function() {
             sel_problems.push($(this).val());
         });
 
@@ -169,5 +169,23 @@
                 $('.manage-group-problems').html('Something went wrong');
             }
         });
+    });
+
+    $('.remove-problems-cb').on('change', function() {
+        if ($('.remove-problems-cb').is(':checked')) {
+            $('#removeProblemsBtn').show();
+        }
+        else {
+            $('#removeProblemsBtn').hide();
+        }
+    });
+
+    $('.add-problems-cb').on('change', function() {
+        if ($('.add-problems-cb').is(':checked')) {
+            $('#assignProblemsBtn').show();
+        }
+        else {
+            $('#assignProblemsBtn').hide();
+        }
     });
 </script>

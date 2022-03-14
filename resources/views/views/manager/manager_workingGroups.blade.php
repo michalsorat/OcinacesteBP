@@ -52,7 +52,7 @@
                     </button>
 
                     <h5 class="mt-5 ml-4 font-weight-bolder">Dostupné vozidlá</h5>
-                    <div id="vehicleTableHolder">
+                    <div class="tableHolderSlider">
                         <table class="table working-group-table" id="vehiclesTable">
                             <thead>
                             <tr class="text-center">
@@ -118,22 +118,34 @@
                         </div>
                     </div>
 
-                    <div class="row group-detail-users-categories mx-1">
-                        <div class="col-12 px-4">
-                            @if ($errors->has('newCategories'))
-                                <div class="alert alert-danger mt-3">
-                                    <span>Zvoľte aspoň jednu katégóriu riešených problémov čaty!</span>
-                                </div>
-                            @endif
-                            <h4 class="text-center my-5">Vyberte pracovnú čatu na zobrazenie detailov</h4>
-                        </div>
+{{--                    <div class="row">--}}
+{{--                        <div class="col-12 group-detail-users-categories mx-1">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-12 px-4">--}}
+{{--                                    @if ($errors->has('newCategories'))--}}
+{{--                                        <div class="alert alert-danger mt-3">--}}
+{{--                                            <span>Zvoľte aspoň jednu katégóriu riešených problémov čaty!</span>--}}
+{{--                                        </div>--}}
+{{--                                    @endif--}}
+{{--                                    <h4 class="text-center my-5">Vyberte pracovnú čatu na zobrazenie detailov</h4>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+
+{{--                        <div class="col-12  mx-5 mt-3">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-9 group-detail-chart">--}}
+
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+
+                    <div class="group-detail">
+
                     </div>
 
-                    <div class="row group-detail-chart mx-5">
-
-{{--                        <div class="col-9 group-detail-chart">--}}
-
-{{--                        </div>--}}
+                    <div class="group-detail-chart">
                     </div>
 
                 </div>
@@ -161,77 +173,75 @@
             $('#workingGroupsTable').find('.active').removeClass('active');
             $('#vehicleId-'+vehicleID).toggleClass('active');
 
-            $('.group-detail-chart').html('<canvas id="groupChart"></canvas>');
-
             $.ajax({
-                url:'/workingGroupUsers/'+ vehicleID,
+                url:'/workingGroupDetail/'+ vehicleID,
                 type:'GET',
                 success:function(data){
-                    $('.group-detail-users-categories').html(data);
-                },
-                error: function () {
-                    $('.group-detail-users-categories').html('Something went wrong');
-                }
-            });
+                    $('.group-detail').html(data);
+                    $('.group-detail-chart').html('<canvas id="groupChart"></canvas>');
+                    $.ajax({
+                        url: '/workingGroupChart/' + vehicleID,
+                        type: 'GET',
+                        success: function (data) {
+                            let months = ['Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
+                            let inProcessProbData = months.map((month, index) => {
+                                let dataObj = {};
+                                dataObj.monthName = month;
+                                dataObj.countNr = data.inProcessProbMonths[index];
+                                return dataObj;
+                            });
 
-            $.ajax({
-                url:'/workingGroupChart/'+ vehicleID,
-                type:'GET',
-                success:function(data) {
-                    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
-                    let inProcessProbData = months.map((month, index) => {
-                        let dataObj = {};
-                        dataObj.monthName = month;
-                        dataObj.countNr = data.inProcessProbMonths[index];
-                        return dataObj;
-                    });
+                            let endedProbData = months.map((month, index) => {
+                                let dataObj = {};
+                                dataObj.monthName = month;
+                                dataObj.countNr = data.finishedProbMonths[index];
+                                return dataObj;
+                            });
 
-                    let endedProbData = months.map((month, index) => {
-                        let dataObj = {};
-                        dataObj.monthName = month;
-                        dataObj.countNr = data.finishedProbMonths[index];
-                        return dataObj;
-                    });
-
-                    let ctx = $('#groupChart');
-                    var config = {
-                        type: 'bar',
-                        data: {
-                            datasets: [
-                                {
-                                    label: 'Počet vyriešených problémov',
-                                    maxBarThickness: 10,
-                                    data: endedProbData,
-                                    backgroundColor: 'rgb(13,134,72)',
-                                    parsing: {
-                                        xAxisKey: 'monthName',
-                                        yAxisKey: 'countNr'
-                                    }
+                            let ctx = $('#groupChart');
+                            var config = {
+                                type: 'bar',
+                                data: {
+                                    datasets: [
+                                        {
+                                            label: 'Počet vyriešených problémov',
+                                            maxBarThickness: 10,
+                                            data: endedProbData,
+                                            backgroundColor: 'rgb(13,134,72)',
+                                            parsing: {
+                                                xAxisKey: 'monthName',
+                                                yAxisKey: 'countNr'
+                                            }
+                                        },
+                                        {
+                                            label: 'Počet problémov v procese riešenia',
+                                            maxBarThickness: 10,
+                                            data: inProcessProbData,
+                                            backgroundColor: 'rgb(255,172,0)',
+                                            parsing: {
+                                                xAxisKey: 'monthName',
+                                                yAxisKey: 'countNr'
+                                            }
+                                        }
+                                    ],
                                 },
-                                {
-                                    label: 'Počet problémov v procese riešenia',
-                                    maxBarThickness: 10,
-                                    data: inProcessProbData,
-                                    backgroundColor: 'rgb(255,172,0)',
-                                    parsing: {
-                                        xAxisKey: 'monthName',
-                                        yAxisKey: 'countNr'
-                                    }
-                                }
-                            ],
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    },
+                                },
+                            }
+                            new Chart(ctx, config);
                         },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
-                            },
-                        },
-                    }
-                    new Chart(ctx, config);
+                        error: function () {
+                            $('.group-detail-chart').html('Something went wrong');
+                        }
+                    });
                 },
                 error: function () {
-                    $('.group-details').html('Something went wrong');
+                    $('.group-detail').html('Something went wrong');
                 }
             });
         });

@@ -31,7 +31,6 @@
 
                 </div>
 
-
                 <div class="form-group">
                     <h6 class="mt-4 mb-3 font-weight-bolder">Vyberte členov pracovnej čaty</h6>
                     <table id="selectUsersTable" class="table table-hover table-bordered">

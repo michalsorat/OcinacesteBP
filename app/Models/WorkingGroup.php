@@ -29,4 +29,9 @@ class WorkingGroup extends Model
         return $this->hasmany(Problem::class, 'working_group_id');
     }
 
+    public function history()
+    {
+        return $this->hasmany(WorkingGroupHistory::class, 'working_group_id');
+    }
+
 }

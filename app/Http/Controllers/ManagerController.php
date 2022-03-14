@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Charts\WorkingGroupChart;
 use App\Models\AssignedCategoriesToGroup;
 use App\Models\KategoriaProblemu;
 use App\Models\Priorita;
 use App\Models\Problem;
-use App\Models\StavProblemu;
 use App\Models\StavRieseniaProblemu;
 use App\Models\TypStavuRieseniaProblemu;
 use App\Models\Vozidlo;
 use App\Models\WorkingGroup;
+use App\Models\WorkingGroupHistory;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -91,22 +90,25 @@ class ManagerController extends Controller
 
     public function assignProblemsToGroup(Request $request) {
         for ($i = 0; $i < count($request->problemsToAssign); $i++) {
-            $problem = Problem::find($request->problemsToAssign[$i]);
+            $problem = Problem::where('problem_id', '=', $request->problemsToAssign[$i])->first();
             $problem->working_group_id = $request->workingGroupID;
             $problem->priorita_id = $request->prioritiesToAssign[$i];
             $problem->save();
             StavRieseniaProblemu::create(['problem_id' => $request->problemsToAssign[$i], 'typ_stavu_riesenia_problemu_id' => 3]); //v procese
+            WorkingGroupHistory::create(['working_group_id' => $request->workingGroupID, 'type' => 'Priradenie problému čate', 'description' => 'ID problému- '.$request->problemsToAssign[$i]]);
         }
         return $this->manageGroupProblems($request->workingGroupID);
     }
 
     public function removeProblemsFromGroup(Request $request) {
         for ($i = 0; $i < count($request->problemsToAssign); $i++) {
-            $problem = Problem::find($request->problemsToAssign[$i]);
+            $problem = Problem::where('problem_id', '=', $request->problemsToAssign[$i])->first();
             $problem->working_group_id = 0;
             $problem->priorita_id = 1;
             $problem->save();
             StavRieseniaProblemu::create(['problem_id' => $request->problemsToAssign[$i], 'typ_stavu_riesenia_problemu_id' => 5]); //odložené
+            WorkingGroupHistory::create(['working_group_id' => $request->workingGroupID, 'type' => 'Odobratie problému čate', 'description' => 'ID problému- '.$request->problemsToAssign[$i]]);
+
         }
         return $this->manageGroupProblems($request->workingGroupID);
     }
@@ -125,8 +127,13 @@ class ManagerController extends Controller
     }
 
     public function changeAssignedVehicle(Request $request) {
-        Vozidlo::where('vozidlo_id', '=', $request->oldVehicleID)->update(['working_group_id' => '0']);
-        Vozidlo::where('vozidlo_id', '=', $request->newVehicleID)->update(['working_group_id' => $request->workingGroupID]);
+        $oldVeh = Vozidlo::where('vozidlo_id', '=', $request->oldVehicleID)->first();
+        $newVeh = Vozidlo::where('vozidlo_id', '=', $request->newVehicleID)->first();
+        $oldVeh->working_group_id = 0;
+        $oldVeh->save();
+        $newVeh->working_group_id = $request->workingGroupID;
+        $newVeh->save();
+        WorkingGroupHistory::create(['working_group_id' => $request->workingGroupID, 'type' => 'Zmena vozidla', 'description' => $oldVeh->SPZ.' -> '.$newVeh->SPZ]);
 
         return json_encode(['res'=>true]);
     }
@@ -186,17 +193,20 @@ class ManagerController extends Controller
         ]);
     }
 
-    public function workingGroupUsers($id) {
+    public function workingGroupDetail($id) {
         $selGroup = WorkingGroup::whereHas('vehicle', function ($query) use ($id) {
             $query->where('vozidlo_id', '=', $id);
         })
             ->with('users')
             ->with('assignedCategories')
+            ->with('history')
             ->get();
         $categories = KategoriaProblemu::all();
+        $availUsers = User::where('rola_id', '=', '4')->where('working_group_id', '=', '0')->get();
 
-        return view('components.manager.workingGroupUsersCat')
+        return view('components.manager.workingGroupDetails')
             ->with('selGroup', $selGroup)
+            ->with('availUsers', $availUsers)
             ->with('categories', $categories);
     }
 
@@ -205,13 +215,50 @@ class ManagerController extends Controller
             'newCategories' => 'required',
         ]);
 
-        AssignedCategoriesToGroup::where('working_group_id', '=', $id)->delete();
-        foreach ($request->newCategories as $categoryId) {
-            AssignedCategoriesToGroup::create(['working_group_id' => $id, 'kategoria_problemu_id' => $categoryId]);
+        $oldAssignedCategories = AssignedCategoriesToGroup::where('working_group_id', '=', $id)->pluck('kategoria_problemu_id');
+        $result = array_diff($oldAssignedCategories->toArray(), $request->newCategories);
+        //ak je result prazdny newCategories pridavaju novu kategoriu
+        if (empty($result)) {
+            $result2 = array_diff($request->newCategories, $oldAssignedCategories->toArray());
+            foreach ($result2 as $addCategoryID) {
+                $category = KategoriaProblemu::where('kategoria_problemu_id', '=', $addCategoryID)->first();
+                AssignedCategoriesToGroup::create(['working_group_id' => $id, 'kategoria_problemu_id' => $addCategoryID]);
+                WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Pridaná kategória riešených problémov', 'description' => $category->nazov]);
+            }
+        }
+        //inak newCategories odoberaju kategoriu
+        else {
+            foreach ($result as $removeCategoryID) {
+                $category = KategoriaProblemu::where('kategoria_problemu_id', '=', $removeCategoryID)->first();
+                AssignedCategoriesToGroup::where('working_group_id', '=', $id)->where('kategoria_problemu_id', '=', $removeCategoryID)->delete();
+                WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Odobratá kategória riešených problémov', 'description' => $category->nazov]);
+            }
         }
 
         return redirect()->back()
             ->with('status', 'Kategórie riešených problémov úspešne zmenené!');
+    }
+
+    public function removeGroupUsers(Request $request, $id) {
+        foreach ($request->selected_users as $userID) {
+            $user = User::where('id', '=', $userID)->first();
+            $user->working_group_id = 0;
+            $user->save();
+            WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Odobratý pracovník čaty', 'description' => 'ID'.$user->id.' Meno-'.$user->name]);
+        }
+        return redirect()->back()
+            ->with('status', 'Zamestnanci z pracovnej čaty úspešne odstránení!');
+    }
+
+    public function addGroupUsers(Request $request, $id) {
+        foreach ($request->selected_users as $userID) {
+            $user = User::where('id', '=', $userID)->first();
+            $user->working_group_id = $id;
+            $user->save();
+            WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Priradený pracovník čate', 'description' => 'ID-'.$user->id.', '.$user->name]);
+        }
+        return redirect()->back()
+            ->with('status', 'Zamestnanci úspešne pridaní do pracovnej čaty!');
     }
 
     /**
@@ -239,13 +286,23 @@ class ManagerController extends Controller
         ]);
         WorkingGroup::create();
         $createdGroup = DB::table('working_groups')->latest('id')->first();
-        Vozidlo::where('vozidlo_id', '=', $request->selectedVehicle)->update(['working_group_id' => $createdGroup->id]);
+
+        $vehicle = Vozidlo::where('vozidlo_id', '=', $request->selectedVehicle)->first();
+        $vehicle->working_group_id = $createdGroup->id;
+        $vehicle->save();
+        WorkingGroupHistory::create(['working_group_id' => $createdGroup->id, 'type' => 'Priradené vozidlo', 'description' => 'Vozidlo '.$vehicle->SPZ]);
+
         foreach ($request->selected_users as $id) {
-            User::where('id', '=', $id)->update(['working_group_id' => $createdGroup->id]);
+            $user = User::where('id', '=', $id)->first();
+            $user->working_group_id = $createdGroup->id;
+            $user->save();
+            WorkingGroupHistory::create(['working_group_id' => $createdGroup->id, 'type' => 'Priradený pracovník čate', 'description' => 'ID-'.$user->id.', '.$user->name]);
         }
 
         foreach ($request->checkedCategories as $categoryId) {
+            $category = KategoriaProblemu::where('kategoria_problemu_id', '=', $categoryId)->first();
             AssignedCategoriesToGroup::create(['working_group_id' => $createdGroup->id, 'kategoria_problemu_id' => $categoryId]);
+            WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Pridaná kategória riešených problémov', 'description' => $category->nazov]);
         }
 
         return redirect()->back()

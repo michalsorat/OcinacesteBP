@@ -22,6 +22,34 @@
     }
 }
 
+@media (max-width: 1200px) {
+    .group-detail-chart {
+        width: 60vw;
+    }
+}
+
+@media (max-width: 992px) {
+    .group-detail-chart {
+        width: 65vw;
+        top: 65%;
+    }
+}
+
+@media (max-width: 768px) {
+    .group-detail-chart {
+        width: 90vw;
+        top: 100%;
+        margin-top: 20px;
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .group-detail-chart {
+        padding-left: 30px;
+    }
+}
+
 /*@media (max-width:650px){*/
 /*    .main_header{*/
 /*        margin-left: auto;*/
