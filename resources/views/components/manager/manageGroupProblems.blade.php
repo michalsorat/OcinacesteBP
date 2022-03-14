@@ -125,7 +125,7 @@
     $('#assignProblemsBtn').on('click', function() {
         let sel_problems = [];
         let sel_problems_priorities = [];
-        let vehicleID = $('#vehicleProblems').val();
+        let workingGroupID = $('#vehicleProblems').val();
         $('.add-problems-cb[type="checkbox"]:checked').each(function() {
             let id = $(this).val();
             sel_problems.push(id);
@@ -138,7 +138,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            data:{problemsToAssign:sel_problems, prioritiesToAssign:sel_problems_priorities, workingGroupID:vehicleID},
+            data:{problemsToAssign:sel_problems, prioritiesToAssign:sel_problems_priorities, workingGroupID:workingGroupID},
             success:function(data){
                 $('.manage-group-problems').html(data);
             },
@@ -150,7 +150,7 @@
 
     $('#removeProblemsBtn').on('click', function() {
         let sel_problems = [];
-        let vehicleID = $('#vehicleProblems').val();
+        let workingGroupID = $('#vehicleProblems').val();
         $('.remove-problems-cb[type="checkbox"]:checked').each(function() {
             sel_problems.push($(this).val());
         });
@@ -161,7 +161,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            data:{problemsToAssign:sel_problems, workingGroupID:vehicleID},
+            data:{problemsToAssign:sel_problems, workingGroupID:workingGroupID},
             success:function(data){
                 $('.manage-group-problems').html(data);
             },

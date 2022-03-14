@@ -14,41 +14,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xl-3 col-12 px-0 pb-3 bg-light">
-                    <h5 class="mt-lg-3 mt-2 ml-4 font-weight-bolder">Pracovné čaty</h5>
-                    <table class="table working-group-table" id="workingGroupsTable">
-                        <thead>
-                            <tr class="text-center">
-                                <th scope="col">Vozidlo</th>
-                                <th scope="col">Počet zamestnancov</th>
-                                <th scope="col">Priradené kategórie</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($workingGroups as $workingGroup)
-                            <tr class="text-center group-row" id="vehicleId-{{$workingGroup->vehicle->vozidlo_id}}">
-                                <td>
-                                    <div>
-                                        {{$workingGroup->vehicle->oznacenie}}
-                                    </div>
-                                    <div>
-                                        {{$workingGroup->vehicle->SPZ}}
-                                    </div>
-                                </td>
-                                <td class="pt-4">{{count($workingGroup->users)}}</td>
-                                <td class="text-left pl-4">
-                                    @foreach($workingGroup->assignedCategories as $assignedCategory)
-                                        <div>
-                                            {{$categories[$assignedCategory->kategoria_problemu_id - 1]->nazov}}
-                                        </div>
-                                    @endforeach
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                    <button type="button" class="btn btn-secondary ml-3" data-toggle="modal" data-target="#createWorkingGroup">
-                        Vytvoriť novú
-                    </button>
+                    @include('components.manager.workingGroupsTable')
                 </div>
 
                 <div class="col-xl-9 col-12">
@@ -61,8 +27,8 @@
                                 <select
                                     id="vehicleProblems" class="input-filter form-input w-100" name="vehicleProblems">
                                     <option value="" selected disabled hidden>Zvoľte pracovnú čatu</option>
-                                    @foreach($vehicles as $vehicle)
-                                        <option value={{$vehicle->vozidlo_id}}>{{$vehicle->oznacenie}}, {{$vehicle->SPZ}}</option>
+                                    @foreach($workingGroups as $workingGroup)
+                                        <option value={{$workingGroup->id}}>{{$workingGroup->vehicle->oznacenie}}, {{$workingGroup->vehicle->SPZ}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -79,6 +45,8 @@
 
         @include('partials.manager.manager_createWorkingGroup')
 
+        @include('partials.manager.manager_deleteGroupConfirmation')
+
     </section>
 
     <script>
@@ -87,12 +55,12 @@
         }, 6000);
 
         $('#vehicleProblems').on('change', function() {
-            let vehicleID = $('#vehicleProblems').val();
+            let workingGroupID = $('#vehicleProblems').val();
             $('#workingGroupsTable').find('.active').removeClass('active');
-            $('#vehicleId-'+vehicleID).toggleClass('active');
+            $('#workingGroupID-'+workingGroupID).toggleClass('active');
 
             $.ajax({
-                url:'/manageGroupProblems/'+ vehicleID,
+                url:'/manageGroupProblems/'+ workingGroupID,
                 type:'GET',
                 success:function(data){
                     $('.manage-group-problems').html(data);
@@ -103,10 +71,7 @@
             });
         });
 
-        $('.group-row').on('click', function() {
-            let vehicleID = ($(this).attr('id')).split('-')[1];
-            $('#vehicleProblems').val(vehicleID).change();
-        });
+
 
     </script>
 @endsection

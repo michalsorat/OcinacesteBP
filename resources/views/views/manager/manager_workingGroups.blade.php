@@ -15,41 +15,7 @@
             <div class="row">
                 {{--                left side--}}
                 <div class="col-xl-4 col-12 px-0 pb-3 bg-light">
-                    <h5 class="mt-lg-3 mt-2 ml-4 font-weight-bolder">Pracovné čaty</h5>
-                    <table class="table working-group-table" id="workingGroupsTable">
-                        <thead>
-                        <tr class="text-center">
-                            <th scope="col">Vozidlo</th>
-                            <th scope="col">Počet zamestnancov</th>
-                            <th scope="col">Priradené kategórie</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($workingGroups as $workingGroup)
-                            <tr class="text-center group-row-main" id="vehicleId-{{$workingGroup->vehicle->vozidlo_id}}">
-                                <td>
-                                    <div>
-                                        {{$workingGroup->vehicle->oznacenie}}
-                                    </div>
-                                    <div>
-                                        {{$workingGroup->vehicle->SPZ}}
-                                    </div>
-                                </td>
-                                <td class="pt-4">{{count($workingGroup->users)}}</td>
-                                <td class="text-left pl-4">
-                                    @foreach($workingGroup->assignedCategories as $assignedCategory)
-                                        <div>
-                                            {{$categories[$assignedCategory->kategoria_problemu_id - 1]->nazov}}
-                                        </div>
-                                    @endforeach
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                    <button type="button" class="btn btn-secondary ml-3" data-toggle="modal" data-target="#createWorkingGroup">
-                        Vytvoriť novú
-                    </button>
+                    @include('components.manager.workingGroupsTable')
 
                     <h5 class="mt-5 ml-4 font-weight-bolder">Dostupné vozidlá</h5>
                     <div class="tableHolderSlider">
@@ -107,11 +73,10 @@
                         <div class="row col-12 col-md-6 col-lg-5 col-xl-4">
                             <label for="vehicleProblems" class="col-12 col-sm-6 col-md-5 col-lg-5 p-md-0">Vyber vozidlo čaty</label>
                             <div class="col-sm-6 col-12 col-md-7 col-lg-7 pl-md-0">
-                                <select
-                                    id="vehicleProblems" class="input-filter form-input w-100" name="vehicleProblems">
+                                <select id="vehicleProblems" class="input-filter form-input w-100" name="vehicleProblems">
                                     <option value="" selected disabled hidden>Zvoľte pracovnú čatu</option>
                                     @foreach($workingGroups as $workingGroup)
-                                        <option value={{$workingGroup->vehicle->vozidlo_id}}>{{$workingGroup->vehicle->oznacenie}}, {{$workingGroup->vehicle->SPZ}}</option>
+                                        <option value={{$workingGroup->id}}>{{$workingGroup->vehicle->oznacenie}}, {{$workingGroup->vehicle->SPZ}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -145,6 +110,8 @@
 
     @include('partials.manager.manager_createVehicle')
 
+    @include('partials.manager.manager_deleteGroupConfirmation')
+
     <script>
         setInterval(function () {
             $(".alert").fadeOut();
@@ -155,18 +122,18 @@
         });
 
         $('#vehicleProblems').on('change', function() {
-            let vehicleID = $('#vehicleProblems').val();
+            let workingGroupID = $('#vehicleProblems').val();
             $('#workingGroupsTable').find('.active').removeClass('active');
-            $('#vehicleId-'+vehicleID).toggleClass('active');
+            $('#workingGroupID-'+workingGroupID).toggleClass('active');
 
             $.ajax({
-                url:'/workingGroupDetail/'+ vehicleID,
+                url:'/workingGroupDetail/'+ workingGroupID,
                 type:'GET',
                 success:function(data){
                     $('.group-detail').html(data);
                     $('.group-detail-chart').html('<canvas id="groupChart"></canvas>');
                     $.ajax({
-                        url: '/workingGroupChart/' + vehicleID,
+                        url: '/workingGroupChart/' + workingGroupID,
                         type: 'GET',
                         success: function (data) {
                             let months = ['Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
@@ -232,14 +199,19 @@
             });
         });
 
-        $('.group-row-main').on('click', function() {
-            let vehicleID = ($(this).attr('id')).split('-')[1];
-            $('#vehicleProblems').val(vehicleID).change();
-        });
+        // $('.group-row-main').on('click', function() {
+        //     let workingGroupID = ($(this).attr('id')).split('-')[1];
+        //     $('#vehicleProblems').val(workingGroupID).change();
+        //     $('#deleteWorkingGroupBtn').show();
+        // });
+        //
+        // $('#deleteWorkingGroupBtn').on('click', function() {
+        //     let workingGroupID = ($('#workingGroupsTable').find('.active').attr('id')).split('-')[1];
+        //     $('#deleteWorkingGroup').find('.modal-body').find('#workingGroupID').val(workingGroupID);
+        // });
 
         $('.vehicle-row').on('click', function() {
             $('#vehiclesTable').find('.active').removeClass('active');
-            // let vehicleID = ($(this).attr('id')).split('-')[1];
             let cb = $(this).find('.add-vehicle-cb');
             if (cb.is(':checked')) {
                 cb.prop('checked', false);

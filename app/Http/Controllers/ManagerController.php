@@ -50,9 +50,7 @@ class ManagerController extends Controller
         $solStatusTypes = TypStavuRieseniaProblemu::all();
         $priorities = Priorita::all();
 
-        $groupProblems = WorkingGroup::whereHas('vehicle', function ($query) use ($id) {
-                $query->where('vozidlo_id', '=', $id);
-            })
+        $groupProblems = WorkingGroup::where('id', '=', $id)
             ->with('assignedCategories')
             ->with('assignedProblems')
             ->get();
@@ -162,9 +160,7 @@ class ManagerController extends Controller
     }
 
     public function workingGroupChart($id) {
-        $groupProblems = WorkingGroup::whereHas('vehicle', function ($query) use ($id) {
-            $query->where('vozidlo_id', '=', $id);
-        })
+        $groupProblems = WorkingGroup::where('id', '=', $id)
             ->with('assignedProblems')
             ->get();
 
@@ -193,9 +189,7 @@ class ManagerController extends Controller
     }
 
     public function workingGroupDetail($id) {
-        $selGroup = WorkingGroup::whereHas('vehicle', function ($query) use ($id) {
-            $query->where('vozidlo_id', '=', $id);
-        })
+        $selGroup = WorkingGroup::where('id', '=', $id)
             ->with('users')
             ->with('assignedCategories')
             ->with('history')
@@ -254,6 +248,20 @@ class ManagerController extends Controller
         }
         return redirect()->back()
             ->with('status', 'Zamestnanci úspešne pridaní do pracovnej čaty!');
+    }
+
+    public function deleteWorkingGroup(Request $request){
+        $workingGroup = WorkingGroup::where('id', '=', $request->workingGroupID)->first();
+
+        $workingGroup->assignedProblems()->update(['working_group_id' => 0]);
+        $workingGroup->users()->update(['working_group_id' => 0]);
+        $workingGroup->vehicle()->update(['working_group_id' => 0]);
+        $workingGroup->assignedCategories()->delete();
+        $workingGroup->history()->delete();
+        $workingGroup->delete();
+
+        return redirect()->back()
+            ->with('status', 'Pracovná čata úspešne zmazaná!');
     }
 
     /**

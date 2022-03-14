@@ -325,7 +325,7 @@ body {
     font-size: 1.3rem;
 }
 
-#hiddenButtons, #assignVehicle, #cancelChangeCat, #removeUsersBtn, #removeProblemsBtn, #assignProblemsBtn, #addUsersBtn {
+#hiddenButtons, #assignVehicle, #cancelChangeCat, #removeUsersBtn, #removeProblemsBtn, #assignProblemsBtn, #addUsersBtn, #deleteWorkingGroupBtn {
     display: none;
 }
 

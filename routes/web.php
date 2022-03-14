@@ -77,6 +77,8 @@ Route::middleware(['auth', 'isManager'])->group(function () {
     Route::put('/removeGroupUsers/{id}', 'ManagerController@removeGroupUsers')->name('removeGroupUsers');
     Route::put('/addGroupUsers/{id}', 'ManagerController@addGroupUsers')->name('addGroupUsers');
     Route::post('/createVehicle', 'ManagerController@createVehicle')->name('createVehicle');
+    Route::delete('/deleteWorkingGroup', 'ManagerController@deleteWorkingGroup')->name('deleteWorkingGroup');
+
 });
 
 Route::middleware(['auth', 'isWorker'])->group(function () {
