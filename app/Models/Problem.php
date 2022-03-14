@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Problem extends Model
 {
     protected $fillable = ['problem_id', 'poloha', 'address', 'popis_problemu', 'priorita_id', 'cesta_id', 'pouzivatel_id',
-        'kategoria_problemu_id', 'stav_problemu_id', 'isBump', 'working_group_id', 'detection_count'
+        'kategoria_problemu_id', 'stav_problemu_id', 'isBump', 'working_group_id', 'detection_count', 'detection_speed_kmh'
     ];
 
     protected $table = 'problem';
