@@ -39,7 +39,7 @@
         @if(($availUsers)->isEmpty())
             <h5 class="text-center mt-4 font-weight-bolder">Žiadny zamestnanci na priradenie</h5>
         @else
-            <h6 class="mt-4 mb-3 font-weight-bolder">Dostupný zamestnanci na priradenie pracovnej čate</h6>
+            <h6 class="mt-4 mb-3 font-weight-bolder">Dostupní zamestnanci na priradenie pracovnej čate</h6>
             <form class="tableHolderSlider" id="addUsersForm" method="POST" action="{{ route('addGroupUsers', $selGroup[0]->id) }}">
                 @csrf
                 @method('PUT')
@@ -98,36 +98,6 @@
         </button>
     </form>
 </div>
-
-{{--<div class="row mt-lg-4 mt-xl-5">--}}
-{{--    <form class="col-md-3 assigned-categories form-group" id="changeCatForm" method="POST" action="{{ route('changeAssignedCategories', $selGroup[0]->id) }}">--}}
-{{--        @csrf--}}
-{{--        @method('PUT')--}}
-
-{{--        <h6 class="mt-4 mb-3 font-weight-bolder">Kategórie riešených problémov</h6>--}}
-
-{{--        @foreach($categories as $category)--}}
-{{--            <div class="form-check my-1">--}}
-{{--                <input class="form-check-input categories-input" type="checkbox" name="newCategories[]" value="{{$category->kategoria_problemu_id}}"/>--}}
-{{--                <label class="form-check-label">--}}
-{{--                    {{$category->nazov}}--}}
-{{--                </label>--}}
-{{--            </div>--}}
-{{--        @endforeach--}}
-
-{{--        <button type="button" class="btn btn-sm btn-secondary float-right mt-2 mb-4" id="changeAssignedCatBtn">--}}
-{{--            Zmeň kategórie--}}
-{{--        </button>--}}
-
-{{--        <button type="button" class="btn btn-sm btn-danger float-right mt-2 mr-2" id="cancelChangeCat">--}}
-{{--            Zrušiť--}}
-{{--        </button>--}}
-
-{{--        <button type="button" class="btn btn-secondary btn-block mt-5" data-toggle="modal" data-target="#historyModal">--}}
-{{--            História pracovnej čaty--}}
-{{--        </button>--}}
-{{--    </form>--}}
-{{--</div>--}}
 
 @include('partials.manager.manager_workingGroupHistory')
 

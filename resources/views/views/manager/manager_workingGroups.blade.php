@@ -118,31 +118,17 @@
                         </div>
                     </div>
 
-{{--                    <div class="row">--}}
-{{--                        <div class="col-12 group-detail-users-categories mx-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-12 px-4">--}}
-{{--                                    @if ($errors->has('newCategories'))--}}
-{{--                                        <div class="alert alert-danger mt-3">--}}
-{{--                                            <span>Zvoľte aspoň jednu katégóriu riešených problémov čaty!</span>--}}
-{{--                                        </div>--}}
-{{--                                    @endif--}}
-{{--                                    <h4 class="text-center my-5">Vyberte pracovnú čatu na zobrazenie detailov</h4>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-
-{{--                        <div class="col-12  mx-5 mt-3">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-9 group-detail-chart">--}}
-
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-
                     <div class="group-detail">
-
+                        <div class="row">
+                            <div class="col-12 px-4">
+                                <h4 class="text-center my-5">Vyberte pracovnú čatu na zobrazenie detailov</h4>
+                                @if ($errors->has('newCategories'))
+                                    <div class="alert alert-danger mt-3">
+                                        <span>Zvoľte aspoň jednu katégóriu riešených problémov čaty!</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
 
                     <div class="group-detail-chart">

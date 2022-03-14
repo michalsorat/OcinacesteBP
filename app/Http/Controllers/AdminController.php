@@ -103,6 +103,15 @@ class AdminController extends Controller
         return response()->json($returnArr);
     }
 
+    public function userRoleInfo($id) {
+        $user = User::findOrFail($id);
+        $roles = Rola::all();
+
+        return view('partials.admin.admin_editRole')
+            ->with('user', $user)
+            ->with('roles', $roles);
+    }
+
     public function create()
     {
         //
@@ -128,8 +137,17 @@ class AdminController extends Controller
         $user = User::find($id);
         $user->rola_id = $request->rola_id;
         $user->save();
+
         return redirect()->back()
             ->with('status', 'Používateľská rola úspešne zmenená!');
+    }
+
+    public function deleteUser(Request $request) {
+        $user = User::findOrFail($request->userID);
+        $user->delete();
+
+        return redirect()->back()
+            ->with('status', 'Účet úspešne zmazaný!');
     }
 
     public function destroy($id)

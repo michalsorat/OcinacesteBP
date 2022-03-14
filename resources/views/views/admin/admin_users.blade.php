@@ -55,14 +55,14 @@
                         <div class="filter-option col-12">
                             <h6 class="p-1 border-bottom">Používateľské roly</h6>
                             @foreach($roles as $role)
+                                <div class="form-check ml-3">
                                 @if($role->rola_id != 2)
-                                    <div class="form-check ml-3">
-                                        <input class="role-check form-check-input" type="checkbox" value="{{$role->rola_id}}" id="checkbox" name="checkedRoles[]" checked>
-                                        <label class="form-check-label" for="checkbox">
-                                            {{$role->nazov}}
-                                        </label>
-                                    </div>
+                                    <input class="role-check form-check-input" type="checkbox" value="{{$role->rola_id}}" id="checkbox{{$role->rola_id}}" name="checkedRoles[]" checked>
+                                    <label class="form-check-label" for="checkbox{{$role->rola_id}}">
+                                        {{$role->nazov}}
+                                    </label>
                                 @endif
+                                </div>
                             @endforeach
                         </div>
                         <div class="filter-option col-12 col-md-6 col-xl-12">

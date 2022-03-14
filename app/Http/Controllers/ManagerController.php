@@ -26,7 +26,6 @@ class ManagerController extends Controller
      */
     public function index()
     {
-        $users = User::where('rola_id', '=', '4')->get();
         $availUsers = User::where('rola_id', '=', '4')->where('working_group_id', '=', '0')->get();
         $availVehicles = Vozidlo::where('working_group_id', '=', '0')->get();
         $vehicles = Vozidlo::where('working_group_id', '!=', '0')->get();
@@ -201,6 +200,7 @@ class ManagerController extends Controller
             ->with('assignedCategories')
             ->with('history')
             ->get();
+
         $categories = KategoriaProblemu::all();
         $availUsers = User::where('rola_id', '=', '4')->where('working_group_id', '=', '0')->get();
 
@@ -217,22 +217,17 @@ class ManagerController extends Controller
 
         $oldAssignedCategories = AssignedCategoriesToGroup::where('working_group_id', '=', $id)->pluck('kategoria_problemu_id');
         $result = array_diff($oldAssignedCategories->toArray(), $request->newCategories);
-        //ak je result prazdny newCategories pridavaju novu kategoriu
-        if (empty($result)) {
-            $result2 = array_diff($request->newCategories, $oldAssignedCategories->toArray());
-            foreach ($result2 as $addCategoryID) {
-                $category = KategoriaProblemu::where('kategoria_problemu_id', '=', $addCategoryID)->first();
-                AssignedCategoriesToGroup::create(['working_group_id' => $id, 'kategoria_problemu_id' => $addCategoryID]);
-                WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Pridaná kategória riešených problémov', 'description' => $category->nazov]);
-            }
+        $result2 = array_diff($request->newCategories, $oldAssignedCategories->toArray());
+
+        foreach ($result2 as $addCategoryID) {
+            $category = KategoriaProblemu::where('kategoria_problemu_id', '=', $addCategoryID)->first();
+            AssignedCategoriesToGroup::create(['working_group_id' => $id, 'kategoria_problemu_id' => $addCategoryID]);
+            WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Pridaná kategória riešených problémov', 'description' => $category->nazov]);
         }
-        //inak newCategories odoberaju kategoriu
-        else {
-            foreach ($result as $removeCategoryID) {
-                $category = KategoriaProblemu::where('kategoria_problemu_id', '=', $removeCategoryID)->first();
-                AssignedCategoriesToGroup::where('working_group_id', '=', $id)->where('kategoria_problemu_id', '=', $removeCategoryID)->delete();
-                WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Odobratá kategória riešených problémov', 'description' => $category->nazov]);
-            }
+        foreach ($result as $removeCategoryID) {
+            $category = KategoriaProblemu::where('kategoria_problemu_id', '=', $removeCategoryID)->first();
+            AssignedCategoriesToGroup::where('working_group_id', '=', $id)->where('kategoria_problemu_id', '=', $removeCategoryID)->delete();
+            WorkingGroupHistory::create(['working_group_id' => $id, 'type' => 'Odobratá kategória riešených problémov', 'description' => $category->nazov]);
         }
 
         return redirect()->back()
@@ -284,8 +279,7 @@ class ManagerController extends Controller
             'selected_users' => 'required',
             'checkedCategories' => 'required',
         ]);
-        WorkingGroup::create();
-        $createdGroup = DB::table('working_groups')->latest('id')->first();
+        $createdGroup = WorkingGroup::create();
 
         $vehicle = Vozidlo::where('vozidlo_id', '=', $request->selectedVehicle)->first();
         $vehicle->working_group_id = $createdGroup->id;

@@ -32,14 +32,14 @@
             <td>{{ $user->created_at }}</td>
             <td class="pl-5">
                 @if($user->rola_id != 3)
-                    <button type="button" class="editUserRoleBtn" data-toggle="modal" data-target="#editUserRole-modal-{{ $user->id }}">
+                    <button type="button" class="editUserRoleBtn" data-toggle="modal" data-id="{{ $user->id }}" data-target="#editUserRole-modal">
                         <i class="fas fa-edit"></i>
                     </button>
                 @endif
             </td>
             <td class="pl-5">
                 @if($user->rola_id != 3)
-                    <button type="button" class="deleteUserBtn" data-toggle="modal" data-target="#delete-modal-{{ $user->id }}">
+                    <button type="button" class="deleteUserBtn" data-toggle="modal" data-id="{{ $user->id }}" data-target="#deleteUser-modal">
                         <i class="far fa-trash-alt"></i>
                     </button>
                 @endif
@@ -48,105 +48,57 @@
         @php
             $counter++;
         @endphp
-
-
-        <div id="delete-modal-{{ $user->id }}" class="modal delete-modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Vymazať používateľa</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Ste si istý, že chcete vymazať tento účet?</p>
-                        <div class="form-group d-flex justify-content-center mt-4">
-                            <button type="button" class="btn btn-primary cancel mr-4"
-                                    data-dismiss="modal"
-                                    aria-label="Close">Zrušiť
-                            </button>
-
-                            <form action="{{ route('pouzivatelia.destroy', $user->id) }}"
-                                  method="POST">
-                                @method('DELETE')
-                                @csrf
-                                <button type="submit" class="btn btn-danger">
-                                    Vymazať
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="editUserRole-modal-{{ $user->id }}" class="modal edit-modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Zmeň rolu používateľovi</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <form action="{{ route('admin.update', $user->id) }}" method="POST" class="row w-100">
-                            @csrf
-                            @method('PUT')
-
-                            <div class="form-group row">
-                                <label for="actualRole" class="col-md-4 col-form-label text-md-right">Aktuálna rola</label>
-
-                                <div class="col-md-6">
-                                    <span id="actualRole" class="form-control">{{$user->Rola['nazov']}}</span>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="changeRole" class="col-md-4 col-form-label text-md-right">Zmeniť na</label>
-
-                                <div class="col-md-6">
-                                    <select id="rola_id" class="form-control" name="rola_id">
-                                        @foreach($roles as $role)
-
-                                            @if($role->rola_id == $user->rola_id)
-                                                <option value="{{ $role->rola_id }}"
-                                                        selected>{{ $role->nazov }}</option>
-
-                                            @elseif($role->rola_id != 2 && $role->rola_id != 3)
-                                                <option
-                                                    value="{{ $role->rola_id }}">{{ $role->nazov }}</option>
-                                            @endif
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group d-flex justify-content-center mt-4">
-                                <button type="button" class="btn btn-primary mr-4"
-                                        data-dismiss="modal"
-                                        aria-label="Close">Zrušiť
-                                </button>
-
-                                <button type="submit" class="btn btn-success">
-                                    Aktualizovať rolu
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
     @endforeach
-
     </tbody>
-
 </table>
 
+<div id="editUserRole-modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Zmeň rolu používateľovi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @include('partials.admin.admin_editRole')
+        </div>
+    </div>
+</div>
+
+<div id="deleteUser-modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vymazať používateľa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Ste si istý, že chcete vymazať tento účet?</p>
+                <div class="form-group d-flex justify-content-center mt-4">
+                    <button type="button" class="btn btn-primary cancel mr-4"
+                            data-dismiss="modal"
+                            aria-label="Close">Zrušiť
+                    </button>
+
+                    <form action="{{ route('deleteUser') }}" method="POST">
+                        @method('DELETE')
+                        @csrf
+                        <button type="submit" class="btn btn-danger">
+                            Vymazať
+                        </button>
+                        <input type="text" id="userID" name="userID" value="" hidden/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @else
-    <h1>Žiadne výsledky</h1>
+    <h2 class="text-center my-3">Žiadne výsledky</h2>
 @endif
 
 
@@ -156,3 +108,28 @@
 @if(!empty(Session::get('error')))
     <div class="alert alert-danger"> {{ Session::get('error') }}</div>
 @endif
+
+<script>
+    $('.editUserRoleBtn').on('click', function (){
+        let clickedUserID = ($(this).data('id'));
+
+        $.ajax({
+            url:'/userRoleInfo/'+ clickedUserID,
+            type:'GET',
+            success:function(data){
+                let editRoleModal = $('#editUserRole-modal');
+                editRoleModal.find('.modal-body').html(data);
+                editRoleModal.modal('show');
+            },
+            error: function () {
+                let editRoleModal = $('#editUserRole-modal');
+                editRoleModal.html('Something went wrong!');
+                editRoleModal.modal('show');
+            }
+        });
+    });
+
+    $('.deleteUserBtn').on('click', function (){
+        $('#deleteUser-modal').find('.modal-body').find('#userID').val($(this).data('id'));
+    });
+</script>

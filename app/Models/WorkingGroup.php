@@ -31,7 +31,7 @@ class WorkingGroup extends Model
 
     public function history()
     {
-        return $this->hasmany(WorkingGroupHistory::class, 'working_group_id');
+        return $this->hasmany(WorkingGroupHistory::class, 'working_group_id')->orderBy('created_at', 'desc');;
     }
 
 }

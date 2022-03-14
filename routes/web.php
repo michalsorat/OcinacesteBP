@@ -60,6 +60,8 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/autocompleteUser', 'AdminController@autocomplete')->name('autocompleteUser');
     Route::get('/filter', 'AdminController@filter')->name('adminFilter');
     Route::get('/updateCounts', 'AdminController@countProblemsOrUsers')->name('adminCounts');
+    Route::get('/userRoleInfo/{id}', 'AdminController@userRoleInfo')->name('userRoleInfo');
+    Route::delete('/deleteUser', 'AdminController@deleteUser')->name('deleteUser');
 });
 
 Route::middleware(['auth', 'isManager'])->group(function () {
