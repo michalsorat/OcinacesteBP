@@ -1501,6 +1501,10 @@ class ProblemController extends Controller
             FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $fileName]);
         }
 
+        if($request->input("is_from_app")) {
+            return response()->json('ok');
+        }
+
         return redirect('/')
             ->with('status', 'Hlasenie bolo úspešne prijaté!');
     }
