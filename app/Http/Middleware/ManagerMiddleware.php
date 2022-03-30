@@ -17,7 +17,7 @@ class ManagerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::user()->rola_id == '5'){
+        if (Auth::user()->rola_id == '5' || Auth::user()->rola_id == '3'){
             return $next($request);
         } else {
             return redirect('/')->withErrors("Unauthorized action");

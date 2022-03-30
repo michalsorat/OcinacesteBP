@@ -1,4 +1,4 @@
-@extends('layouts.citizen_app')
+@extends('layouts.app')
 
 @section('content')
     <script type="text/javascript">
@@ -147,7 +147,7 @@
                     + "<p>" + "<b>Stav problému: </b>" + stav + "</p>"
                     + "<p>" + "<b>Stav riešenia problému: </b>" + typ_stavu_riesenia + "</p>"
                     + "<p>" + "<b>Popis stavu riešenia problému: </b>" + popisRiesenia + "</p>"
-                    + "<a href='#' data-target='#imageGallery' data-toggle='modal' onclick='showImage(" + id + ")'>Galeria obrazkov</a>"
+                    + "<a href='#' data-target='#imageGallery' data-toggle='modal' onclick='showImage(" + id + ")'>Galéria obrázkov</a>"
             });
 
             marker.addListener('click', function () {
@@ -171,7 +171,7 @@
             let modalImg = document.getElementById("img01");
             $.ajax({
                 url: '/image/' + id,
-                type: 'get',
+                type: 'GET',
                 dataType: 'json',
                 success: function (response) {
                     if (response.length === 0) {
@@ -271,7 +271,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <img class="modal-content" id="img01" src="">
+                    <img class="modal-content" id="img01" src="" alt="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -303,7 +303,7 @@
                 </div>
             @endif
 
-            <form class="start-form" action="{{ route('welcomePage.store') }}" method="POST"
+            <form class="start-form" action="{{ route('createProblem') }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
                 <label for="location_field">
@@ -349,9 +349,4 @@
             </form>
         </div>
     </section>
-
-{{--    <script--}}
-{{--        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete">--}}
-{{--    </script>--}}
-
 @endsection

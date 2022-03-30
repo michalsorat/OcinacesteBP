@@ -1,4 +1,4 @@
-@extends('layouts.citizen_app')
+@extends('layouts.app')
 
 @section('content')
 
@@ -8,14 +8,11 @@
 
     <section>
         <div class="container-fluid">
-            <div class="row mt-lg-5 mt-3">
+            <div class="row mt-lg-5 mt-2">
                 <div class="filter-holder col-xl-2 col-lg-3 col-12 px-0">
-                    {{--                    <button--}}
-                    {{--                        class="btn btn-default" id="expand-filter-btn" type="button" data-toggle="collapse" data-target="#filter" aria-expanded="false" aria-controls="filter">Filters<span class="fa fa-filter pl-1"></span>--}}
-                    {{--                    </button>--}}
                     <form class="tableForm" action="{{ route('problem.index') }}" method="GET">
                         <div class="row mx-1" id="filter">
-                            <div class="filter-option col-6 col-lg-12">
+                            <div class="filter-option col-6 col-lg-12 mt-lg-0">
                                 <h6 class="p-1 border-bottom">Zoradiť podľa</h6>
                                 <select
                                     id="orderBy" class="input-filter form-input w-100"
@@ -73,18 +70,26 @@
                             <div>
                                 <input id="radius-dist" class="form-input w-100" name="radius" value="" readonly type="hidden">
                             </div>
-                            <div class="filter-option col-12 ml-4">
-                                <input class="form-check-input" type="checkbox" name="myProblems" id="myProblems">
-                                <label class="form-check-label" for="myProblems">
-                                    Zobraziť iba moje
+                            <div class="filter-option col-12 ml-3 custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="dontShowBumps" name="dontShowBumps">
+                                <label class="custom-control-label" for="dontShowBumps">
+                                    Nezobraziť automaticky detekované výtlky
                                 </label>
                             </div>
-                            <div class="col-6 my-3">
+                            @if(Auth::user() != null)
+                                <div class="filter-option col-12 ml-3 custom-control custom-switch">
+                                    <input class="custom-control-input" type="checkbox" name="myProblems" id="myProblems">
+                                    <label class="custom-control-label" for="myProblems">
+                                        Zobraziť iba moje
+                                    </label>
+                                </div>
+                            @endif
+                            <div class="col-6 col-lg-12 mt-3 mb-lg-0 my-3">
                                 <button type="button" class="btn btn-secondary w-100" data-toggle="modal" data-target="#locationModal">
                                     Zvoľte polohu
                                 </button>
                             </div>
-                            <div class=" col-6 my-3 d-lg-flex justify-content-end">
+                            <div class="col-6 col-lg-12 mt-3 mb-lg-0 my-3 d-lg-flex justify-content-end">
                                 <button class="btn btn-primary w-100" type="submit">Filtruj</button>
                             </div>
                         </div>

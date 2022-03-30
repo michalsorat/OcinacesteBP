@@ -1,4 +1,4 @@
-@extends('layouts.manager_app')
+@extends('layouts.app')
 
 @section('content')
     @if (session('status'))
@@ -58,8 +58,8 @@
                             Zmeniť vozidlo pracovnej čate
                         </button>
 
-                        <button type="button" class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#assignVehToGroupModal">
-                            Odstrániť vozidlo z evidencie
+                        <button type="button" class="btn btn-sm btn-danger btn-block" id="deleteVehicleBtn" data-toggle="modal" data-target="#deleteVehicleModal">
+                            Zmazať vozidlo z evidencie
                         </button>
                     </div>
 
@@ -111,6 +111,8 @@
     @include('partials.manager.manager_createVehicle')
 
     @include('partials.manager.manager_deleteGroupConfirmation')
+
+    @include('partials.manager.manager_deleteVehicleConfirmation')
 
     <script>
         setInterval(function () {
@@ -199,17 +201,6 @@
             });
         });
 
-        // $('.group-row-main').on('click', function() {
-        //     let workingGroupID = ($(this).attr('id')).split('-')[1];
-        //     $('#vehicleProblems').val(workingGroupID).change();
-        //     $('#deleteWorkingGroupBtn').show();
-        // });
-        //
-        // $('#deleteWorkingGroupBtn').on('click', function() {
-        //     let workingGroupID = ($('#workingGroupsTable').find('.active').attr('id')).split('-')[1];
-        //     $('#deleteWorkingGroup').find('.modal-body').find('#workingGroupID').val(workingGroupID);
-        // });
-
         $('.vehicle-row').on('click', function() {
             $('#vehiclesTable').find('.active').removeClass('active');
             let cb = $(this).find('.add-vehicle-cb');
@@ -276,6 +267,11 @@
                     }
                 });
             }
+        });
+
+        $('#deleteVehicleBtn').on('click', function() {
+            let vehicleID = $('#vehiclesTable').find('.active').find('.add-vehicle-cb').val();
+            $('#deleteVehicleModal').find('.modal-body').find('#vehicleID').val(vehicleID);
         });
     </script>
 @endsection

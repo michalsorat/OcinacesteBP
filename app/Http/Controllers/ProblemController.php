@@ -71,30 +71,14 @@ class ProblemController extends Controller
                 array_push($popisy_stavov_riesenia, $id);
             } else array_push($popisy_stavov_riesenia, 0);
         }
-        if (Auth::user() == null) {
-            return view('views.unregisteredCitizen.unregisteredCitizen_welcomePage')
-                ->with('problems', $problems)
-                ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
-                ->with('stavy_riesenia', $stavy_riesenia)
-                ->with('kategorie', $kategorie)
-                ->with('stavy', $stavyProblemu)
-                ->with('popisyAll', $popisyAll)
-                ->with('popisyArr', $popisy_stavov_riesenia);
-        }
-        else {
-            $role = Auth::user()->rola_id;
-            if ($role == 1) {
-                return view('views.registeredCitizen.registeredCitizen_welcomePage')
-                    ->with('problems', $problems)
-                    ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
-                    ->with('stavy_riesenia', $stavy_riesenia)
-                    ->with('kategorie', $kategorie)
-                    ->with('stavy', $stavyProblemu)
-                    ->with('popisyAll', $popisyAll)
-                    ->with('popisyArr', $popisy_stavov_riesenia);
-            }
-            //todo other roles
-        }
+        return view('views.map')
+            ->with('problems', $problems)
+            ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
+            ->with('stavy_riesenia', $stavy_riesenia)
+            ->with('kategorie', $kategorie)
+            ->with('stavy', $stavyProblemu)
+            ->with('popisyAll', $popisyAll)
+            ->with('popisyArr', $popisy_stavov_riesenia);
     }
 
     public function autocomplete(Request $request)
@@ -107,10 +91,6 @@ class ProblemController extends Controller
             array_push($addressArr, (json_decode($obj)->address));
         }
         return response()->json($addressArr);
-
-//        return Problem::select('address')
-//            ->where('address', 'LIKE', "%{$request->get('query')}%")
-//            ->pluck('address');
     }
 
     public function allProblemsJsonPagination(Request $request) {
@@ -162,6 +142,11 @@ class ProblemController extends Controller
         foreach ($finalTmp as $problem) {
             if ($request->myProblems != null && Auth::user() != null) {
                 if ($problem->pouzivatel_id != Auth::user()->id) {
+                    continue;
+                }
+            }
+            if ($request->dontShowBumps != null) {
+                if ($problem->isBump == 1) {
                     continue;
                 }
             }
@@ -218,7 +203,7 @@ class ProblemController extends Controller
             array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
         }
 
-        if (Auth::user() == null) {
+        if (Auth::user() == null || Auth::user()->rola_id == 1) {
             if ($request->ajax()){
                 return view('components.citizen.citizenProblemsTable')
                     ->with('problems', $paginator)
@@ -227,7 +212,7 @@ class ProblemController extends Controller
                     ->with('stavyProblemu', $stavyProblemu);
             }
             else {
-                return view('views.unregisteredCitizen.unregisteredCitizen_problemsTableFilter')
+                return view('views.citizen.citizen_problemsTable')
                     ->with('problems', $paginator)
                     ->with('stavy_riesenia', $stavy_riesenia)
                     ->with('typy_stavov_riesenia', $typy_stavov)
@@ -237,28 +222,6 @@ class ProblemController extends Controller
             }
         }
         else {
-            $rola = Auth::user()->rola_id;
-
-            //registered user
-            if ($rola == 1) {
-                if ($request->ajax()){
-                    return view('components.citizen.citizenProblemsTable')
-                        ->with('problems', $paginator)
-                        ->with('stavy_riesenia', $stavy_riesenia)
-                        ->with('typy_stavov_riesenia', $typy_stavov)
-                        ->with('stavyProblemu', $stavyProblemu);
-                }
-                else {
-                    return view('views.registeredCitizen.registeredCitizen_problemsTableFilter')
-                        ->with('problems', $paginator)
-                        ->with('stavy_riesenia', $stavy_riesenia)
-                        ->with('typy_stavov_riesenia', $typy_stavov)
-                        ->with('kategorie', $kategorie)
-                        ->with('stavyProblemu', $stavyProblemu)
-                        ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu);
-                }
-            }
-            else {
                 $problems = Problem::simplePaginate(10);
                 $users = User::all();
                 $vsetky_vozidla = Vozidlo::all();
@@ -342,7 +305,7 @@ class ProblemController extends Controller
                         ->with('priority', $priority)
                         ->with('VsetciZamestnanci', $zamestnanciAll);
             }
-        }
+//        }
     }
 
 
@@ -1388,15 +1351,6 @@ class ProblemController extends Controller
         }
     }
 
-//    public function welcomePageCreate()
-//    {
-//        $kategorie = KategoriaProblemu::all();
-//        $stavy = StavProblemu::all();
-//        return view('problem.unregisteredCitizen.nezaregistrovanyObcan_create')
-//            ->with('kategorie', $kategorie)
-//            ->with('stavy', $stavy);
-//    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -1410,7 +1364,6 @@ class ProblemController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'poloha' => 'required',
             'popis_problemu' => 'required'
@@ -1472,7 +1425,7 @@ class ProblemController extends Controller
         return response()->json('ok');
     }
 
-    public function welcomePageStore(Request $request)
+    public function createProblem(Request $request)
     {
         $request->validate([
             'poloha' => 'required',
@@ -1741,11 +1694,8 @@ class ProblemController extends Controller
 
     public function priradeneProblemyDispecerovi(User $user)
     {
-
         $dispecer = Auth::user()->id;
         $priradenyZamestnanec = PriradenyZamestnanec::where('zamestnanec_id', '=', $dispecer);
-
-
     }
 
     public function priradeniZamestnanci(Problem $problem)

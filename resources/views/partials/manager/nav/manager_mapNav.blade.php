@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <h1 class="main_header"><a href="{{ route('welcome') }}">Oči na ceste</a></h1>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <h1 class="main_header"><a href="{{ route('manager.index') }}">Oči na ceste</a></h1>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -7,21 +7,24 @@
     <div class="collapse navbar-collapse flex-md-column" id="navbarCollapse">
         <ul class="navbar-nav ml-auto welcomePage-nav mr-3">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>
+                <a class="nav-link px-md-1 px-lg-2" href="{{ route('welcome') }}">Mapa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('problem.index') }}">Zoznam problémov</a>
+                <a class="nav-link px-md-1 px-lg-2" href="#">Zoznam problémov</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('download') }}">Mobilná aplikácia</a>
+                <a class="nav-link" href="{{ route('manager.index') }}">Prideľ problémy čate</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">O projekte</a>
+                <a class="nav-link" href="{{ route('manageWorkingGroups') }}">Spravuj pracovné čaty</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Na schválenie</a>
             </li>
             @guest
                 <li class="nav-item active">
-{{--                    <button class="nav-link dropdown-toggle btn btn-success" id="welcome-page-login-link" data-toggle="dropdown">Prihlásiť sa</button>--}}
-                    <button class="nav-link btn btn-success" id="welcome-page-login-link" data-toggle="modal" data-target="#loginModal">Prihlásiť sa</button>
+                    {{--                    <button class="nav-link dropdown-toggle btn btn-success" id="welcome-page-login-link" data-toggle="dropdown">Prihlásiť sa</button>--}}
+                    <button class="nav-link px-md-1 px-lg-2 btn btn-success" id="welcome-page-login-link" data-toggle="modal" data-target="#loginModal">Prihlásiť sa</button>
                 </li>
             @else
                 <li class="nav-item dropdown">
@@ -54,7 +57,7 @@
         <form class="form-inline ml-auto mr-3">
             <div class="input-group">
                 <input id="search-input" class="typeahead form-control" type="search"
-                       placeholder="Vyhľadaj hlásenie podľa adresy" autocomplete="off" size="30">
+                       placeholder="Vyhľadaj hlásenie podľa adresy" autocomplete="off" size="35">
                 <span class="input-group-append">
                     <button id="search_btn" class="btn btn-outline-success" type="button">
                         <i class="fa fa-search"></i>

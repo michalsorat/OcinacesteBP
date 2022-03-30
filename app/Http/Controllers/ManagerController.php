@@ -137,7 +137,7 @@ class ManagerController extends Controller
 
     public function createVehicle(Request $request) {
         $request->validate([
-            'spz' => ['required', 'unique:Vozidlo,SPZ', 'size:7'],
+            'spz' => ['required', 'unique:vozidlo,SPZ', 'size:7'],
             'vehName' => 'required',
             'kmCount' => ['required', 'integer']
         ]);
@@ -164,8 +164,9 @@ class ManagerController extends Controller
             ->with('assignedProblems')
             ->get();
 
-        $inProcessProbMonths = new SplFixedArray(12);
-        $finishedProbMonths = new SplFixedArray(12);
+//        $inProcessProbMonths = new SplFixedArray(12);
+        $inProcessProbMonths = array(0,0,0,0,0,0,0,0,0,0,0,0);
+        $finishedProbMonths = array(0,0,0,0,0,0,0,0,0,0,0,0);
 
         foreach ($groupProblems[0]->assignedProblems as $assignedProblem) {
             $state = StavRieseniaProblemu::where('problem_id', '=', $assignedProblem->problem_id)
@@ -264,6 +265,12 @@ class ManagerController extends Controller
             ->with('status', 'Pracovná čata úspešne zmazaná!');
     }
 
+    public function deleteVehicle(Request $request) {
+        Vozidlo::where('vozidlo_id', '=', $request->vehicleID)->delete();
+
+        return redirect()->back()
+            ->with('status', 'Vozidlo úspešne odstránené z evidencie!');
+    }
     /**
      * Show the form for creating a new resource.
      *

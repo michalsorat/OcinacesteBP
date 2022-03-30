@@ -7,9 +7,9 @@
     <body>
         <header>
             @if(\Illuminate\Support\Facades\Request::is('/'))
-                @include('partials.citizen.welcomePage_nav')
+                @include('partials.citizen.citizen_mapNav')
             @else
-                @include('partials.citizen.allProblems_nav')
+                @include('partials.citizen.citizen_nav')
             @endif
             @guest
                 @include('auth.login')

@@ -6,11 +6,20 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto mr-3">
-{{--            <li class="nav-item">--}}
-{{--                <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>--}}
-{{--            </li>--}}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('problem.index') }}">Zoznam problémov</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('manager.index') }}">Prideľ problémy čate</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('manageWorkingGroups') }}">Spravuj pracovné čaty</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Na schválenie</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.index') }}">Používatelia</a>

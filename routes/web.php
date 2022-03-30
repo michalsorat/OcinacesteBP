@@ -37,7 +37,7 @@ Route::resource('problem', 'ProblemController');
 Route::resource('pouzivatelia', 'UserController');
 
 //Route::get('/welcomePage/create', 'ProblemController@welcomePageCreate')->name('welcomePage.create');
-Route::post('/welcomePage', 'ProblemController@welcomePageStore')->name('welcomePage.store');
+Route::post('/createProblem', 'ProblemController@createProblem')->name('createProblem');
 
 Route::get('/download', function()
 {
@@ -79,6 +79,7 @@ Route::middleware(['auth', 'isManager'])->group(function () {
     Route::put('/addGroupUsers/{id}', 'ManagerController@addGroupUsers')->name('addGroupUsers');
     Route::post('/createVehicle', 'ManagerController@createVehicle')->name('createVehicle');
     Route::delete('/deleteWorkingGroup', 'ManagerController@deleteWorkingGroup')->name('deleteWorkingGroup');
+    Route::delete('/deleteVehicle', 'ManagerController@deleteVehicle')->name('deleteVehicle');
 
 });
 
