@@ -99,7 +99,7 @@ class ProblemController extends Controller
     }
 
     public function allProblemsJson(Request $request) {
-        $problem = Problem::all('problem_id', 'poloha');
+        $problem = Problem::all('problem_id', 'poloha', 'kategoria_problemu_id');
         return response()->json($problem);
     }
 
