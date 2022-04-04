@@ -15,59 +15,7 @@
                 mapTypeId: 'roadmap'
             });
             addMarker(location, map, "{{ $problem->poloha }}");
-
-
-            // Create the search box and link it to the UI element.
-            var input = document.getElementById('pac-input');
-            var searchBox = new google.maps.places.SearchBox(input);
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-            // Bias the SearchBox results towards current map's viewport.
-            map.addListener('bounds_changed', function () {
-                searchBox.setBounds(map.getBounds());
-            });
-
-            var markers = [];
-            // Listen for the event fired when the user selects a prediction and retrieve
-            // more details for that place.
-            searchBox.addListener('places_changed', function () {
-                var places = searchBox.getPlaces();
-
-                if (places.length == 0) {
-                    return;
-                }
-
-                // Clear out the old markers.
-                markers.forEach(function (marker) {
-                    marker.setMap(null);
-                });
-                markers = [];
-
-                // For each place, get the icon, name and location.
-                var bounds = new google.maps.LatLngBounds();
-                places.forEach(function (place) {
-                    if (!place.geometry) {
-                        console.log("Returned place contains no geometry");
-                        return;
-                    }
-
-                    // Create a marker for each place.
-                    markers.push(new google.maps.Marker({
-                        map: map,
-                        title: place.name,
-                        position: place.geometry.location,
-                        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-                    }));
-
-                    if (place.geometry.viewport) {
-                        // Only geocodes have viewport.
-                        bounds.union(place.geometry.viewport);
-                    } else {
-                        bounds.extend(place.geometry.location);
-                    }
-                });
-                map.fitBounds(bounds);
-            });
+            console.log("{{ $problem->KategoriaProblemu['nazov'] }}");
         }
 
         /**
@@ -78,27 +26,37 @@
          * @return {google.maps.LatLng} An instance of google.maps.LatLng object
          */
         function getLocVar(lat, lng) {
-
             return new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
-
         }
 
         function split(str){
-            var res = str.split(",");
-
-            return res;
+            return str.split(",");
         }
 
         // Adds a marker to the map.
         function addMarker(location, map, poloha) {
-            // Add the marker at the clicked location, and add the next-available label
-            // from the array of alphabetical characters.
-            var marker = new google.maps.Marker({
+            let image;
+            let category = "{{ $problem->KategoriaProblemu['nazov'] }}";
+            console.log("{{ $problem->KategoriaProblemu['nazov'] }}");
+            if (category === 'Stav vozovky') {
+                image = "https://i.imgur.com/KlEk7Rn.png";
+            } else if (category === 'Dopravné značenie') {
+                image = "https://i.imgur.com/fuRl821.png";
+            } else if (category === 'Kvalita opravy') {
+                image = "https://i.imgur.com/8AinVKN.png";
+            } else if (category === 'Zeleň') {
+                image = "https://i.imgur.com/nUcHcHa.png";
+            }
+            //base marker
+            else {
+                image = "https://i.imgur.com/nHmUmuy.png";
+            }
+            new google.maps.Marker({
                 position: location,
                 animation: google.maps.Animation.DROP,
                 map: map,
+                icon: image,
                 title: "Poloha: " + poloha
-
             });
         }
 

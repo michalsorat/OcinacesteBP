@@ -1466,20 +1466,20 @@ class ProblemController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function show(Problem $problem)
     {
-        $rola = Auth::user()->rola_id;
-
+//        $problem = $problem->with('problemImage');
+//        dd($problem->toArray());
         $typ = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
             ->latest('stav_riesenia_problemu_id')->first();
         $popis_riesenia = PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
             ->latest('popis_stavu_riesenia_problemu_id')->first();
 
-
-        if ($rola == 1) {
-            return view('problem.registeredCitizen.obcan_detail', compact('problem', $problem))
+        if (Auth::user() == null || Auth::user()->rola_id == 1) {
+            return view('views.citizen.citizen_problemDetail')
+                ->with('problem', $problem)
                 ->with('stav_riesenia_problemu', $typ)
                 ->with('popis_stavu_riesenia', $popis_riesenia);
         } else {

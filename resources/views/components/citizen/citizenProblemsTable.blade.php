@@ -14,7 +14,8 @@
         $counter = 1;
     @endphp
     @foreach($problems as $problem)
-        <tr>
+        <tr class="problem-row" onclick="window.location='{{ route('problem.show', $problem->problem_id) }}'">
+            <input type="hidden" value="{{ $problem->problem_id }}"/>
             <td data-th="#" id="hashtagID">{{ $counter }}</td>
             <td data-th="Adresa">{{ $problem->address }}</td>
             <td data-th="Vytvorené dňa">{{ $problem->created_at }}</td>
@@ -74,3 +75,7 @@
         </ul>
     @endif
 </div>
+
+<script>
+
+</script>

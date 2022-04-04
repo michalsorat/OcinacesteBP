@@ -8,7 +8,7 @@
 
     <section>
         <div class="container-fluid">
-            <div class="row mt-lg-5 mt-3">
+            <div class="row mt-xl-5 mt-lg-4 mt-3">
                 <div class="filter-holder col-xl-2 col-lg-3 col-12 px-0">
                     {{--                    <button--}}
                     {{--                        class="btn btn-default" id="expand-filter-btn" type="button" data-toggle="collapse" data-target="#filter" aria-expanded="false" aria-controls="filter">Filters<span class="fa fa-filter pl-1"></span>--}}

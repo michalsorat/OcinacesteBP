@@ -8,7 +8,7 @@
 
     <section>
         <div class="container-fluid">
-            <div class="row mt-lg-5 mt-2">
+            <div class="row mt-xl-5 mt-md-4 mt-2">
                 <div class="filter-holder col-xl-2 col-lg-3 col-12 px-0">
                     <form class="tableForm" action="{{ route('problem.index') }}" method="GET">
                         <div class="row mx-1" id="filter">
