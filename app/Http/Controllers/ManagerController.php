@@ -75,6 +75,7 @@ class ManagerController extends Controller
                 ->latest('stav_riesenia_problemu_id')->first();
             array_push($solStatusAssignedProblems, $typ->typ_stavu_riesenia_problemu_id);
         }
+//        dd($solStatusAssignedProblems);
 
         return view('components.manager.manageGroupProblems')
             ->with('groupProblems', $groupProblems)

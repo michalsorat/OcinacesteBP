@@ -22,12 +22,9 @@
                         <td colspan="7" class="text-center">Žiadne pridelené problémy pracovnej čate</td>
                     </tr>
                 @else
-                    @php
-                        $counter = 1;
-                    @endphp
-                    @foreach($groupProblems[0]->assignedProblems as $problem)
+                    @foreach($groupProblems[0]->assignedProblems as $counter=>$problem)
                         <tr>
-                            <td data-th="#" id="hashtagID">{{ $counter }}</td>
+                            <td data-th="#" id="hashtagID">{{ ++$counter }}</td>
                             <td data-th="Adresa">{{ $problem->address }}</td>
                             <td data-th="Kategória problému">{{ $problem->KategoriaProblemu['nazov'] }}</td>
                             <td data-th="Stav problému">{{ $problem->StavProblemu->nazov }}</td>
@@ -43,9 +40,6 @@
                                 <input type="checkbox" class="remove-problems-cb" value="{{$problem->problem_id}}">
                             </td>
                         </tr>
-                        @php
-                            $counter++;
-                        @endphp
                     @endforeach
                 @endif
                 </tbody>
@@ -81,12 +75,9 @@
                         <td colspan="7" class="text-center">Žiadne problémy zodpovedajúce riešeným kategóriam pracovnej čaty na pridelenie</td>
                     </tr>
                 @else
-                    @php
-                        $counter = 1;
-                    @endphp
-                    @foreach($problemsToAssign as $problem)
+                    @foreach($problemsToAssign as $counter=>$problem)
                         <tr>
-                            <td data-th="#" id="hashtagID">{{ $counter }}</td>
+                            <td data-th="#" id="hashtagID">{{ ++$counter }}</td>
                             <td data-th="Adresa">{{ $problem->address }}</td>
                             <td data-th="Kategória problému">{{ $problem->KategoriaProblemu['nazov'] }}</td>
                             <td data-th="Stav problému">{{ $problem->StavProblemu->nazov }}</td>
@@ -107,9 +98,6 @@
                                 <input type="checkbox" class="add-problems-cb" value="{{$problem->problem_id}}">
                             </td>
                         </tr>
-                        @php
-                            $counter++;
-                        @endphp
                     @endforeach
                 @endif
                 </tbody>

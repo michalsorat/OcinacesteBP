@@ -9,7 +9,6 @@
 
 <title>Oči na ceste</title>
 
-{{--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>--}}
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -49,6 +48,12 @@
 
 <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 
+{{--old key--}}
+{{--<script defer--}}
+{{--        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwqdLzr2oJjx6qzdDY8YVE9m8-yRasOwc&libraries=places&callback=initAutocomplete">--}}
+{{--</script>--}}
+
+{{--my key--}}
 <script defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFM1--RiO7MvE1qixa1jYWpWkau9YcJRg&libraries=places&callback=initAutocomplete">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkf657xylGn2KpKWraX_nLq0XHu6OghgQ&libraries=places&callback=initAutocomplete">
 </script>

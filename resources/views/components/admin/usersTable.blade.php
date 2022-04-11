@@ -13,11 +13,7 @@
     </tr>
     </thead>
     <tbody>
-    @php
-        $counter = 1;
-    @endphp
-
-    @foreach($users as $user)
+    @foreach($users as $counter=>$user)
 
         @if($user->id == 1)
             @continue
@@ -45,9 +41,6 @@
                 @endif
             </td>
         </tr>
-        @php
-            $counter++;
-        @endphp
     @endforeach
     </tbody>
 </table>

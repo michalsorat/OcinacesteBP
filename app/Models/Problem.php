@@ -51,6 +51,6 @@ class Problem extends Model
     }
 
     public function problemImage() {
-        return $this->hasOne(FotkaProblemu::class, 'problem_id');
+        return $this->hasMany(FotkaProblemu::class, 'problem_id');
     }
 }

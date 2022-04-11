@@ -43,9 +43,17 @@ class ProblemController extends Controller
      * vlozenie do pola stavy_riesenia
      */
 
-    public function welcomePage()
+    public function welcomePage(Request $request)
     {
-        $problems = Problem::all();
+        if ($request->ajax()) {
+            $problems = Problem::whereIn('kategoria_problemu_id', $request->checkedCategories)
+                                ->where('isBump', $request->isBump)
+                                ->get();
+        }
+        else {
+            $problems = Problem::all();
+        }
+
         $typy_stavov_riesenia = TypStavuRieseniaProblemu::all();
         $popisyAll = PopisStavuRieseniaProblemu::all();
 
@@ -65,20 +73,35 @@ class ProblemController extends Controller
                 ->where('problem_id', '=', $problem->problem_id)
                 ->latest('popis_stavu_riesenia_problemu_id')->first();
             if ($popisTable != null) {
-                if ($popisTable->popis_stavu_riesenia_problemu_id != null)
+                if ($popisTable->popis_stavu_riesenia_problemu_id != null) {
                     $id = $popisTable->popis_stavu_riesenia_problemu_id;
-
+                }
                 array_push($popisy_stavov_riesenia, $id);
-            } else array_push($popisy_stavov_riesenia, 0);
+            }
+            else {
+                array_push($popisy_stavov_riesenia, 0);
+            }
         }
-        return view('views.map')
-            ->with('problems', $problems)
-            ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
-            ->with('stavy_riesenia', $stavy_riesenia)
-            ->with('kategorie', $kategorie)
-            ->with('stavy', $stavyProblemu)
-            ->with('popisyAll', $popisyAll)
-            ->with('popisyArr', $popisy_stavov_riesenia);
+        if ($request->ajax()) {
+            return view('components.map')
+                ->with('problems', $problems)
+                ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
+                ->with('stavy_riesenia', json_encode($stavy_riesenia))
+                ->with('kategorie', $kategorie)
+                ->with('stavy', $stavyProblemu)
+                ->with('popisyAll', $popisyAll)
+                ->with('popisyArr', json_encode($popisy_stavov_riesenia));
+        }
+        else {
+            return view('views.welcomePage')
+                ->with('problems', $problems)
+                ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
+                ->with('stavy_riesenia', json_encode($stavy_riesenia))
+                ->with('kategorie', $kategorie)
+                ->with('stavy', $stavyProblemu)
+                ->with('popisyAll', $popisyAll)
+                ->with('popisyArr', json_encode($popisy_stavov_riesenia));
+        }
     }
 
     public function autocomplete(Request $request)
@@ -110,9 +133,9 @@ class ProblemController extends Controller
 
     public function image($id)
     {
-        $problem = Problem::with('problemImage')->where('problem_id', $id)->get();
-
-        return json_encode($problem);
+        $problem = Problem::with('problemImage')->where('problem_id', $id)->firstOrFail();
+        return view('partials.problemImage')
+            ->with('problem', $problem);
     }
 
     private function getPaginator(Request $request, $items)
@@ -1329,58 +1352,6 @@ class ProblemController extends Controller
 //
 //    }
     //KONIEC DRIENIK
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $rola = Auth::user()->rola_id;
-        $kategorie = KategoriaProblemu::all();
-        $stavy = StavProblemu::all();
-
-        if (($rola == 1) || ($rola == 2)) {
-            return view('problem.registeredCitizen.obcan_create')->with('kategorie', $kategorie)->with('stavy', $stavy);
-        } else if ($rola == 3) {
-            return view('problem.admin.admin_create')->with('kategorie', $kategorie)->with('stavy', $stavy);
-        } else if ($rola == 4) {
-            return view('problem.dispecer.dispecer_create')->with('kategorie', $kategorie)->with('stavy', $stavy);
-        } else if ($rola == 5) {
-            return view('problem.manazer.manazer_create')->with('kategorie', $kategorie)->with('stavy', $stavy);
-        }
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
-     *
-     * validacia povinnych polí
-     * pridanie user id tvorcu problemu do requestu
-     * vytvorenie zaznamu problemu v DB
-     * pre kazdy vytvoreny problem, vytvorim zaznam v stav_riesenia_problemu s hodnotou prijate
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'poloha' => 'required',
-            'popis_problemu' => 'required'
-        ]);
-
-
-        $request->request->add(['pouzivatel_id' => Auth::user()->id]);
-
-
-        Problem::create($request->all());
-
-        $last = DB::table('problem')->latest('problem_id')->first();
-        StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
-
-        return redirect('problem');
-        //->with('success', 'Hlasenie bolo prijate!');
-    }
 
     public function storeBump(Request $request) {
 
@@ -1425,12 +1396,23 @@ class ProblemController extends Controller
         return response()->json('ok');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
+     *
+     * validacia povinnych polí
+     * pridanie user id tvorcu problemu do requestu
+     * vytvorenie zaznamu problemu v DB
+     * pre kazdy vytvoreny problem, vytvorim zaznam v stav_riesenia_problemu s hodnotou prijate
+     */
     public function createProblem(Request $request)
     {
         $request->validate([
             'poloha' => 'required',
             'popis_problemu' => 'required',
-            'uploaded_image' => 'mimes:jpeg,bmp,png'
+            'uploaded_images.*' => 'mimes:jpeg,bmp,png'
         ]);
 
         if (Auth::user() != null) {
@@ -1447,11 +1429,12 @@ class ProblemController extends Controller
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
 
-        if ($request->hasFile('uploaded_image')) {
-            $file = $request->file('uploaded_image');
-            $fileName = date('Y-m-d-') . $file->hashName();
-            $file->storeAs('problemImages', $fileName, 'public');
-            FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $fileName]);
+        if ($request->hasFile('uploaded_images')) {
+            foreach ($request->file('uploaded_images') as $uploadedImage) {
+                $fileName = date('Y-m-d-') . $uploadedImage->hashName();
+                $uploadedImage->storeAs('problemImages', $fileName, 'public');
+                FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $fileName]);
+            }
         }
 
         if($request->input("is_from_app")) {
@@ -1470,8 +1453,7 @@ class ProblemController extends Controller
      */
     public function show(Problem $problem)
     {
-//        $problem = $problem->with('problemImage');
-//        dd($problem->toArray());
+        $problemWithImages = Problem::with('problemImage')->where('problem_id', '=', $problem->problem_id)->firstOrFail();
         $typ = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
             ->latest('stav_riesenia_problemu_id')->first();
         $popis_riesenia = PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
@@ -1479,10 +1461,11 @@ class ProblemController extends Controller
 
         if (Auth::user() == null || Auth::user()->rola_id == 1) {
             return view('views.citizen.citizen_problemDetail')
-                ->with('problem', $problem)
+                ->with('problem', $problemWithImages)
                 ->with('stav_riesenia_problemu', $typ)
                 ->with('popis_stavu_riesenia', $popis_riesenia);
         } else {
+            $rola = Auth::user()->rola_id;
             $zamestnanec = PriradenyZamestnanec::where('problem_id', '=', $problem->problem_id)
                 ->latest('priradeny_zamestnanec_id')->first();
 

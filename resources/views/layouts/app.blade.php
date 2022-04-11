@@ -42,7 +42,7 @@
 <main>
     @yield('content')
 </main>
-
+@include('partials.footer')
 <script>
     $(function () {
         var url = window.location.href;
