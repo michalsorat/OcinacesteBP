@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JWTController;
+use App\Http\Controllers\MobileAppProblemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +31,13 @@ Route::post('/editProblem', 'ProblemController@editProblem')->name('editProblem'
 Route::post('/comment', 'ProblemController@comment')->name('comment');
 Route::post('/deleteAccount', 'ProblemController@deleteAccountAndroid')->name('deleteAccount');
 Route::post('/editAccount', 'ProblemController@editAccountAndroid')->name('editAccount');
+
+Route::group(['middleware' => 'api'], function($router) {
+    Route::post('/register', [JWTController::class, 'register']);
+    Route::post('/login', [JWTController::class, 'login']);
+    Route::post('/logout', [JWTController::class, 'logout']);
+    Route::post('/refresh', [JWTController::class, 'refresh']);
+    Route::post('/profile', [JWTController::class, 'profile']);
+    Route::get('/myProblems', [MobileAppProblemController::class, 'myProblems']);
+    Route::post('/storeBump', [MobileAppProblemController::class, 'storeBump']);
+});
