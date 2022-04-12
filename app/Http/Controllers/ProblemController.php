@@ -127,7 +127,7 @@ class ProblemController extends Controller
     }
 
     public function problemById($id) {
-        $problem = Problem::findOrFail($id);
+        $problem = Problem::with('problemImage')->where('problem_id', $id)->get();
         return response()->json($problem);
     }
 
