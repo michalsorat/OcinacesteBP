@@ -89,30 +89,30 @@
         var popis_stavu_riesenia;
 
         @foreach($problems as $problem)
-        var loc = split(" {{ $problem->poloha }}");
+            var loc = split(" {{ $problem->poloha }}");
 
-        @foreach($typy_stavov_riesenia as $typ)
-        if (stavyRiesenia[count] === {{$typ->typ_stavu_riesenia_problemu_id}}) {
-            nazov_typu_riesenia = "{{$typ->nazov}}";
-        }
-        @endforeach
+            @foreach($typy_stavov_riesenia as $typ)
+                if (stavyRiesenia[count] === {{$typ->typ_stavu_riesenia_problemu_id}}) {
+                    nazov_typu_riesenia = "{{$typ->nazov}}";
+                }
+            @endforeach
 
             @foreach($popisyAll as $popis)
-        if (popisyArr[count] === 0) {
-            popis_stavu_riesenia = "Nepriradený popis";
-        } else if (popisyArr[count] === "{{$popis->popis_stavu_riesenia_problemu_id}}") {
-            popis_stavu_riesenia = "{{$popis->popis}}";
-        }
-        @endforeach
+                if (popisyArr[count] === 0) {
+                    popis_stavu_riesenia = "Nepriradený popis";
+                } else if (popisyArr[count] === "{{$popis->popis_stavu_riesenia_problemu_id}}") {
+                    popis_stavu_riesenia = "{{$popis->popis}}";
+                }
+            @endforeach
 
-        if (popis_stavu_riesenia == null) {
-            popis_stavu_riesenia = "Nepriradený popis";
-        }
+            if (popis_stavu_riesenia == null) {
+                popis_stavu_riesenia = "Nepriradený popis";
+            }
 
-        markerCluster.addMarker(createMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->created_at}}",
-            "{{ $problem->address }}", "{{ $problem->popis_problemu }}", "{{ $problem->KategoriaProblemu['nazov'] }}",
-            "{{ $problem->StavProblemu['nazov'] }}", nazov_typu_riesenia, "{{$problem->problem_id}}", popis_stavu_riesenia));
-        count++;
+            markerCluster.addMarker(createMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->created_at}}",
+                "{{ $problem->address }}", "{{ $problem->popis_problemu }}", "{{ $problem->KategoriaProblemu['nazov'] }}",
+                "{{ $problem->StavProblemu['nazov'] }}", nazov_typu_riesenia, "{{$problem->problem_id}}", popis_stavu_riesenia));
+            count++;
         @endforeach
     }
 
@@ -242,8 +242,10 @@
     <div id="map"></div>
 </div>
 
+@if(!$problems->isEmpty())
 <div class="modal fade" id="imageGallery" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         @include('partials.problemImage')
     </div>
 </div>
+@endif

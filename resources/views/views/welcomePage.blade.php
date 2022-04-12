@@ -1,27 +1,51 @@
 @extends('layouts.app')
 
 @section('content')
+
     <section>
-        <div class="filter-option">
-            <h6 class="p-1 border-bottom">Kategorie</h6>
+        <div class="filter-menu">
             @foreach($kategorie as $kategoria)
-                <div class="form-check ml-3">
+                <div class="form-check">
                     <input class="role-check form-check-input categoryCB" type="checkbox" value="{{$kategoria->kategoria_problemu_id}}" id="checkbox{{$kategoria->kategoria_problemu_id}}" name="checkedCategories[]" checked>
                     <label class="form-check-label" for="checkbox{{$kategoria->kategoria_problemu_id}}">
                         {{$kategoria->nazov}}
                     </label>
+                    @if($kategoria->kategoria_problemu_id == 1)
+                        <img src="https://i.imgur.com/KlEk7Rn.png" alt="Stav vozovky">
+                    @elseif($kategoria->kategoria_problemu_id == 2)
+                        <img src="https://i.imgur.com/fuRl821.png" alt="Dopravné značenie">
+                    @elseif($kategoria->kategoria_problemu_id == 3)
+                        <img src="https://i.imgur.com/8AinVKN.png" alt="Kvalita opravy">
+                    @elseif($kategoria->kategoria_problemu_id == 4)
+                        <img src="https://i.imgur.com/nUcHcHa.png" alt="Zeleň">
+                    @endif
                 </div>
             @endforeach
+            <div class="form-check">
+                <input class="role-check form-check-input" type="checkbox" value="0" id="showBumpsCB" name="showBumps" checked>
+                <label class="form-check-label" for="showBumpsCB">
+                    Autom. detekované výtlky
+                </label>
+            </div>
         </div>
-        <div class="filter-option">
-            <h6 class="p-1 border-bottom">Zobrazit vytlky</h6>
-                <div class="form-check ml-3">
-                    <input class="role-check form-check-input" type="checkbox" value="1" id="showBumpsCB" name="showBumps" checked>
-                    <label class="form-check-label" for="showBumpsCB">
-                        Zobraziť výltky
-                    </label>
-                </div>
+
+        <button class="filter-btn btn" type="button">
+            <i class="fa-solid fa-sort"></i>
+        </button>
+
+        <div class="slider-holder">
+            <div class="row">
+                <label class="col-1" for="dateFrom">Od:</label>
+                <input class="col-3 mb-3" type="text" id="dateFrom" style="border: 0; font-weight: bold;" readonly/>
+                <input type="hidden" id="dateFromMysql" name="dateFrom">
+                <div class="col-4"></div>
+                <label class="col-1" for="dateTo">Do:</label>
+                <input class="col-3 mb-3" type="text" id="dateTo" style="border: 0;font-weight: bold;" readonly/>
+                <input type="hidden" id="dateToMysql" name="dateTo">
+            </div>
+            <div id="slider-range"></div>
         </div>
+
     </section>
 
     <section id="map-section">
@@ -100,20 +124,94 @@
 
     <script>
         $('input[type="checkbox"]').on('change', function() {
-            console.log('haha');
             let checkboxArr = [];
-            let isBump = 0;
+            let isBump;
             $('.categoryCB[type="checkbox"]:checked').each(function() {
                 checkboxArr.push($(this).val());
             });
             let showBumpsCB = $('#showBumpsCB');
             if (showBumpsCB.is(':checked')) {
-                isBump = showBumpsCB.val();
+                isBump = 'showAll';
             }
+            else isBump = showBumpsCB.val();
+
+            let dateFrom = $("#dateFromMysql").val();
+            let dateTo = $("#dateToMysql").val();
+
             $.ajax({
                 url: '/',
                 type:'GET',
-                data:{isBump: isBump, checkedCategories: checkboxArr},
+                data:{isBump: isBump, checkedCategories: checkboxArr, dateFrom: dateFrom, dateTo: dateTo},
+                success:function(data){
+                    $('#map-section').html(data);
+                    initAutocomplete();
+                },
+                error: function () {
+                    $('#map-section').html('Something went wrong');
+                }
+            });
+        });
+
+        $('.filter-btn').on('click', function () {
+            let alreadyClicked = $('.clicked').length;
+            if (alreadyClicked) {
+                $('.filter-menu').removeClass('clicked');
+            }
+            else {
+                $('.filter-menu').addClass('clicked');
+            }
+        })
+
+        $(function () {
+            let minDate = '{{$problems[0]->created_at}}';
+            let minDateTimeParts= minDate.split(/[- :]/);
+            minDateTimeParts[1]--;
+            const minDateObject = new Date(...minDateTimeParts);
+            let sliderRange = $('#slider-range');
+            let dateFrom, dateTo;
+
+            sliderRange.slider({
+                range: true,
+                min: minDateObject.getTime() / 1000,
+                max: new Date().getTime() / 1000,
+                step: 5000,
+                values: [minDateObject.getTime() / 1000, new Date().getTime() / 1000],
+                slide: function (event, ui) {
+                    $("#dateFrom").val(new Date(ui.values[0] * 1000).toLocaleDateString());
+                    $("#dateTo").val(new Date(ui.values[1] * 1000).toLocaleDateString());
+                }
+            });
+            dateFrom = new Date(sliderRange.slider("values", 0) * 1000);
+            dateTo = new Date(sliderRange.slider("values", 1) * 1000);
+            $("#dateFrom").val(dateFrom.toLocaleDateString());
+            $("#dateFromMysql").val(dateFrom.toISOString().slice(0, 19).replace('T', ' '));
+            $("#dateTo").val(dateTo.toLocaleDateString());
+            $("#dateToMysql").val(dateTo.toISOString().slice(0, 19).replace('T', ' '));
+        });
+
+        $("#slider-range").on("slidestop", function(event, ui) {
+            let checkboxArr = [];
+            let isBump;
+            $('.categoryCB[type="checkbox"]:checked').each(function() {
+                checkboxArr.push($(this).val());
+            });
+            let showBumpsCB = $('#showBumpsCB');
+            if (showBumpsCB.is(':checked')) {
+                isBump = 'showAll';
+            }
+            else isBump = showBumpsCB.val();
+
+            let dateFromInput = $("#dateFromMysql");
+            let dateToInput = $("#dateToMysql");
+            dateFromInput.val(new Date(ui.values[0] * 1000).toISOString().slice(0, 19).replace('T', ' '));
+            dateToInput.val(new Date(ui.values[1] * 1000).toISOString().slice(0, 19).replace('T', ' '));
+
+            let dateFrom = dateFromInput.val();
+            let dateTo = dateToInput.val();
+            $.ajax({
+                url: '/',
+                type:'GET',
+                data:{isBump: isBump, checkedCategories: checkboxArr, dateFrom: dateFrom, dateTo: dateTo},
                 success:function(data){
                     $('#map-section').html(data);
                     initAutocomplete();

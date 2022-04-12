@@ -47,13 +47,16 @@ class ProblemController extends Controller
     {
         if ($request->ajax()) {
             $problems = Problem::whereIn('kategoria_problemu_id', $request->checkedCategories)
-                                ->where('isBump', $request->isBump)
+                                ->when(($request->isBump) != 'showAll', function($query) use ($request) {
+                                    $query->where('isBump', $request->isBump);
+                                })
+                                ->whereBetween('created_at', [$request->dateFrom, $request->dateTo])
+                                ->orderBy('created_at', 'asc')
                                 ->get();
         }
         else {
-            $problems = Problem::all();
+            $problems = Problem::orderBy('created_at', 'asc')->get();
         }
-
         $typy_stavov_riesenia = TypStavuRieseniaProblemu::all();
         $popisyAll = PopisStavuRieseniaProblemu::all();
 

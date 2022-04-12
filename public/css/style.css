@@ -380,5 +380,68 @@ body {
     padding : 5px 15px;
 }
 
+.filter-menu {
+    position: absolute;
+    bottom: 100px;
+    right: 10px;
+    z-index: 10;
+    border-radius: 10px;
+    padding: 10px 20px;
+    background-color: #a4d4b2;
+    vertical-align: center;
+}
+
+.filter-menu label {
+    float: left;
+    margin-right: 20px;
+}
+
+.filter-menu label, .filter-menu input {
+    cursor: pointer;
+}
+
+.filter-menu img {
+    margin-left: auto;
+    display: block;
+    height: 25px;
+    width: 25px;
+}
+
+.filter-btn {
+    z-index: 0;
+    position: absolute;
+    bottom: 140px;
+    background-color: #ffffff;
+    border-radius: 0;
+    /*font-size: 1.2rem;*/
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    padding: 3px 0 0 0;
+}
+
+.filter-btn i {
+    font-size: 1.4rem;
+    color: #5d5c5c;
+}
+
+.slider-holder {
+    position: absolute;
+    /*align-items: center;*/
+    bottom: 25px;
+    left: 50%;
+    z-index: 10;
+    width: 400px;
+    margin-left: -200px;
+    padding: 10px 20px;
+    background: #a4d4b2;
+    border-radius: 10px;
+    font-size: 0.85rem;
+}
+
+.slider-holder input {
+    background-color: #a4d4b2;
+}
+
 
 
