@@ -330,7 +330,7 @@ body {
     font-size: 1.3rem;
 }
 
-#hiddenButtons, #assignVehicle, #cancelChangeCat, #removeUsersBtn, #removeProblemsBtn, #assignProblemsBtn, #addUsersBtn, #deleteWorkingGroupBtn {
+#hiddenButtons, #assignVehicle, #cancelChangeCat, #removeUsersBtn, #removeProblemsBtn, #assignProblemsBtn, #addUsersBtn, #deleteWorkingGroupBtn, #cancelUploadBtn {
     display: none;
 }
 
@@ -441,6 +441,13 @@ body {
 
 .slider-holder input {
     background-color: #a4d4b2;
+}
+
+#cancelUploadBtn {
+    position: absolute;
+    right: 20px;
+    bottom: 92px;
+    color: #9f030a;
 }
 
 

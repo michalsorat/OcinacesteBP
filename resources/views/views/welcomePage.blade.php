@@ -111,7 +111,12 @@
                         </textarea>
                 </label>
                 <div class="form-group">
-                    <input type="file" class="form-control-file active-upload" name="uploaded_images[]" multiple>
+                    <input type="file" class="form-control-file" id="uploadedFiles" name="uploaded_images[]" multiple>
+                    <button class="btn" id="cancelUploadBtn" type="button">
+{{--                        <i class="fa-solid fa-rectangle-xmark"></i>--}}
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
                     <small id="imageUploadHint" class="form-text text-muted">Odfotťe problém a vložte obrázok na toto
                         miesto</small>
                 </div>
@@ -123,6 +128,20 @@
     </section>
 
     <script>
+        $('#uploadedFiles').on('change', function () {
+            if ($(this).val()) {
+                $('#cancelUploadBtn').show();
+            }
+            else {
+                $('#cancelUploadBtn').hide();
+            }
+        });
+
+        $('#cancelUploadBtn').on('click', function () {
+            $('#uploadedFiles').val('');
+            $(this).hide();
+        })
+
         $('input[type="checkbox"]').on('change', function() {
             let checkboxArr = [];
             let isBump;
