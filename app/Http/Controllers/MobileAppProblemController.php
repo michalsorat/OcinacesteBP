@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FotkaProblemu;
 use App\Models\Problem;
 use App\Models\StavRieseniaProblemu;
 use Illuminate\Http\Request;
@@ -63,6 +64,36 @@ class MobileAppProblemController extends Controller
 
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
+
+        return response()->json('ok');
+    }
+
+    public function createProblem(Request $request)
+    {
+        $request->validate([
+            'poloha' => 'required',
+            'popis_problemu' => 'required',
+            'uploaded_images.*' => 'mimes:jpeg,bmp,png'
+        ]);
+
+        $user = auth('api')->user();
+
+        $request->request->add(['pouzivatel_id' => $user->id]);
+
+        $request->request->add(['isBump' => false]);
+
+        Problem::create($request->all());
+
+        $last = DB::table('problem')->latest('problem_id')->first();
+        StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
+
+        if ($request->hasFile('uploaded_images')) {
+            foreach ($request->file('uploaded_images') as $uploadedImage) {
+                $fileName = date('Y-m-d-') . $uploadedImage->hashName();
+                $uploadedImage->storeAs('problemImages', $fileName, 'public');
+                FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $fileName]);
+            }
+        }
 
         return response()->json('ok');
     }

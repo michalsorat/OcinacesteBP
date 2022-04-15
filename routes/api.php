@@ -40,4 +40,5 @@ Route::group(['middleware' => 'api'], function($router) {
     Route::post('/profile', [JWTController::class, 'profile']);
     Route::get('/myProblems', [MobileAppProblemController::class, 'myProblems']);
     Route::post('/storeBump', [MobileAppProblemController::class, 'storeBump']);
+    Route::post('/createProblem', [MobileAppProblemController::class, 'createProblem']);
 });

@@ -130,7 +130,7 @@ class ProblemController extends Controller
     }
 
     public function problemById($id) {
-        $problem = Problem::with('problemImage')->where('problem_id', $id)->get();
+        $problem = Problem::with('problemImage')->where('problem_id', $id)->first();
         return response()->json($problem);
     }
 
