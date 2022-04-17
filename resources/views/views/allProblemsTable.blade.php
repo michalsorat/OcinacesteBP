@@ -2,20 +2,22 @@
 
 @section('content')
 
-    @if (Session::has('message'))
-        <div class="alert alert-info">{{ Session::get('message') }}</div>
+    @if (session('status'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ session('status') }}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
     @endif
 
     <section>
         <div class="container-fluid">
-            <div class="row mt-lg-5 mt-3">
+            <div class="row mt-xl-5 mt-md-4 mt-2">
                 <div class="filter-holder col-xl-2 col-lg-3 col-12 px-0">
-                    {{--                    <button--}}
-                    {{--                        class="btn btn-default" id="expand-filter-btn" type="button" data-toggle="collapse" data-target="#filter" aria-expanded="false" aria-controls="filter">Filters<span class="fa fa-filter pl-1"></span>--}}
-                    {{--                    </button>--}}
                     <form class="tableForm" action="{{ route('problem.index') }}" method="GET">
                         <div class="row mx-1" id="filter">
-                            <div class="filter-option col-6 col-lg-12">
+                            <div class="filter-option col-6 col-lg-12 mt-lg-0">
                                 <h6 class="p-1 border-bottom">Zoradiť podľa</h6>
                                 <select
                                     id="orderBy" class="input-filter form-input w-100"
@@ -73,20 +75,34 @@
                             <div>
                                 <input id="radius-dist" class="form-input w-100" name="radius" value="" readonly type="hidden">
                             </div>
-                            <div class="col-6 my-3">
+                            <div class="filter-option col-12 ml-3 custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="dontShowBumps" name="dontShowBumps">
+                                <label class="custom-control-label" for="dontShowBumps">
+                                    Nezobraziť automaticky detekované výtlky
+                                </label>
+                            </div>
+                            @if(Auth::user() != null)
+                                <div class="filter-option col-12 ml-3 custom-control custom-switch">
+                                    <input class="custom-control-input" type="checkbox" name="myProblems" id="myProblems">
+                                    <label class="custom-control-label" for="myProblems">
+                                        Zobraziť iba moje
+                                    </label>
+                                </div>
+                            @endif
+                            <div class="col-6 col-lg-12 mt-3 mb-lg-0 my-3">
                                 <button type="button" class="btn btn-secondary w-100" data-toggle="modal" data-target="#locationModal">
                                     Zvoľte polohu
                                 </button>
                             </div>
-                            <div class=" col-6 my-3 d-lg-flex justify-content-end">
-                                <button id="filterBtn" class="btn btn-primary w-100" type="submit">Filtruj</button>
+                            <div class="col-6 col-lg-12 mt-3 mb-lg-0 my-3 d-lg-flex justify-content-end">
+                                <button class="btn btn-primary w-100" type="submit">Filtruj</button>
                             </div>
                         </div>
                     </form>
                 </div>
 
                 <div class="tableHolder col-xl-10 col-lg-9 col-12">
-                    @include('components.citizen.citizenProblemsTable')
+                    @include('components.problemsTable')
                 </div>
             </div>
         </div>
@@ -118,6 +134,10 @@
     </div>
 
     <script type="text/javascript">
+        setInterval(function () {
+            $(".alert").fadeOut();
+        }, 3000);
+
         let map, marker, circle;
         function initAutocomplete() {
             const trnavaLatLon = {lat: 48.3767994, lng: 17.5835082};

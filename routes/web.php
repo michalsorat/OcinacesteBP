@@ -48,6 +48,7 @@ Route::get('/download', function()
 Route::get('/autocomplete', 'ProblemController@autocomplete')->name('autocomplete');
 
 Route::get('/image/{id}', 'ProblemController@image');
+Route::delete('/delete/{image}', 'ProblemController@deleteImage')->name('deleteImage');
 
 Route::get('/userDetails/{id}', 'UserController@getUserDetails');
 

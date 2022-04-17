@@ -229,109 +229,22 @@ class ProblemController extends Controller
             array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
         }
 
-        if (Auth::user() == null || Auth::user()->rola_id == 1) {
-            if ($request->ajax()){
-                return view('components.citizen.citizenProblemsTable')
-                    ->with('problems', $paginator)
-                    ->with('stavy_riesenia', $stavy_riesenia)
-                    ->with('typy_stavov_riesenia', $typy_stavov)
-                    ->with('stavyProblemu', $stavyProblemu);
-            }
-            else {
-                return view('views.citizen.citizen_problemsTable')
-                    ->with('problems', $paginator)
-                    ->with('stavy_riesenia', $stavy_riesenia)
-                    ->with('typy_stavov_riesenia', $typy_stavov)
-                    ->with('kategorie', $kategorie)
-                    ->with('stavyProblemu', $stavyProblemu)
-                    ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu);
-            }
+        if ($request->ajax()){
+            return view('components.problemsTable')
+                ->with('problems', $paginator)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('typy_stavov_riesenia', $typy_stavov)
+                ->with('stavyProblemu', $stavyProblemu);
         }
         else {
-                $problems = Problem::simplePaginate(10);
-                $users = User::all();
-                $vsetky_vozidla = Vozidlo::all();
-                $stavy_riesenia = array();
-                $priradeni_zamestnanci = array();
-                $priradene_vozidla = array();
-
-                $kategorie = KategoriaProblemu::all();
-                $stavyProblemu = StavProblemu::all();
-                $typyStavovRieseniaProblemu = TypStavuRieseniaProblemu::all();
-                $priority = Priorita::all();
-                $zamestnanciAll = User::where('rola_id', '>', '2')->get();
-
-
-                foreach ($problems as $problem) {
-                    $typ = DB::table('stav_riesenia_problemu')
-                        ->where('problem_id', '=', $problem->problem_id)
-                        ->latest('stav_riesenia_problemu_id')->first();
-                    array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
-
-                    $zamestnanci = DB::table('priradeny_zamestnanec')
-                        ->where('problem_id', '=', $problem->problem_id)
-                        ->latest('priradeny_zamestnanec_id')->first();
-                    if ($zamestnanci != null)
-                        array_push($priradeni_zamestnanci, $zamestnanci->zamestnanec_id);
-                    else
-                        array_push($priradeni_zamestnanci, 0);
-
-                    $vozidla = DB::table('priradene_vozidlo')
-                        ->where('problem_id', '=', $problem->problem_id)
-                        ->latest('priradene_vozidlo_id')->first();
-
-
-                    if ($vozidla != null)
-                        array_push($priradene_vozidla, $vozidla->vozidlo_id);
-                    else
-                        array_push($priradene_vozidla, 0);
-                }
-
-                if ($rola == 3)
-                    return view('views.admin.admin_allProblemsTableFilter')
-                        ->with('problems', $problems)
-                        ->with('stavy_riesenia', $stavy_riesenia)
-                        ->with('typy_stavov_riesenia', $typy_stavov)
-                        ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
-                        ->with('zamestnanci', $users)
-                        ->with('priradene_vozidla', $priradene_vozidla)
-                        ->with('vozidla', $vsetky_vozidla)
-                        ->with('kategorie', $kategorie)
-                        ->with('stavyProblemu', $stavyProblemu)
-                        ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu)
-                        ->with('priority', $priority)
-                        ->with('VsetciZamestnanci', $zamestnanciAll);
-                if ($rola == 4)
-                    return view('problem.dispecer.dispecer_index')
-                        ->with('problems', $problems)
-                        ->with('stavy_riesenia', $stavy_riesenia)
-                        ->with('typy_stavov_riesenia', $typy_stavov)
-                        ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
-                        ->with('zamestnanci', $users)
-                        ->with('priradene_vozidla', $priradene_vozidla)
-                        ->with('vozidla', $vsetky_vozidla)
-                        ->with('kategorie', $kategorie)
-                        ->with('stavyProblemu', $stavyProblemu)
-                        ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu)
-                        ->with('priority', $priority)
-                        ->with('VsetciZamestnanci', $zamestnanciAll);
-
-                if ($rola == 5)
-                    return view('views.manager.manager_allProblemsTableFilter')
-                        ->with('problems', $problems)
-                        ->with('stavy_riesenia', $stavy_riesenia)
-                        ->with('typy_stavov_riesenia', $typy_stavov)
-                        ->with('priradeni_zamestnanci', $priradeni_zamestnanci)
-                        ->with('zamestnanci', $users)
-                        ->with('priradene_vozidla', $priradene_vozidla)
-                        ->with('vozidla', $vsetky_vozidla)
-                        ->with('kategorie', $kategorie)
-                        ->with('stavyProblemu', $stavyProblemu)
-                        ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu)
-                        ->with('priority', $priority)
-                        ->with('VsetciZamestnanci', $zamestnanciAll);
-            }
-//        }
+            return view('views.allProblemsTable')
+                ->with('problems', $paginator)
+                ->with('stavy_riesenia', $stavy_riesenia)
+                ->with('typy_stavov_riesenia', $typy_stavov)
+                ->with('kategorie', $kategorie)
+                ->with('stavyProblemu', $stavyProblemu)
+                ->with('typyStavovRieseniaProblemu', $typyStavovRieseniaProblemu);
+        }
     }
 
 
@@ -1457,6 +1370,8 @@ class ProblemController extends Controller
     public function show(Problem $problem)
     {
         $problemWithImages = Problem::with('problemImage')->where('problem_id', '=', $problem->problem_id)->firstOrFail();
+        $categories = KategoriaProblemu::all();
+        $problemStates = StavProblemu::all();
         $typ = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
             ->latest('stav_riesenia_problemu_id')->first();
         $popis_riesenia = PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
@@ -1466,7 +1381,9 @@ class ProblemController extends Controller
             return view('views.citizen.citizen_problemDetail')
                 ->with('problem', $problemWithImages)
                 ->with('stav_riesenia_problemu', $typ)
-                ->with('popis_stavu_riesenia', $popis_riesenia);
+                ->with('popis_stavu_riesenia', $popis_riesenia)
+                ->with('problemStates', $problemStates)
+                ->with('categories', $categories);
         } else {
             $rola = Auth::user()->rola_id;
             $zamestnanec = PriradenyZamestnanec::where('problem_id', '=', $problem->problem_id)
@@ -1591,11 +1508,38 @@ class ProblemController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param Problem $problem
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Problem $problem)
     {
+        $request->validate([
+            'file' => 'mimes:jpeg,bmp,png'
+        ]);
+//        dd($problem->toArray());
+        //registered citizen
+        if (Auth::user()->rola_id == 1) {
+            if ($request->newCategoryId != $problem->kategoria_problemu_id) {
+                $problem->kategoria_problemu_id = $request->newCategoryId;
+            }
+            if ($request->newStateId != $problem->stav_problemu_id) {
+                $problem->stav_problemu_id = $request->newStateId;
+            }
+            if ($request->problemDesc != null) {
+                $problem->popis_problemu = $request->problemDesc;
+            }
 
+            if ($request->hasFile('file')) {
+                $uploadedImage = $request->file('file');
+                $fileName = date('Y-m-d-') . $uploadedImage->hashName();
+                $uploadedImage->storeAs('problemImages', $fileName, 'public');
+                FotkaProblemu::create(['problem_id' => $problem->problem_id, 'nazov_suboru' => $fileName]);
+                return response()->json(['success'=>$fileName]);
+            }
+            $problem->save();
+
+            return redirect()->back()
+                ->with('status', 'Problem úspešne aktualizovaný!');
+        }
         $stav = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
             ->latest('stav_riesenia_problemu_id')->first();
         $priradene_vozidlo = PriradeneVozidlo::where('problem_id', '=', $problem->problem_id)
@@ -1667,14 +1611,24 @@ class ProblemController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Problem $problem
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function destroy(Problem $problem)
     {
-        $problem = Problem::find($problem->problem_id);
+        $problem = Problem::findOrFail($problem->problem_id);
         $problem->delete();
 
-        return redirect('problem');
+        return redirect('problem')
+            ->with('status', 'Problem úspešne zmazaný!');
+    }
+
+    public function deleteImage(FotkaProblemu $image) {
+        unlink(public_path().'/storage/problemImages/'.$image->nazov_suboru);
+        Storage::delete($image->nazov_suboru);
+        $image->delete();
+
+        return redirect()->back()
+            ->with('status', 'Fotka úspešne zmazaná!');
     }
 
 

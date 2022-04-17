@@ -2,6 +2,7 @@
     let map;
     let markersCount = 0;
     let infoWindow;
+    let markerCluster;
 
     function initAutocomplete() {
         const trnava = {lat: 48.3767994, lng: 17.5835082};
@@ -77,7 +78,7 @@
     }
 
     function displayMarkers() {
-        let markerCluster = new MarkerClusterer(map, [], {
+        markerCluster = new MarkerClusterer(map, [], {
             imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
         });
 
@@ -211,12 +212,20 @@
     }
 
     function findProblemWithAddress(address) {
+        let count = 0;
         @foreach($problems as $problem)
         if ("{{ $problem->address}}" === address) {
             let latLonArr = split(" {{ $problem->poloha }}");
             smoothZoom(map, 16, map.getZoom());
             map.setCenter(getLocVar(latLonArr[0], latLonArr[1]));
+
+            let marker = markerCluster.getMarkers()[count];
+            infoWindow.setOptions({
+                content: marker.description,
+            });
+            infoWindow.open(map, marker);
         }
+        ++count;
         @endforeach
     }
 
@@ -232,10 +241,6 @@
             }, 40);
         }
     }
-
-    setInterval(function () {
-        $(".alert").fadeOut();
-    }, 3000);
 </script>
 
 <div class="bnr-holder">

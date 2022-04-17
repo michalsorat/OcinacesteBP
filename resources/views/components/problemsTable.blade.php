@@ -37,7 +37,7 @@
 <div class="d-flex justify-content-end mr-4 my-3">
     @if ($problems->hasPages())
         <ul class="pagination">
-{{--             Previous Page Link--}}
+            {{--             Previous Page Link--}}
             @if ($problems->onFirstPage())
                 <li class="d-none"><span>Previous</span></li>
             @else
@@ -66,7 +66,7 @@
                 <li class="hidden"><a href="{{ $problems->url($problems->lastPage()) }}">{{ $problems->lastPage() }}</a></li>
             @endif
 
-{{--             Next Page Link--}}
+            {{--             Next Page Link--}}
             @if ($problems->hasMorePages())
                 <li><a href="{{ $problems->nextPageUrl() }}" rel="next"><i class="fas fa-chevron-right"></i></a></li>
             @else

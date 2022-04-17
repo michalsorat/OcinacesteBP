@@ -36,17 +36,26 @@
 }
 
 @media (max-width: 768px) {
+    #welcome-page-login-link {
+        padding: 5px 10px;
+    }
     .group-detail-chart {
         width: 90vw;
         top: 100%;
         margin-top: 20px;
         padding-left: 20px;
     }
-    .filter-menu {
+    .slider-holder {
+        max-width: 95%;
+        font-size: 0.8rem;
+        padding: 10px 15px;
+        bottom: 50px;
+        left: 53%;
+    }
+    .filter-menu, .slider-holder {
         z-index: 0;
         opacity: 0;
     }
-
     .filter-btn {
         z-index: 10;
     }
@@ -54,6 +63,11 @@
         z-index: 10;
         opacity: 1;
         bottom: 200px;
+        transition: ease-in-out 300ms;
+    }
+    .clicked-slider {
+        z-index: 10;
+        opacity: 1;
         transition: ease-in-out 300ms;
     }
 }

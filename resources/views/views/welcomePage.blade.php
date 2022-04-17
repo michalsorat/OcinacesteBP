@@ -36,11 +36,11 @@
         <div class="slider-holder">
             <div class="row">
                 <label class="col-1" for="dateFrom">Od:</label>
-                <input class="col-3 mb-3" type="text" id="dateFrom" style="border: 0; font-weight: bold;" readonly/>
+                <input class="col-5 col-md-3 mb-3" type="text" id="dateFrom" style="border: 0; font-weight: bold;" readonly/>
                 <input type="hidden" id="dateFromMysql" name="dateFrom">
-                <div class="col-4"></div>
+                <div class="d-none d-md-block col-md-4"></div>
                 <label class="col-1" for="dateTo">Do:</label>
-                <input class="col-3 mb-3" type="text" id="dateTo" style="border: 0;font-weight: bold;" readonly/>
+                <input class="col-5 col-md-3 mb-3" type="text" id="dateTo" style="border: 0;font-weight: bold;" readonly/>
                 <input type="hidden" id="dateToMysql" name="dateTo">
             </div>
             <div id="slider-range"></div>
@@ -106,14 +106,11 @@
                     </select>
                 </label>
                 <label for="description_field"><span>Popis problému <span class="required">*</span></span>
-                    <textarea
-                        id="popis_problemu" name="popis_problemu" class="textarea-field">
-                        </textarea>
+                    <textarea id="popis_problemu" name="popis_problemu" class="textarea-field"></textarea>
                 </label>
                 <div class="form-group">
                     <input type="file" class="form-control-file" id="uploadedFiles" name="uploaded_images[]" multiple>
                     <button class="btn" id="cancelUploadBtn" type="button">
-{{--                        <i class="fa-solid fa-rectangle-xmark"></i>--}}
                         <i class="fa-solid fa-xmark"></i>
                     </button>
 
@@ -128,6 +125,10 @@
     </section>
 
     <script>
+        setInterval(function () {
+            $(".alert").fadeOut();
+        }, 3000);
+
         $('#uploadedFiles').on('change', function () {
             if ($(this).val()) {
                 $('#cancelUploadBtn').show();
@@ -173,11 +174,16 @@
 
         $('.filter-btn').on('click', function () {
             let alreadyClicked = $('.clicked').length;
-            if (alreadyClicked) {
+            let alreadyClickedSlider = $('.clicked-slider').length;
+
+            if (alreadyClicked && alreadyClickedSlider) {
                 $('.filter-menu').removeClass('clicked');
+                $('.slider-holder').removeClass('clicked-slider');
             }
             else {
                 $('.filter-menu').addClass('clicked');
+                $('.slider-holder').addClass('clicked-slider');
+
             }
         })
 
