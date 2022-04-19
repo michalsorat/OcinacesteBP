@@ -205,7 +205,7 @@
                                                     <form action="{{ route('deleteImage', $image->fotka_problemu_id) }}" method="POST">
                                                         @method('DELETE')
                                                         @csrf
-                                                        <button class="btn" id="deleteImgBtn" type="submit">
+                                                        <button class="btn deleteImgBtn" type="submit">
                                                             <i class="fa-solid fa-xmark"></i>
                                                         </button>
                                                     </form>
@@ -306,6 +306,7 @@
         })
 
         $(function() {
+            Dropzone.autoDiscover = false;
             var myDropzone = new Dropzone("#imageUploadDZ");
 
             myDropzone.on("queuecomplete", function() {

@@ -1522,8 +1522,17 @@ class ProblemController extends Controller
         $request->validate([
             'file' => 'mimes:jpeg,bmp,png'
         ]);
+
         //registered citizen
         if (Auth::user()->rola_id == 1) {
+            if ($request->hasFile('file')) {
+                $uploadedImage = $request->file('file');
+                $fileName = date('Y-m-d-') . $uploadedImage->hashName();
+                $uploadedImage->storeAs('problemImages', $fileName, 'public');
+                FotkaProblemu::create(['problem_id' => $problem->problem_id, 'nazov_suboru' => $fileName]);
+                return response()->json(['success'=>$fileName]);
+            }
+
             if ($request->newCategoryId != $problem->kategoria_problemu_id) {
                 $newCategory = KategoriaProblemu::where('kategoria_problemu_id', '=', $request->newCategoryId)->first();
                 ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena kategórie', 'description' => $problem->KategoriaProblemu['nazov'].' -> '.$newCategory->nazov]);
@@ -1539,13 +1548,6 @@ class ProblemController extends Controller
                 ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena popisu', 'description' => '']);
             }
 
-            if ($request->hasFile('file')) {
-                $uploadedImage = $request->file('file');
-                $fileName = date('Y-m-d-') . $uploadedImage->hashName();
-                $uploadedImage->storeAs('problemImages', $fileName, 'public');
-                FotkaProblemu::create(['problem_id' => $problem->problem_id, 'nazov_suboru' => $fileName]);
-                return response()->json(['success'=>$fileName]);
-            }
             $problem->save();
 
             return redirect()->back()
