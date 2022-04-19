@@ -1524,7 +1524,7 @@ class ProblemController extends Controller
         ]);
 
         //registered citizen
-        if (Auth::user()->rola_id == 1) {
+        if (Auth::user() == null || Auth::user()->rola_id == 1) {
             if ($request->hasFile('file')) {
                 $uploadedImage = $request->file('file');
                 $fileName = date('Y-m-d-') . $uploadedImage->hashName();
