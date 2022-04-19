@@ -460,6 +460,10 @@ body {
     color: #9f030a;
 }
 
+.fa-cloud-arrow-up {
+    font-size: 2rem;
+}
+
 footer {
     margin-top: auto;
 }

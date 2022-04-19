@@ -146,14 +146,17 @@
                 <div class="col-md-6 mt-4 mt-md-0">
                     <nav>
                         <div class="nav nav-tabs nav-fill" role="tablist">
-                            <a class="nav-item nav-link active" data-toggle="tab" href="#nav-problem" role="tab" aria-controls="nav-problem" aria-selected="true">Galéria problému</a>
+                            <a class="nav-item nav-link active" data-toggle="tab" href="#problemHistory" role="tab" aria-controls="nav-problem-history" aria-selected="true">História riešenia problému</a>
                             @if(Auth::user() != null && Auth::user()->id == $problem->pouzivatel_id)
-                                <a class="nav-item nav-link" data-toggle="tab" href="#nav-problem-solution" role="tab" aria-controls="nav-problem-solution" aria-selected="false">Nahrať nový obrázok</a>
+                                <a class="nav-item nav-link" data-toggle="tab" href="#problemSolutionImages" role="tab" aria-controls="nav-problem-gallery-solution" aria-selected="false">Galéria riešenia problému</a>
                             @endif
                         </div>
                     </nav>
-                    <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-                        <div class="tab-pane fade show active" id="nav-problem" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="tab-content py-3 px-3 px-sm-0">
+                        <div class="tab-pane fade show active" id="problemHistory" role="tabpanel" aria-labelledby="nav-home-tab">
+
+                        </div>
+                        <div class="tab-pane fade" id="problemSolutionImages" role="tabpanel" aria-labelledby="nav-profile-tab">
                             {{--                            <div class="row" id="gallery" data-toggle="modal" data-target="#imageModal">--}}
                             {{--                                @foreach ($problem->problemImage as $key=>$image)--}}
                             {{--                                    <div class="col-12 col-sm-6 col-lg-3">--}}
@@ -163,20 +166,17 @@
                             {{--                                @endforeach--}}
                             {{--                            </div>--}}
                         </div>
-                        <div class="tab-pane fade" id="nav-problem-solution" role="tabpanel" aria-labelledby="nav-profile-tab">
-                            Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
-                        </div>
                     </div>
                 </div>
 
                 <div class="col-md-6 mt-4 mt-md-0">
                     <nav>
                         <div class="nav nav-tabs nav-fill" role="tablist">
-                            <a class="nav-item nav-link active" data-toggle="tab" href="#problemImages" role="tab" aria-controls="nav-problem" aria-selected="true">Galéria problému</a>
+                            <a class="nav-item nav-link active" data-toggle="tab" href="#problemImages" role="tab" aria-controls="nav-problem-gallery" aria-selected="true">Galéria problému</a>
                             <a class="nav-item nav-link" data-toggle="tab" href="#newImageUploadTab" role="tab" aria-controls="nav-problem-solution" aria-selected="false">Nahrať nový obrázok</a>
                         </div>
                     </nav>
-                    <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                    <div class="tab-content py-3 px-3 px-sm-0">
                         <div class="tab-pane fade show active" id="problemImages" role="tabpanel" aria-labelledby="nav-home-tab">
                             <div class="row" id="gallery">
                                 @foreach ($problem->problemImage as $key=>$image)
@@ -214,7 +214,12 @@
                                                 <div>
                                                     <h4 class="text-center">KLIKNUTÍM ZVOĽTE OBRÁZKY NA NAHRATIE</h4>
                                                 </div>
-                                                <div class="dz-default dz-message"><span>Sem presuňte obrázky na nahratie</span></div>
+                                                <div class="dz-default dz-message">
+                                                    <div class="mb-2">
+                                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                                    </div>
+                                                    <span>Sem presuňte obrázky na nahratie</span>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
