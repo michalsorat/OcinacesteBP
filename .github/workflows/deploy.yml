@@ -1,0 +1,22 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deployBackend:
+    name: Deploy backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploying to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ${{ secrets.PROJECT_PATH }}
+            git pull
