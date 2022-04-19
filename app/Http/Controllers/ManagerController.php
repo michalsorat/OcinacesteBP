@@ -6,6 +6,7 @@ use App\Models\AssignedCategoriesToGroup;
 use App\Models\KategoriaProblemu;
 use App\Models\Priorita;
 use App\Models\Problem;
+use App\Models\ProblemHistoryRecord;
 use App\Models\StavRieseniaProblemu;
 use App\Models\TypStavuRieseniaProblemu;
 use App\Models\Vozidlo;
@@ -92,7 +93,9 @@ class ManagerController extends Controller
             $problem->working_group_id = $request->workingGroupID;
             $problem->priorita_id = $request->prioritiesToAssign[$i];
             $problem->save();
+            $latestSolState = StavRieseniaProblemu::latest()->where('problem_id', '=', $request->problemsToAssign[$i])->first();
             StavRieseniaProblemu::create(['problem_id' => $request->problemsToAssign[$i], 'typ_stavu_riesenia_problemu_id' => 3]); //v procese
+            ProblemHistoryRecord::create(['problem_id' => $request->problemsToAssign[$i], 'type' => 'Zmena stavu riešenia', 'description' => $latestSolState->TypStavuRieseniaProblemu['nazov'].' -> V procese']);
             WorkingGroupHistory::create(['working_group_id' => $request->workingGroupID, 'type' => 'Priradenie problému čate', 'description' => 'ID problému- '.$request->problemsToAssign[$i]]);
         }
         return $this->manageGroupProblems($request->workingGroupID);
@@ -104,7 +107,9 @@ class ManagerController extends Controller
             $problem->working_group_id = 0;
             $problem->priorita_id = 1;
             $problem->save();
+            $latestSolState = StavRieseniaProblemu::latest()->where('problem_id', '=', $request->problemsToAssign[$i])->first();
             StavRieseniaProblemu::create(['problem_id' => $request->problemsToAssign[$i], 'typ_stavu_riesenia_problemu_id' => 5]); //odložené
+            ProblemHistoryRecord::create(['problem_id' => $request->problemsToAssign[$i], 'type' => 'Zmena stavu riešenia', 'description' => $latestSolState->TypStavuRieseniaProblemu['nazov'].' -> Odložené']);
             WorkingGroupHistory::create(['working_group_id' => $request->workingGroupID, 'type' => 'Odobratie problému čate', 'description' => 'ID problému- '.$request->problemsToAssign[$i]]);
 
         }

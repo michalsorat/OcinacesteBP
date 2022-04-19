@@ -20,37 +20,44 @@ class Problem extends Model
     ];
 
     //A Problem can only have one Priorita
-    public function Priorita()
+    public function Priorita(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo('App\Models\Priorita', 'priorita_id');
     }
 
-    public function Cesta()
+    public function Cesta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo('App\Models\Cesta', 'cesta_id');
     }
 
-    public function users()
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo('App\User', 'pouzivatel_id');
     }
 
-    public function KategoriaProblemu()
+    public function KategoriaProblemu(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo('App\Models\KategoriaProblemu', 'kategoria_problemu_id');
     }
 
 
-    public function StavProblemu()
+    public function StavProblemu(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo('App\Models\StavProblemu', 'stav_problemu_id');
     }
 
-    public function StavRieseniaProblemu() {
+    public function StavRieseniaProblemu(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
         return $this->hasOne(StavRieseniaProblemu::class, 'problem_id');
     }
 
-    public function problemImage() {
+    public function problemImage(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
         return $this->hasMany(FotkaProblemu::class, 'problem_id');
+    }
+
+    public function problemHistory(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ProblemHistoryRecord::class, 'problem_id')->orderBy('created_at', 'desc');
     }
 }

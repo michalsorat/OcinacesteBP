@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PopisStavuRieseniaProblemu;
 use App\Models\PriradeneVozidlo;
 use App\Models\PriradenyZamestnanec;
+use App\Models\ProblemHistoryRecord;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -1345,6 +1346,12 @@ class ProblemController extends Controller
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
 
+        $category = KategoriaProblemu::where('kategoria_problemu_id', '=', $request->kategoria_problemu_id)->first();
+        $problemState = StavProblemu::where('stav_problemu_id', '=', $request->stav_problemu_id)->first();
+        ProblemHistoryRecord::create(['problem_id' => $last->problem_id, 'type' => 'Priradená kategória', 'description' => $category->nazov]);
+        ProblemHistoryRecord::create(['problem_id' => $last->problem_id, 'type' => 'Priradený stav', 'description' => $problemState->nazov]);
+        ProblemHistoryRecord::create(['problem_id' => $last->problem_id, 'type' => 'Priradený stav riešenia', 'description' => 'Prijaté']);
+
         if ($request->hasFile('uploaded_images')) {
             foreach ($request->file('uploaded_images') as $uploadedImage) {
                 $fileName = date('Y-m-d-') . $uploadedImage->hashName();
@@ -1369,7 +1376,7 @@ class ProblemController extends Controller
      */
     public function show(Problem $problem)
     {
-        $problemWithImages = Problem::with('problemImage')->where('problem_id', '=', $problem->problem_id)->firstOrFail();
+        $problemFull = Problem::with('problemImage')->with('problemHistory')->where('problem_id', '=', $problem->problem_id)->firstOrFail();
         $categories = KategoriaProblemu::all();
         $problemStates = StavProblemu::all();
         $typ = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
@@ -1379,7 +1386,7 @@ class ProblemController extends Controller
 
         if (Auth::user() == null || Auth::user()->rola_id == 1) {
             return view('views.citizen.citizen_problemDetail')
-                ->with('problem', $problemWithImages)
+                ->with('problem', $problemFull)
                 ->with('stav_riesenia_problemu', $typ)
                 ->with('popis_stavu_riesenia', $popis_riesenia)
                 ->with('problemStates', $problemStates)
@@ -1515,17 +1522,21 @@ class ProblemController extends Controller
         $request->validate([
             'file' => 'mimes:jpeg,bmp,png'
         ]);
-//        dd($problem->toArray());
         //registered citizen
         if (Auth::user()->rola_id == 1) {
             if ($request->newCategoryId != $problem->kategoria_problemu_id) {
+                $newCategory = KategoriaProblemu::where('kategoria_problemu_id', '=', $request->newCategoryId)->first();
+                ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena kategórie', 'description' => $problem->KategoriaProblemu['nazov'].' -> '.$newCategory->nazov]);
                 $problem->kategoria_problemu_id = $request->newCategoryId;
             }
             if ($request->newStateId != $problem->stav_problemu_id) {
+                $newState = StavProblemu::where('stav_problemu_id', '=', $request->newStateId)->first();
+                ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena stavu', 'description' => $problem->StavProblemu['nazov'].' -> '.$newState->nazov]);
                 $problem->stav_problemu_id = $request->newStateId;
             }
-            if ($request->problemDesc != null) {
+            if ($request->problemDesc != $problem->popis_problemu) {
                 $problem->popis_problemu = $request->problemDesc;
+                ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena popisu', 'description' => '']);
             }
 
             if ($request->hasFile('file')) {

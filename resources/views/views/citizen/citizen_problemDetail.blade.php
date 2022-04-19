@@ -147,16 +147,34 @@
                     <nav>
                         <div class="nav nav-tabs nav-fill" role="tablist">
                             <a class="nav-item nav-link active" data-toggle="tab" href="#problemHistory" role="tab" aria-controls="nav-problem-history" aria-selected="true">História riešenia problému</a>
-                            @if(Auth::user() != null && Auth::user()->id == $problem->pouzivatel_id)
-                                <a class="nav-item nav-link" data-toggle="tab" href="#problemSolutionImages" role="tab" aria-controls="nav-problem-gallery-solution" aria-selected="false">Galéria riešenia problému</a>
-                            @endif
+                            <a class="nav-item nav-link" data-toggle="tab" href="#problemSolutionImages" role="tab" aria-controls="nav-problem-gallery-solution" aria-selected="false">Galéria riešenia problému</a>
                         </div>
                     </nav>
                     <div class="tab-content py-3 px-3 px-sm-0">
                         <div class="tab-pane fade show active" id="problemHistory" role="tabpanel" aria-labelledby="nav-home-tab">
-
+                            <div id="history-table-holder">
+                                <table class="table small table-hover table-bordered working-group-table">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th class="align-middle" scope="col">Zmena vykonaná dňa</th>
+                                        <th class="align-middle" scope="col">Typ</th>
+                                        <th class="align-middle" scope="col">Popis</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($problem->problemHistory as $historyRecord)
+                                        <tr class="text-center">
+                                            <td>{{$historyRecord->created_at}}</td>
+                                            <td>{{$historyRecord->type}}</td>
+                                            <td>{{$historyRecord->description}}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="tab-pane fade" id="problemSolutionImages" role="tabpanel" aria-labelledby="nav-profile-tab">
+                            <h1>hahaha</h1>
                             {{--                            <div class="row" id="gallery" data-toggle="modal" data-target="#imageModal">--}}
                             {{--                                @foreach ($problem->problemImage as $key=>$image)--}}
                             {{--                                    <div class="col-12 col-sm-6 col-lg-3">--}}

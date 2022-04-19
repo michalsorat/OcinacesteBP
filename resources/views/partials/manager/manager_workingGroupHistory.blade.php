@@ -13,9 +13,9 @@
                     <table id="historyTable" class="table table-hover table-bordered working-group-table">
                         <thead>
                         <tr class="text-center">
-                            <th scope="col">Vytvorené dňa</th>
-                            <th scope="col">Typ</th>
-                            <th scope="col">Popis</th>
+                            <th class="align-middle" scope="col">Zmena vykonaná dňa</th>
+                            <th class="align-middle" scope="col">Typ</th>
+                            <th class="align-middle" scope="col">Popis</th>
                         </tr>
                         </thead>
                         <tbody>

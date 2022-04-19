@@ -303,6 +303,12 @@ body {
     display:block;
 }
 
+#history-table-holder {
+    overflow-y:scroll;
+    max-height:300px;
+    display:block;
+}
+
 .tableHolderSlider thead th {
     position: sticky;
     top: 0;
