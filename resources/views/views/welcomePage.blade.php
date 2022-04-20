@@ -61,19 +61,20 @@
         </div>
     @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @foreach ($errors->all() as $error)
+                    <strong>{{ $error }}</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                @endforeach
+        </div>
+    @endif
+
     <section>
         <div id="create-form" class="create-form">
             <h1 id="test" class="create-form_header">Vytvorenie hlásenia</h1>
-            @if ($errors->any())
-                <div class="alert-danger">
-                    <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 
             <form class="start-form" action="{{ route('createProblem') }}" method="POST"
                   enctype="multipart/form-data">

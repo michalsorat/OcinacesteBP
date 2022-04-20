@@ -62,7 +62,7 @@
         @endif
         <div class="container-fluid">
             <div class="row justify-content-end my-md-4 my-2">
-                @if(Auth::user() != null && Auth::user()->id == $problem->pouzivatel_id)
+                @if(Auth::user() != null && (Auth::user()->id == $problem->pouzivatel_id || Auth::user()->rola_id >= 3))
                     <button id="editBtn" class="btn btn-success mr-3" value="edit">Upraviť</button>
                     <button id="cancelBtn" class="btn btn-secondary mr-3">Zrušiť</button>
                     <form action="{{ route('problem.destroy', $problem->problem_id) }}" method="POST">
@@ -201,7 +201,7 @@
                                     <div class="col-12 col-sm-6 col-lg-3 mb-4">
                                         <div class="card">
                                             <div class="card-header mb-2">
-                                                @if(Auth::user() != null && Auth::user()->id == $problem->pouzivatel_id)
+                                                @if(Auth::user() != null && (Auth::user()->id == $problem->pouzivatel_id || Auth::user()->rola_id >= 3))
                                                     <form action="{{ route('deleteImage', $image->fotka_problemu_id) }}" method="POST">
                                                         @method('DELETE')
                                                         @csrf

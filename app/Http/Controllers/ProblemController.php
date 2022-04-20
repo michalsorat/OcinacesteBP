@@ -27,6 +27,7 @@ use App\Models\FotkaProblemu;
 use App\Models\FotkaStavuRieseniaProblemu;
 use Illuminate\Support\Facades\Auth;
 use App\User;
+use Illuminate\Validation\ValidationException;
 
 
 class ProblemController extends Controller
@@ -1270,6 +1271,23 @@ class ProblemController extends Controller
 //    }
     //KONIEC DRIENIK
 
+    public function checkIfProblemExists($radius_meters, $latitude, $longitude, $isBump) {
+        // Find any problems which are closer than specified radius
+        return Problem::selectRaw("problem_id,
+                         ( 6371000 * acos( cos( radians(?) ) *
+                           cos( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) )
+                           * cos( radians( CAST(SUBSTRING_INDEX(poloha,',',-1) AS DOUBLE) ) - radians(?)
+                           ) + sin( radians(?) ) *
+                           sin( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) ) )
+                         ) AS distance", [$latitude, $longitude, $latitude])
+            ->where('isBump', '=', $isBump)
+            ->having("distance", "<", $radius_meters)
+            ->orderBy("distance",'asc')
+            ->offset(0)
+            ->limit(1)
+            ->get();
+    }
+
     public function storeBump(Request $request) {
 
         $radius_meters = 10;
@@ -1279,21 +1297,7 @@ class ProblemController extends Controller
         $latitude = $coordinates_array[0];
         $longitude = $coordinates_array[1];
 
-        // Find any problems which are closer than specified radius
-        $problems = Problem::selectRaw("problem_id,
-                         ( 6371000 * acos( cos( radians(?) ) *
-                           cos( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) )
-                           * cos( radians( CAST(SUBSTRING_INDEX(poloha,',',-1) AS DOUBLE) ) - radians(?)
-                           ) + sin( radians(?) ) *
-                           sin( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) ) )
-                         ) AS distance", [$latitude, $longitude, $latitude])
-            ->where('isBump', '=', 1)
-            ->having("distance", "<", $radius_meters)
-            ->orderBy("distance",'asc')
-            ->offset(0)
-            ->limit(1)
-            ->get();
-
+        $problems = $this->checkIfProblemExists($radius_meters, $latitude, $longitude, 1);
         if($problems->count() > 0) {
             Problem::find($problems->get(0)['problem_id'])->increment('detection_count', 1);
             return response()->json('ok');
@@ -1317,7 +1321,7 @@ class ProblemController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      *
      * validacia povinnych polí
      * pridanie user id tvorcu problemu do requestu
@@ -1331,6 +1335,17 @@ class ProblemController extends Controller
             'popis_problemu' => 'required',
             'uploaded_images.*' => 'mimes:jpeg,bmp,png'
         ]);
+
+        $radius_meters = 10;
+
+        $coordinates = $request->get("poloha");
+        $coordinates_array = explode(',', $coordinates);
+        $latitude = $coordinates_array[0];
+        $longitude = $coordinates_array[1];
+
+        if($this->checkIfProblemExists($radius_meters, $latitude, $longitude, 0)->count() > 0) {
+            throw ValidationException::withMessages(['exists' => 'Tento problém už bol zaznačený!']);
+        }
 
         if (Auth::user() != null) {
             $request->request->add(['pouzivatel_id' => Auth::user()->id]);
@@ -1384,130 +1399,17 @@ class ProblemController extends Controller
         $popis_riesenia = PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
             ->latest('popis_stavu_riesenia_problemu_id')->first();
 
-        if (Auth::user() == null || Auth::user()->rola_id == 1) {
-            return view('views.citizen.citizen_problemDetail')
-                ->with('problem', $problemFull)
-                ->with('stav_riesenia_problemu', $typ)
-                ->with('popis_stavu_riesenia', $popis_riesenia)
-                ->with('problemStates', $problemStates)
-                ->with('categories', $categories);
-        } else {
-            $rola = Auth::user()->rola_id;
-            $zamestnanec = PriradenyZamestnanec::where('problem_id', '=', $problem->problem_id)
-                ->latest('priradeny_zamestnanec_id')->first();
-
-            $vozidlo = PriradeneVozidlo::where('problem_id', '=', $problem->problem_id)
-                ->latest('priradene_vozidlo_id')->first();
-
-            if ($rola == 3) {
-                return view('problem.admin.admin_detail', compact('problem', $problem))
-                    ->with('stav_riesenia_problemu', $typ)
-                    ->with('popis_stavu_riesenia', $popis_riesenia)
-                    ->with('priradeny_zamestnanec', $zamestnanec)
-                    ->with('priradene_vozidlo', $vozidlo);
-            }
-            if ($rola == 4) {
-                return view('problem.dispecer.dispecer_detail', compact('problem', $problem))
-                    ->with('stav_riesenia_problemu', $typ)
-                    ->with('popis_stavu_riesenia', $popis_riesenia)
-                    ->with('priradeny_zamestnanec', $zamestnanec)
-                    ->with('priradene_vozidlo', $vozidlo);
-            }
-            if ($rola == 5) {
-                return view('problem.manazer.manazer_detail', compact('problem', $problem))
-                    ->with('stav_riesenia_problemu', $typ)
-                    ->with('popis_stavu_riesenia', $popis_riesenia)
-                    ->with('priradeny_zamestnanec', $zamestnanec)
-                    ->with('priradene_vozidlo', $vozidlo);
-            }
-        }
-
+        return view('views.citizen.citizen_problemDetail')
+            ->with('problem', $problemFull)
+            ->with('stav_riesenia_problemu', $typ)
+            ->with('popis_stavu_riesenia', $popis_riesenia)
+            ->with('problemStates', $problemStates)
+            ->with('categories', $categories);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Problem $problem)
     {
-        $priority = Priorita::all();
-        $kraje = Kraj::all();
-        $katastralne_uzemia = KatastralneUzemie::all();
-        $obce = Obec::all();
-        $spravcovia = Spravca::all();
-        $typy_stavov_riesenia_problemu = TypStavuRieseniaProblemu::all();
-        $kategorie = KategoriaProblemu::all();
-        $stavy_problemu = StavProblemu::all();
-        $vozidla = Vozidlo::all();
 
-
-        $priradeny_zamestanec = PriradenyZamestnanec::where('problem_id', '=', $problem->problem_id)
-            ->latest('priradeny_zamestnanec_id')->first();
-
-        $stav = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
-            ->latest('stav_riesenia_problemu_id')->first();
-
-        $priradene_vozidlo = PriradeneVozidlo::where('problem_id', '=', $problem->problem_id)
-            ->latest('priradene_vozidlo_id')->first();
-
-        $priradeny_popis_riesenia = PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
-            ->latest('popis_stavu_riesenia_problemu_id')->first();
-
-        $dispeceri = DB::table('users')->where('rola_id', '=', 4)->get();
-
-        $rola = Auth::user()->rola_id;
-
-        if ($rola == 3) {
-            return view('problem.admin.admin_edit', compact('problem', $problem))
-                ->with('priority', $priority)
-                ->with('kraje', $kraje)
-                ->with('katastralne_uzemia', $katastralne_uzemia)
-                ->with('obce', $obce)
-                ->with('spravcovia', $spravcovia)
-                ->with('typy_stavov_riesenia_problemu', $typy_stavov_riesenia_problemu)
-                ->with('stav_riesenia_problemu', $stav)
-                ->with('kategorie', $kategorie)
-                ->with('vozidla', $vozidla)
-                ->with('priradene_vozidlo', $priradene_vozidlo)
-                ->with('stavy_problemu', $stavy_problemu)
-                ->with('popis_stavu_riesenia', $priradeny_popis_riesenia)
-                ->with('dispeceri', $dispeceri)
-                ->with('priradeny_zamestnanec', $priradeny_zamestanec);
-        } else if ($rola == 4) {
-            return view('problem.dispecer.dispecer_edit', compact('problem', $problem))
-                ->with('priority', $priority)
-                ->with('kraje', $kraje)
-                ->with('katastralne_uzemia', $katastralne_uzemia)
-                ->with('obce', $obce)
-                ->with('spravcovia', $spravcovia)
-                ->with('typy_stavov_riesenia_problemu', $typy_stavov_riesenia_problemu)
-                ->with('stav_riesenia_problemu', $stav)
-                ->with('kategorie', $kategorie)
-                ->with('vozidla', $vozidla)
-                ->with('priradene_vozidlo', $priradene_vozidlo)
-                ->with('stavy_problemu', $stavy_problemu)
-                ->with('popis_stavu_riesenia', $priradeny_popis_riesenia)
-                ->with('dispeceri', $dispeceri)
-                ->with('priradeny_zamestnanec', $priradeny_zamestanec);
-        } else if ($rola == 5) {
-            return view('problem.manazer.manazer_edit', compact('problem', $problem))
-                ->with('priority', $priority)
-                ->with('kraje', $kraje)
-                ->with('katastralne_uzemia', $katastralne_uzemia)
-                ->with('obce', $obce)
-                ->with('spravcovia', $spravcovia)
-                ->with('typy_stavov_riesenia_problemu', $typy_stavov_riesenia_problemu)
-                ->with('stav_riesenia_problemu', $stav)
-                ->with('kategorie', $kategorie)
-                ->with('vozidla', $vozidla)
-                ->with('priradene_vozidlo', $priradene_vozidlo)
-                ->with('stavy_problemu', $stavy_problemu)
-                ->with('popis_stavu_riesenia', $priradeny_popis_riesenia)
-                ->with('dispeceri', $dispeceri)
-                ->with('priradeny_zamestnanec', $priradeny_zamestanec);
-        }
     }
 
     /**
@@ -1522,101 +1424,33 @@ class ProblemController extends Controller
         $request->validate([
             'file' => 'mimes:jpeg,bmp,png'
         ]);
-
-        //registered citizen
-        if (Auth::user() == null || Auth::user()->rola_id == 1) {
-            if ($request->hasFile('file')) {
-                $uploadedImage = $request->file('file');
-                $fileName = date('Y-m-d-') . $uploadedImage->hashName();
-                $uploadedImage->storeAs('problemImages', $fileName, 'public');
-                FotkaProblemu::create(['problem_id' => $problem->problem_id, 'nazov_suboru' => $fileName]);
-                return response()->json(['success'=>$fileName]);
-            }
-
-            if ($request->newCategoryId != $problem->kategoria_problemu_id) {
-                $newCategory = KategoriaProblemu::where('kategoria_problemu_id', '=', $request->newCategoryId)->first();
-                ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena kategórie', 'description' => $problem->KategoriaProblemu['nazov'].' -> '.$newCategory->nazov]);
-                $problem->kategoria_problemu_id = $request->newCategoryId;
-            }
-            if ($request->newStateId != $problem->stav_problemu_id) {
-                $newState = StavProblemu::where('stav_problemu_id', '=', $request->newStateId)->first();
-                ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena stavu', 'description' => $problem->StavProblemu['nazov'].' -> '.$newState->nazov]);
-                $problem->stav_problemu_id = $request->newStateId;
-            }
-            if ($request->problemDesc != $problem->popis_problemu) {
-                $problem->popis_problemu = $request->problemDesc;
-                ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena popisu', 'description' => '']);
-            }
-
-            $problem->save();
-
-            return redirect()->back()
-                ->with('status', 'Problem úspešne aktualizovaný!');
-        }
-        $stav = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
-            ->latest('stav_riesenia_problemu_id')->first();
-        $priradene_vozidlo = PriradeneVozidlo::where('problem_id', '=', $problem->problem_id)
-            ->latest('priradene_vozidlo_id')->first();
-        $aktualny_popis = PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)
-            ->latest('popis_stavu_riesenia_problemu_id')->first();
-        $aktualny_priradeny_zamestnanec = PriradenyZamestnanec::where('problem_id', '=', $problem->problem_id)
-            ->latest('priradeny_zamestnanec_id')->first();
-
-
-        if ($request->priorita_id != $problem->priorita_id) {
-            $problem->priorita_id = $request->priorita_id;
-        }
-        if ($request->poloha != $problem->poloha) {
-            $problem->poloha = $request->poloha;
-        }
-        if ($request->kategoria_problemu_id != $problem->kategoria_problemu_id) {
-            $problem->kategoria_problemu_id = $request->kategoria;
-        }
-        if ($request->stav_problemu_id != $problem->stav_problemu_id) {
-            $problem->stav_problemu_id = $request->stav_problemu_id;
-        }
-        if ($stav->typ_stavu_riesenia_problemu_id != $request->stav_riesenia_problemu_id) {
-            StavRieseniaProblemu::create(['problem_id' => $problem->problem_id,
-                'typ_stavu_riesenia_problemu_id' => $request->stav_riesenia_problemu_id]);
-        }
-        if ($request->priradene_vozidlo_id != 0) {
-            if ($priradene_vozidlo == null) {
-                PriradeneVozidlo::create(['problem_id' => $problem->problem_id,
-                    'vozidlo_id' => $request->priradene_vozidlo_id]);
-            } else
-                if ($priradene_vozidlo->vozidlo_id != $request->priradene_vozidlo_id) {
-                    PriradeneVozidlo::create(['problem_id' => $problem->problem_id,
-                        'vozidlo_id' => $request->priradene_vozidlo_id]);
-                }
-        }
-        if ($request->popis_stavu_riesenia_problemu != null) {
-            if ($aktualny_popis == null) {
-                PopisStavuRieseniaProblemu::create(['popis' => $request->popis_stavu_riesenia_problemu,
-                    'problem_id' => $problem->problem_id]);
-            } else
-                if ($request->popis_stavu_riesenia_problemu != $aktualny_popis->popis) {
-                    PopisStavuRieseniaProblemu::create(['popis' => $request->popis_stavu_riesenia_problemu,
-                        'problem_id' => $problem->problem_id]);
-                }
+        if ($request->hasFile('file')) {
+            $uploadedImage = $request->file('file');
+            $fileName = date('Y-m-d-') . $uploadedImage->hashName();
+            $uploadedImage->storeAs('problemImages', $fileName, 'public');
+            FotkaProblemu::create(['problem_id' => $problem->problem_id, 'nazov_suboru' => $fileName]);
+            return response()->json(['success'=>$fileName]);
         }
 
-        if ((Auth::user()->rola_id) == 5 || (Auth::user()->rola_id) == 3) {
-            if ($request->priradeny_zamestnanec_id != null) {
-                if ($request->priradeny_zamestnanec_id != 0) {
-                    if ($aktualny_priradeny_zamestnanec == null) {
-                        PriradenyZamestnanec::create(['zamestnanec_id' => $request->priradeny_zamestnanec_id,
-                            'problem_id' => $problem->problem_id]);
-                    } else
-                        if ($request->priradeny_zamestnanec_id != $aktualny_priradeny_zamestnanec) {
-                            PriradenyZamestnanec::create(['zamestnanec_id' => $request->priradeny_zamestnanec_id,
-                                'problem_id' => $problem->problem_id]);
-                        }
-                }
-            }
+        if ($request->newCategoryId != $problem->kategoria_problemu_id) {
+            $newCategory = KategoriaProblemu::where('kategoria_problemu_id', '=', $request->newCategoryId)->first();
+            ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena kategórie', 'description' => $problem->KategoriaProblemu['nazov'].' -> '.$newCategory->nazov]);
+            $problem->kategoria_problemu_id = $request->newCategoryId;
+        }
+        if ($request->newStateId != $problem->stav_problemu_id) {
+            $newState = StavProblemu::where('stav_problemu_id', '=', $request->newStateId)->first();
+            ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena stavu', 'description' => $problem->StavProblemu['nazov'].' -> '.$newState->nazov]);
+            $problem->stav_problemu_id = $request->newStateId;
+        }
+        if ($request->problemDesc != $problem->popis_problemu) {
+            $problem->popis_problemu = $request->problemDesc;
+            ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena popisu', 'description' => '']);
         }
 
         $problem->save();
-        return redirect('problem');
+
+        return redirect()->back()
+            ->with('status', 'Problem úspešne aktualizovaný!');
     }
 
 
@@ -1642,84 +1476,5 @@ class ProblemController extends Controller
 
         return redirect()->back()
             ->with('status', 'Fotka úspešne zmazaná!');
-    }
-
-
-    public function priradeneProblemyDispecerovi(User $user)
-    {
-        $dispecer = Auth::user()->id;
-        $priradenyZamestnanec = PriradenyZamestnanec::where('zamestnanec_id', '=', $dispecer);
-    }
-
-    public function priradeniZamestnanci(Problem $problem)
-    {
-        $zamestnanci = PriradenyZamestnanec::where('problem_id', '=', $problem->problem_id)->get();
-
-        $rola = Auth::user()->rola_id;
-
-        if ($rola == 4) {
-            return view('problem.dispecer.historia.dispecer_priradeniZamestnanci',
-                compact('problem', $problem))->with('zamestnanci', $zamestnanci);
-        } else if ($rola == 3) {
-            return view('problem.admin.historia.admin_priradeniZamestnanci',
-                compact('problem', $problem))->with('zamestnanci', $zamestnanci);
-        } else if ($rola == 5) {
-            return view('problem.manazer.historia.manazer_priradeniZamestnanci',
-                compact('problem', $problem))->with('zamestnanci', $zamestnanci);
-        }
-    }
-
-    public function priradeneVozidla(Problem $problem)
-    {
-        $vozidla = PriradeneVozidlo::where('problem_id', '=', $problem->problem_id)->get();
-
-        $rola = Auth::user()->rola_id;
-
-        if ($rola == 4) {
-            return view('problem.dispecer.historia.dispecer_priradeneVozidla',
-                compact('problem', $problem))->with('vozidla', $vozidla);
-        } else if ($rola == 3) {
-            return view('problem.admin.historia.admin_priradeneVozidla',
-                compact('problem', $problem))->with('vozidla', $vozidla);
-        } else if ($rola == 5) {
-            return view('problem.manazer.historia.manazer_priradeneVozidla',
-                compact('problem', $problem))->with('vozidla', $vozidla);
-        }
-    }
-
-    public function stavyRieseniaProblemu(Problem $problem)
-    {
-        $stavy = StavRieseniaProblemu::where('problem_id', '=', $problem->problem_id)->get();
-
-        $rola = Auth::user()->rola_id;
-
-        if ($rola == 4) {
-            return view('problem.dispecer.historia.dispecer_stavyRieseniaProblemu',
-                compact('problem', $problem))->with('stavy', $stavy);
-        } else if ($rola == 3) {
-            return view('problem.admin.historia.admin_stavyRieseniaProblemu',
-                compact('problem', $problem))->with('stavy', $stavy);
-        } else if ($rola == 5) {
-            return view('problem.manazer.historia.manazer_stavyRieseniaProblemu',
-                compact('problem', $problem))->with('stavy', $stavy);
-        }
-    }
-
-    public function popisyStavovRieseniaProblemu(Problem $problem)
-    {
-        $popisy = PopisStavuRieseniaProblemu::where('problem_id', '=', $problem->problem_id)->get();
-
-        $rola = Auth::user()->rola_id;
-
-        if ($rola == 4) {
-            return view('problem.dispecer.historia.dispecer_popisyStavovRieseniaProblemu',
-                compact('problem', $problem))->with('popisy', $popisy);
-        } else if ($rola == 3) {
-            return view('problem.admin.historia.admin_popisyStavovRieseniaProblemu',
-                compact('problem', $problem))->with('popisy', $popisy);
-        } else if ($rola == 5) {
-            return view('problem.manazer.historia.manazer_popisyStavovRieseniaProblemu',
-                compact('problem', $problem))->with('popisy', $popisy);
-        }
     }
 }
