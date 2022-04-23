@@ -28,10 +28,13 @@ use App\Models\FotkaStavuRieseniaProblemu;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Validation\ValidationException;
-
+use App\Traits\SuperclusterTrait;
+use App\Traits\ProblemTrait;
 
 class ProblemController extends Controller
 {
+    use SuperclusterTrait;
+    use ProblemTrait;
     /**
      * Display a listing of the resource.
      *
@@ -121,14 +124,28 @@ class ProblemController extends Controller
         return response()->json($addressArr);
     }
 
-    public function allProblemsJsonPagination(Request $request) {
+    public function allProblemsJsonPagination() {
         $problem = Problem::paginate(15);
         return response()->json($problem->toArray());
     }
 
-    public function allProblemsJson(Request $request) {
+    public function allProblemsJson() {
         $problem = Problem::all('problem_id', 'poloha', 'kategoria_problemu_id');
         return response()->json($problem);
+    }
+
+    public function allProblemsClustered(Request $request) {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->get('http://127.0.0.1:8080/problems', [
+            'query' => [
+                'zoom' => $request->query('zoom'),
+                'westLng' => $request->query('westLng'),
+                'southLat' => $request->query('southLat'),
+                'eastLng' => $request->query('eastLng'),
+                'northLat' => $request->query('northLat')
+            ]
+        ]);
+        return response()->json(json_decode($response->getBody()));
     }
 
     public function problemById($id) {
@@ -1271,52 +1288,6 @@ class ProblemController extends Controller
 //    }
     //KONIEC DRIENIK
 
-    public function checkIfProblemExists($radius_meters, $latitude, $longitude, $isBump) {
-        // Find any problems which are closer than specified radius
-        return Problem::selectRaw("problem_id,
-                         ( 6371000 * acos( cos( radians(?) ) *
-                           cos( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) )
-                           * cos( radians( CAST(SUBSTRING_INDEX(poloha,',',-1) AS DOUBLE) ) - radians(?)
-                           ) + sin( radians(?) ) *
-                           sin( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) ) )
-                         ) AS distance", [$latitude, $longitude, $latitude])
-            ->where('isBump', '=', $isBump)
-            ->having("distance", "<", $radius_meters)
-            ->orderBy("distance",'asc')
-            ->offset(0)
-            ->limit(1)
-            ->get();
-    }
-
-    public function storeBump(Request $request) {
-
-        $radius_meters = 10;
-
-        $coordinates = $request->get("poloha");
-        $coordinates_array = explode(',', $coordinates);
-        $latitude = $coordinates_array[0];
-        $longitude = $coordinates_array[1];
-
-        $problems = $this->checkIfProblemExists($radius_meters, $latitude, $longitude, 1);
-        if($problems->count() > 0) {
-            Problem::find($problems->get(0)['problem_id'])->increment('detection_count', 1);
-            return response()->json('ok');
-        }
-
-        $request->request->add(['kategoria_problemu_id' => '1']);
-        $request->request->add(['stav_problemu_id' => '2']);
-        $request->request->add(['popis_problemu' => 'Automaticky detekovaný výtlk na ceste']);
-        $request->request->add(['isBump' => true]);
-        $request->request->add(['pouzivatel_id' => '1']);
-
-        Problem::create($request->all());
-
-        $last = DB::table('problem')->latest('problem_id')->first();
-        StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
-
-        return response()->json('ok');
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -1375,9 +1346,7 @@ class ProblemController extends Controller
             }
         }
 
-        if($request->input("is_from_app")) {
-            return response()->json('ok');
-        }
+        $this->refreshSuperclusterIndex();
 
         return redirect('/')
             ->with('status', 'Hlasenie bolo úspešne prijaté!');

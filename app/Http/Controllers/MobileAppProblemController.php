@@ -7,9 +7,14 @@ use App\Models\Problem;
 use App\Models\StavRieseniaProblemu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Traits\SuperclusterTrait;
+use App\Traits\ProblemTrait;
 
 class MobileAppProblemController extends Controller
 {
+    use SuperclusterTrait;
+    use ProblemTrait;
+
     public function __construct()
     {
         $this->middleware('auth:api');
@@ -21,7 +26,6 @@ class MobileAppProblemController extends Controller
         $problem = Problem::where('pouzivatel_id', $user->id)->paginate(15);
         return response()->json($problem->toArray());
     }
-
 
     public function storeBump(Request $request) {
 
@@ -35,19 +39,7 @@ class MobileAppProblemController extends Controller
         $longitude = $coordinates_array[1];
 
         // Find any problems which are closer than specified radius
-        $problems = Problem::selectRaw("problem_id,
-                         ( 6371000 * acos( cos( radians(?) ) *
-                           cos( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) )
-                           * cos( radians( CAST(SUBSTRING_INDEX(poloha,',',-1) AS DOUBLE) ) - radians(?)
-                           ) + sin( radians(?) ) *
-                           sin( radians( CAST(SUBSTRING_INDEX(poloha,',',1) AS DOUBLE) ) ) )
-                         ) AS distance", [$latitude, $longitude, $latitude])
-            ->where('isBump', '=', 1)
-            ->having("distance", "<", $radius_meters)
-            ->orderBy("distance",'asc')
-            ->offset(0)
-            ->limit(1)
-            ->get();
+        $problems = $this->checkIfProblemExists($radius_meters, $latitude, $longitude, 1);
 
         if($problems->count() > 0) {
             Problem::find($problems->get(0)['problem_id'])->increment('detection_count', 1);
@@ -64,6 +56,8 @@ class MobileAppProblemController extends Controller
 
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
+
+        $this->refreshSuperclusterIndex();
 
         return response()->json('ok');
     }
@@ -94,6 +88,8 @@ class MobileAppProblemController extends Controller
                 FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $fileName]);
             }
         }
+
+        $this->refreshSuperclusterIndex();
 
         return response()->json('ok');
     }
