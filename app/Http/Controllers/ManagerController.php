@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\AssignedCategoriesToGroup;
 use App\Models\KategoriaProblemu;
+use App\Models\PopisStavuRieseniaProblemu;
 use App\Models\Priorita;
 use App\Models\Problem;
 use App\Models\ProblemHistoryRecord;
+use App\Models\StavProblemu;
 use App\Models\StavRieseniaProblemu;
 use App\Models\TypStavuRieseniaProblemu;
 use App\Models\Vozidlo;
@@ -50,15 +52,16 @@ class ManagerController extends Controller
         $solStatusProblemsToAssign = array();
         $solStatusTypes = TypStavuRieseniaProblemu::all();
         $priorities = Priorita::all();
+        $problemsToAssignFinal = array();
 
-        $groupProblems = WorkingGroup::where('id', '=', $id)
+        $workingGroup = WorkingGroup::where('id', '=', $id)
             ->with('assignedCategories')
             ->with('assignedProblems')
             ->get();
 
         $problemsToAssign = Problem::where('working_group_id', '=', '0')
-            ->where(function($query) use ($groupProblems) {
-                foreach ($groupProblems[0]->assignedCategories as $assignedCategory) {
+            ->where(function($query) use ($workingGroup) {
+                foreach ($workingGroup[0]->assignedCategories as $assignedCategory) {
                     $query->orWhere('kategoria_problemu_id', '=', $assignedCategory->kategoria_problemu_id);
                 }
             })->get();
@@ -67,20 +70,22 @@ class ManagerController extends Controller
             $typ = DB::table('stav_riesenia_problemu')
                 ->where('problem_id', '=', $problem->problem_id)
                 ->latest('stav_riesenia_problemu_id')->first();
-            array_push($solStatusProblemsToAssign, $typ->typ_stavu_riesenia_problemu_id);
+            if ($typ->typ_stavu_riesenia_problemu_id != 4) {
+                array_push($problemsToAssignFinal, $problem);
+                array_push($solStatusProblemsToAssign, $typ->typ_stavu_riesenia_problemu_id);
+            }
         }
 
-        foreach ($groupProblems[0]->assignedProblems as $problem) {
+        foreach ($workingGroup[0]->assignedProblems as $problem) {
             $typ = DB::table('stav_riesenia_problemu')
                 ->where('problem_id', '=', $problem->problem_id)
                 ->latest('stav_riesenia_problemu_id')->first();
             array_push($solStatusAssignedProblems, $typ->typ_stavu_riesenia_problemu_id);
         }
-//        dd($solStatusAssignedProblems);
 
         return view('components.manager.manageGroupProblems')
-            ->with('groupProblems', $groupProblems)
-            ->with('problemsToAssign', $problemsToAssign)
+            ->with('groupProblems', $workingGroup)
+            ->with('problemsToAssign', $problemsToAssignFinal)
             ->with('solStatusProblemsToAssign', $solStatusProblemsToAssign)
             ->with('solStatusAssignedProblems', $solStatusAssignedProblems)
             ->with('solStatusTypes', $solStatusTypes)
@@ -114,6 +119,68 @@ class ManagerController extends Controller
 
         }
         return $this->manageGroupProblems($request->workingGroupID);
+    }
+
+    public function waitingForApproval() {
+        $problems = Problem::with('problemImage')->with('problemHistory')->with('StavRieseniaProblemu')->get();
+        $solStatusTypes = TypStavuRieseniaProblemu::all();
+        $priorities = Priorita::all();
+        $waitingForApproval = array();
+        $solStatusAssignedProblems = array();
+
+        foreach ($problems as $problem) {
+            if ($problem->StavRieseniaProblemu->typ_stavu_riesenia_problemu_id == 2) {
+                array_push($waitingForApproval, $problem);
+                $typ = DB::table('stav_riesenia_problemu')
+                    ->where('problem_id', '=', $problem->problem_id)
+                    ->latest('stav_riesenia_problemu_id')->first();
+                array_push($solStatusAssignedProblems, $typ->typ_stavu_riesenia_problemu_id);
+            }
+        }
+
+        return view('views.manager.manager_waitingForApprovalProblems')
+            ->with('problems', $waitingForApproval)
+            ->with('solStatusAssignedProblems', $solStatusAssignedProblems)
+            ->with('priorities', $priorities)
+            ->with('solStatusTypes', $solStatusTypes);
+    }
+
+    public function approvalProblemDetail($id) {
+        $problemFull = Problem::with('problemImage')->with('problemSolImage')->with('problemHistory')->where('problem_id', '=', $id)->firstOrFail();
+        $categories = KategoriaProblemu::all();
+        $problemStates = StavProblemu::all();
+        $stav_riesenia_problemu = StavRieseniaProblemu::where('problem_id', '=', $id)
+            ->latest('stav_riesenia_problemu_id')->first();
+        $popis_riesenia = PopisStavuRieseniaProblemu::where('problem_id', '=', $id)
+            ->latest('popis_stavu_riesenia_problemu_id')->first();
+
+        return view('views.manager.manager_approveProblem')
+            ->with('problem', $problemFull)
+            ->with('stav_riesenia_problemu', $stav_riesenia_problemu)
+            ->with('popis_riesenia', $popis_riesenia)
+            ->with('problemStates', $problemStates)
+            ->with('categories', $categories);
+    }
+
+    public function approveSolution(Request $request, $id) {
+        $problem = Problem::where('problem_id', '=', $id)->firstOrFail();
+        $popis_riesenia = PopisStavuRieseniaProblemu::where('problem_id', '=', $id)
+            ->latest('popis_stavu_riesenia_problemu_id')->first();
+        if ($popis_riesenia->popis != $request->solutionDesc) {
+            $popis_riesenia->popis = $request->solutionDesc;
+            $popis_riesenia->save();
+        }
+
+        $latestSolState = StavRieseniaProblemu::latest()->where('problem_id', '=', $id)->first();
+        StavRieseniaProblemu::create(['problem_id' => $id, 'typ_stavu_riesenia_problemu_id' => 4]); //vyriešené
+        ProblemHistoryRecord::create(['problem_id' => $id, 'type' => 'Zmena stavu riešenia', 'description' => $latestSolState->TypStavuRieseniaProblemu['nazov'].' -> Vyriešené']);
+        WorkingGroupHistory::create(['working_group_id' => $problem->working_group_id, 'type' => 'Problém ukončený', 'description' => 'Problém ID '.$problem->problem_id.' -> schválený']);
+
+        $problem->working_group_id = 0;
+        $problem->save();
+
+        return redirect()->route('waitingForApproval')
+            ->with('status', 'Riešenie problému schválené, problém úspešne vyriešený!');
     }
 
     public function manageWorkingGroups() {
@@ -170,9 +237,9 @@ class ManagerController extends Controller
             ->with('assignedProblems')
             ->get();
 
-//        $inProcessProbMonths = new SplFixedArray(12);
         $inProcessProbMonths = array(0,0,0,0,0,0,0,0,0,0,0,0);
         $finishedProbMonths = array(0,0,0,0,0,0,0,0,0,0,0,0);
+        $forApproval = array(0,0,0,0,0,0,0,0,0,0,0,0);
 
         foreach ($groupProblems[0]->assignedProblems as $assignedProblem) {
             $state = StavRieseniaProblemu::where('problem_id', '=', $assignedProblem->problem_id)
@@ -187,26 +254,30 @@ class ManagerController extends Controller
             else if ($state->typ_stavu_riesenia_problemu_id == 4) {
                 $finishedProbMonths[$index] += 1;
             }
+            else if ($state->typ_stavu_riesenia_problemu_id == 2) {
+                $forApproval[$index] += 1;
+            }
         }
 
         return response()->json([
             'inProcessProbMonths' => $inProcessProbMonths,
-            'finishedProbMonths' => $finishedProbMonths
+            'finishedProbMonths' => $finishedProbMonths,
+            'forApproval' => $forApproval
         ]);
     }
 
     public function workingGroupDetail($id) {
-        $selGroup = WorkingGroup::where('id', '=', $id)
+        $workingGroup = WorkingGroup::where('id', '=', $id)
             ->with('users')
             ->with('assignedCategories')
             ->with('history')
-            ->get();
+            ->firstOrFail();
 
         $categories = KategoriaProblemu::all();
         $availUsers = User::where('rola_id', '=', '4')->where('working_group_id', '=', '0')->get();
 
         return view('components.manager.workingGroupDetails')
-            ->with('selGroup', $selGroup)
+            ->with('workingGroup', $workingGroup)
             ->with('availUsers', $availUsers)
             ->with('categories', $categories);
     }

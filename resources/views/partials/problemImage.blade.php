@@ -34,7 +34,27 @@
                 @endif
             </div>
             <div class="tab-pane fade" id="nav-problem-solution" role="tabpanel" aria-labelledby="nav-profile-tab">
-                Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
+                @if(!$problem->problemSolImage->isEmpty())
+                    <div id="carouselGallery" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                            @foreach($problem->problemSolImage as $image)
+                                <div @if($loop->first) class="carousel-item active" @else class="carousel-item" @endif>
+                                    <img class="d-block w-100" src="/storage/problemImages/{{$image->nazov_suboru}}">
+                                </div>
+                            @endforeach
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselGallery" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselGallery" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                @else
+                    <img class="d-block w-100" src="/img/no_image_available.jpg" alt="no-image">
+                @endif
             </div>
         </div>
     </div>

@@ -25,20 +25,13 @@ class CreateProblemTable extends Migration
         Schema::table('problem', function (Blueprint $table) {
 
             $table->bigInteger('priorita_id')->unsigned();
-            $table->bigInteger('cesta_id')->unsigned();
             $table->bigInteger('pouzivatel_id')->unsigned();
             $table->bigInteger('kategoria_problemu_id')->unsigned();
             $table->bigInteger('stav_problemu_id')->unsigned();
             $table->bigInteger('working_group_id')->unsigned();
 
-
-
             $table->foreign('priorita_id')
                 ->references('priorita_id')->on('priorita')
-                ->onDelete('cascade');
-
-            $table->foreign('cesta_id')
-                ->references('cesta_id')->on('cesta')
                 ->onDelete('cascade');
 
             $table->foreign('pouzivatel_id')

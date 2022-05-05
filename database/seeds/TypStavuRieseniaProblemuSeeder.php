@@ -17,13 +17,13 @@ class TypStavuRieseniaProblemuSeeder extends Seeder
                 'nazov' => 'Prijaté',
             ],
             [
-                'nazov' => 'Potvrdené',
+                'nazov' => 'Čaká na schválenie',
             ],
             [
                 'nazov' => 'V procese',
             ],
             [
-                'nazov' => 'Ukončené',
+                'nazov' => 'Vyriešené',
             ],
             [
                 'nazov' => 'Odložené'

@@ -153,6 +153,13 @@
                                 return dataObj;
                             });
 
+                            let approvalProbData = months.map((month, index) => {
+                                let dataObj = {};
+                                dataObj.monthName = month;
+                                dataObj.countNr = data.forApproval[index];
+                                return dataObj;
+                            });
+
                             let ctx = $('#groupChart');
                             var config = {
                                 type: 'bar',
@@ -173,6 +180,16 @@
                                             maxBarThickness: 10,
                                             data: inProcessProbData,
                                             backgroundColor: 'rgb(255,172,0)',
+                                            parsing: {
+                                                xAxisKey: 'monthName',
+                                                yAxisKey: 'countNr'
+                                            }
+                                        },
+                                        {
+                                            label: 'Počet problémov v čakajúcich na schválenie',
+                                            maxBarThickness: 10,
+                                            data: approvalProbData,
+                                            backgroundColor: 'rgb(20,132,166)',
                                             parsing: {
                                                 xAxisKey: 'monthName',
                                                 yAxisKey: 'countNr'

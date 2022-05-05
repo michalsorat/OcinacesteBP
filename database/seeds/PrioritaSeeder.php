@@ -14,7 +14,7 @@ class PrioritaSeeder extends Seeder
     {
         $priority = [
             [
-                'priorita' => 'Nepiradená',
+                'priorita' => 'Nepriradená',
             ],
             [
                 'priorita' => 'Vysoká',

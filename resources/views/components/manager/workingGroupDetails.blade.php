@@ -1,10 +1,10 @@
 <div class="row">
     <div class="col-lg-6 px-4">
-        @if(($selGroup[0]->users)->isEmpty())
+        @if(($workingGroup->users)->isEmpty())
             <h5 class="text-center mt-4 font-weight-bolder">Pracovná čata nemá priradených zamestnancov</h5>
         @else
             <h6 class="mt-4 mb-3 font-weight-bolder">Členovia pracovnej čaty</h6>
-            <form class="tableHolderSlider" id="removeUsersForm" method="POST" action="{{ route('removeGroupUsers', $selGroup[0]->id) }}">
+            <form class="tableHolderSlider" id="removeUsersForm" method="POST" action="{{ route('removeGroupUsers', $workingGroup->id) }}">
                 @csrf
                 @method('PUT')
                 <table class="table table-hover usersTable">
@@ -16,7 +16,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($selGroup[0]->users as $user)
+                    @foreach($workingGroup->users as $user)
                         <tr class="group-user-row-remove">
                             <td>{{$user->name}}</td>
                             <td>{{$user->email}}</td>
@@ -40,7 +40,7 @@
             <h5 class="text-center mt-4 font-weight-bolder">Žiadny zamestnanci na priradenie</h5>
         @else
             <h6 class="mt-4 mb-3 font-weight-bolder">Dostupní zamestnanci na priradenie pracovnej čate</h6>
-            <form class="tableHolderSlider" id="addUsersForm" method="POST" action="{{ route('addGroupUsers', $selGroup[0]->id) }}">
+            <form class="tableHolderSlider" id="addUsersForm" method="POST" action="{{ route('addGroupUsers', $workingGroup->id) }}">
                 @csrf
                 @method('PUT')
                 <table class="table table-hover usersTable">
@@ -70,7 +70,7 @@
         @endif
     </div>
 
-    <form class="col-md-3 mt-lg-4 mt-xl-5 assigned-categories form-group" id="changeCatForm" method="POST" action="{{ route('changeAssignedCategories', $selGroup[0]->id) }}">
+    <form class="col-md-3 mt-lg-4 mt-xl-5 assigned-categories form-group" id="changeCatForm" method="POST" action="{{ route('changeAssignedCategories', $workingGroup->id) }}">
         @csrf
         @method('PUT')
 
@@ -104,7 +104,7 @@
 <script>
     $(document).ready(function () {
         let assignedCat = [];
-        @foreach($selGroup[0]->assignedCategories as $category)
+        @foreach($workingGroup->assignedCategories as $category)
             assignedCat.push({{$category->kategoria_problemu_id}});
         @endforeach
         $('.categories-input[type=checkbox]').each(function () {
@@ -141,7 +141,7 @@
         prevBtn.removeClass('clicked');
         prevBtn.addClass('btn-secondary');
         let assignedCat = [];
-        @foreach($selGroup[0]->assignedCategories as $category)
+        @foreach($workingGroup->assignedCategories as $category)
             assignedCat.push({{$category->kategoria_problemu_id}});
         @endforeach
         $('.categories-input[type=checkbox]').each(function () {

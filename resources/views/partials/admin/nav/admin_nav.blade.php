@@ -19,7 +19,7 @@
                 <a class="nav-link" href="{{ route('manageWorkingGroups') }}">Spravuj pracovné čaty</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Na schválenie</a>
+                <a class="nav-link" href="{{ route('waitingForApproval') }}">Na schválenie</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.index') }}">Používatelia</a>

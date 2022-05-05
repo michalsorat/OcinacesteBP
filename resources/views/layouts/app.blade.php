@@ -21,7 +21,12 @@
             @include('partials.admin.nav.admin_nav')
         @endif
 {{--    worker--}}
-{{--    @elseif(Auth::user()->rola_id == 4)--}}
+    @elseif(Auth::user()->rola_id == 4)
+        @if(\Illuminate\Support\Facades\Request::is('/'))
+            @include('partials.worker.nav.worker_mapNav')
+        @else
+            @include('partials.worker.nav.worker_nav')
+        @endif
 {{--    manager--}}
     @elseif(Auth::user()->rola_id == 5)
         @if(\Illuminate\Support\Facades\Request::is('/'))

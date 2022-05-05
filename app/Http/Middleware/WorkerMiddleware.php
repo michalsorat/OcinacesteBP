@@ -17,7 +17,7 @@ class WorkerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::user()->rola_id == '4'){
+        if (Auth::user()->rola_id == '4' || Auth::user()->rola_id == '5' || Auth::user()->rola_id == '3'){
             return $next($request);
         } else {
             return redirect('/')->withErrors("Unauthorized action");

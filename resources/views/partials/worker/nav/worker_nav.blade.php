@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <h1 class="main_header"><a href="{{ route('manager.index') }}">Oči na ceste</a></h1>
+    <h1 class="main_header"><a href="{{ route('worker.index') }}">Oči na ceste</a></h1>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -13,13 +13,10 @@
                 <a class="nav-link" href="{{ route('problem.index') }}">Zoznam problémov</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('manager.index') }}">Prideľ problémy čate</a>
+                <a class="nav-link" href="{{ route('workingGroupDetail') }}">Pracovná čata</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('manageWorkingGroups') }}">Spravuj pracovné čaty</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('waitingForApproval') }}">Na schválenie</a>
+                <a class="nav-link" href="{{ route('worker.index') }}">Priradené problémy</a>
             </li>
             @guest
                 <li class="nav-item dropdown active">

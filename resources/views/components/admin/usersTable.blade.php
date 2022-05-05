@@ -15,7 +15,7 @@
     <tbody>
     @foreach($users as $counter=>$user)
 
-        @if($user->id == 1)
+        @if($user->id <= 2)
             @continue
         @endif
 

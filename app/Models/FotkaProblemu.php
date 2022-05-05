@@ -11,8 +11,5 @@ class FotkaProblemu extends Model
     protected $table='fotka_problemu';
     protected $primaryKey ='fotka_problemu_id';
 
-//    public function Problems(){
-//        return $this->belongsTo('App\Models\Problem', 'problem_id');
-//    }
 
 }

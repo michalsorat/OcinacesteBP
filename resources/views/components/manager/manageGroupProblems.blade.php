@@ -24,7 +24,7 @@
                 @else
                     @foreach($groupProblems[0]->assignedProblems as $counter=>$problem)
                         <tr>
-                            <td data-th="#" id="hashtagID">{{ ++$counter }}</td>
+                            <td onclick="window.location='{{ route('problemDetail', $problem->problem_id) }}'" data-th="#" id="hashtagID">{{ ++$counter }}</td>
                             <td data-th="Adresa">{{ $problem->address }}</td>
                             <td data-th="Kategória problému">{{ $problem->KategoriaProblemu['nazov'] }}</td>
                             <td data-th="Stav problému">{{ $problem->StavProblemu->nazov }}</td>
@@ -70,7 +70,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @if($problemsToAssign->isEmpty())
+                @if($problemsToAssign == null)
                     <tr>
                         <td colspan="7" class="text-center">Žiadne problémy zodpovedajúce riešeným kategóriam pracovnej čaty na pridelenie</td>
                     </tr>

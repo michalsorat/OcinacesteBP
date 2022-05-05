@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Problem;
+use App\Models\StavRieseniaProblemu;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\User;
@@ -145,22 +146,38 @@ class UserController extends Controller
     }
 
     public function getUserDetails($id) {
-        $createdProblemsCount = Problem::where('pouzivatel_id', '=', $id)->count();
-        $solvedProblemsCount = Problem::where('pouzivatel_id', '=', $id)
-            ->whereHas('StavRieseniaProblemu', function ($query) {
-                    $query->where('typ_stavu_riesenia_problemu_id', '=', '4');
-                })
-            ->count();
-        $acceptedProblemsCount = Problem::where('pouzivatel_id', '=', $id)
-            ->whereHas('StavRieseniaProblemu', function ($query) {
-                $query->where('typ_stavu_riesenia_problemu_id', '=', '1');
-            })
-            ->count();
-        $inProgressProblemsCount = Problem::where('pouzivatel_id', '=', $id)
-            ->whereHas('StavRieseniaProblemu', function ($query) {
-                $query->where('typ_stavu_riesenia_problemu_id', '=', '3');
-            })
-            ->count();
+        $userProblems = Problem::with('StavRieseniaProblemu')->where('pouzivatel_id', '=', $id)->get();
+        $createdProblemsCount = $userProblems->count();
+        $solvedProblemsCount = 0;
+        $acceptedProblemsCount = 0;
+        $inProgressProblemsCount = 0;
+        foreach ($userProblems as $problem) {
+            if ($problem->StavRieseniaProblemu->typ_stavu_riesenia_problemu_id == 4) {
+                $solvedProblemsCount++;
+            }
+            else if ($problem->StavRieseniaProblemu->typ_stavu_riesenia_problemu_id == 1) {
+                $acceptedProblemsCount++;
+            }
+            else if ($problem->StavRieseniaProblemu->typ_stavu_riesenia_problemu_id == 3) {
+                $inProgressProblemsCount++;
+            }
+        }
+//        $createdProblemsCount = Problem::where('pouzivatel_id', '=', $id)->count();
+//        $solvedProblemsCount = Problem::where('pouzivatel_id', '=', $id)
+//            ->whereHas('StavRieseniaProblemu', function ($query) {
+//                    $query->where('typ_stavu_riesenia_problemu_id', '=', '4');
+//                })
+//            ->count();
+//        $acceptedProblemsCount = Problem::where('pouzivatel_id', '=', $id)
+//            ->whereHas('StavRieseniaProblemu', function ($query) {
+//                $query->where('typ_stavu_riesenia_problemu_id', '=', '1');
+//            })
+//            ->count();
+//        $inProgressProblemsCount = Problem::where('pouzivatel_id', '=', $id)
+//            ->whereHas('StavRieseniaProblemu', function ($query) {
+//                $query->where('typ_stavu_riesenia_problemu_id', '=', '3');
+//            })
+//            ->count();
 
         $user = User::find($id);
 

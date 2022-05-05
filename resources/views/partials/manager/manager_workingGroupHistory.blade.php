@@ -19,7 +19,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($selGroup[0]->history as $historyRecord)
+                        @foreach($workingGroup->history as $historyRecord)
                             <tr class="text-center">
                                 <td>{{$historyRecord->created_at}}</td>
                                 <td>{{$historyRecord->type}}</td>
@@ -30,9 +30,6 @@
                     </table>
                 </div>
             </div>
-{{--            <div class="modal-footer">--}}
-{{--                <button type="button" class="btn btn-secondary" id="assignVehicle">Zmeň vozidlo</button>--}}
-{{--            </div>--}}
         </div>
     </div>
 </div>

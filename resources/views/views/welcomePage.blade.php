@@ -192,7 +192,7 @@
             let minDate = '{{$problems[0]->created_at}}';
             let minDateTimeParts= minDate.split(/[- :]/);
             minDateTimeParts[1]--;
-            const minDateObject = new Date(...minDateTimeParts);
+            let minDateObject = new Date(...minDateTimeParts);
             let sliderRange = $('#slider-range');
             let dateFrom, dateTo;
 

@@ -65,7 +65,7 @@
                 success:function(data){
                     $('.manage-group-problems').html(data);
                 },
-                error: function () {
+                error: function (data) {
                     $('.manage-group-problems').html('Something went wrong');
                 }
             });

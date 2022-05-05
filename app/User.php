@@ -96,4 +96,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function workingGroup() {
+        $this->belongsTo(WorkingGroup::class);
+    }
 }

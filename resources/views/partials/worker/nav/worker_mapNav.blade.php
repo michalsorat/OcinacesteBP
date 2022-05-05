@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <h1 class="main_header"><a href="{{ route('manager.index') }}">Oči na ceste</a></h1>
+    <h1 class="main_header"><a href="{{ route('worker.index') }}">Oči na ceste</a></h1>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -7,19 +7,16 @@
     <div class="collapse navbar-collapse flex-md-column" id="navbarCollapse">
         <ul class="navbar-nav ml-auto welcomePage-nav mr-3">
             <li class="nav-item">
-                <a class="nav-link px-md-1 px-lg-2" href="{{ route('welcome') }}">Mapa</a>
+                <a class="nav-link" href="{{ route('welcome') }}">Mapa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link px-md-1 px-lg-2" href="{{ route('problem.index') }}">Zoznam problémov</a>
+                <a class="nav-link" href="{{ route('problem.index') }}">Zoznam problémov</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('manager.index') }}">Prideľ problémy čate</a>
+                <a class="nav-link" href="{{ route('workingGroupDetail') }}">Pracovná čata</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('manageWorkingGroups') }}">Spravuj pracovné čaty</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('waitingForApproval') }}">Na schválenie</a>
+                <a class="nav-link" href="{{ route('worker.index') }}">Priradené problémy</a>
             </li>
             @guest
                 <li class="nav-item active">

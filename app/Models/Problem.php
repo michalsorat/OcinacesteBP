@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Problem extends Model
 {
-    protected $fillable = ['problem_id', 'poloha', 'address', 'popis_problemu', 'priorita_id', 'cesta_id', 'pouzivatel_id',
+    protected $fillable = ['problem_id', 'poloha', 'address', 'popis_problemu', 'priorita_id', 'pouzivatel_id',
         'kategoria_problemu_id', 'stav_problemu_id', 'isBump', 'working_group_id', 'detection_count', 'detection_speed_kmh'
     ];
 
@@ -15,7 +15,6 @@ class Problem extends Model
 
     protected $attributes = [
         'priorita_id' => 1, //nepriradena
-        'cesta_id' => 1, // default
         'working_group_id' => 0, // default- nepriradena
     ];
 
@@ -23,11 +22,6 @@ class Problem extends Model
     public function Priorita(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo('App\Models\Priorita', 'priorita_id');
-    }
-
-    public function Cesta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo('App\Models\Cesta', 'cesta_id');
     }
 
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -46,14 +40,24 @@ class Problem extends Model
         return $this->belongsTo('App\Models\StavProblemu', 'stav_problemu_id');
     }
 
+//    public function StavyRieseniaProblemu(): \Illuminate\Database\Eloquent\Relations\HasMany
+//    {
+//        return $this->hasMany(StavRieseniaProblemu::class, 'problem_id')->orderByDesc('created_at');
+//    }
+
     public function StavRieseniaProblemu(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(StavRieseniaProblemu::class, 'problem_id');
+        return $this->hasOne(StavRieseniaProblemu::class, 'problem_id')->orderByDesc('created_at');
     }
 
     public function problemImage(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(FotkaProblemu::class, 'problem_id');
+    }
+
+    public function problemSolImage(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(FotkaRieseniaProblemu::class, 'problem_id');
     }
 
     public function problemHistory(): \Illuminate\Database\Eloquent\Relations\HasMany
