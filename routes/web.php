@@ -41,6 +41,7 @@ Route::get('/mobileApp', 'CitizenController@mobileApp')->name('mobileApp');
 
 Route::get('/problemsJsonPagination', 'ProblemController@allProblemsJsonPagination');
 Route::get('/problemsJson', 'ProblemController@allProblemsJson');
+Route::get('/problemsClustered', 'ProblemController@allProblemsClustered');
 Route::get('/problemsJson/{id}', 'ProblemController@problemById');
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
