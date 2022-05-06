@@ -53,6 +53,7 @@ class ProblemController extends Controller
         else {
             $problems = Problem::orderBy('created_at', 'asc')->get();
         }
+
         $typy_stavov_riesenia = TypStavuRieseniaProblemu::all();
         $popisyAll = PopisStavuRieseniaProblemu::all();
 

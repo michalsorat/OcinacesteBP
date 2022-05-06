@@ -49,7 +49,6 @@
     </section>
 
     <section id="map-section">
-        @include('components.map')
     </section>
 
     @if (session('status'))
@@ -150,11 +149,18 @@
             $('.categoryCB[type="checkbox"]:checked').each(function() {
                 checkboxArr.push($(this).val());
             });
+            localStorage.checkedArr = JSON.stringify(checkboxArr);
+
+
             let showBumpsCB = $('#showBumpsCB');
             if (showBumpsCB.is(':checked')) {
                 isBump = 'showAll';
+                localStorage.showBumps = true;
             }
-            else isBump = showBumpsCB.val();
+            else {
+                isBump = showBumpsCB.val();
+                localStorage.showBumps = false;
+            }
 
             let dateFrom = $("#dateFromMysql").val();
             let dateTo = $("#dateToMysql").val();
@@ -193,15 +199,22 @@
             let minDateTimeParts= minDate.split(/[- :]/);
             minDateTimeParts[1]--;
             let minDateObject = new Date(...minDateTimeParts);
+
             let sliderRange = $('#slider-range');
             let dateFrom, dateTo;
+            let maxDateObject = new Date();
+
+            if (localStorage.dateFrom == null || localStorage.dateTo == null) {
+                localStorage.dateFrom = minDateObject;
+                localStorage.dateTo = maxDateObject;
+            }
 
             sliderRange.slider({
                 range: true,
                 min: minDateObject.getTime() / 1000,
-                max: new Date().getTime() / 1000,
+                max: maxDateObject.getTime() / 1000,
                 step: 5000,
-                values: [minDateObject.getTime() / 1000, new Date().getTime() / 1000],
+                values: [new Date(localStorage.dateFrom).getTime() / 1000, new Date(localStorage.dateTo).getTime() / 1000],
                 slide: function (event, ui) {
                     $("#dateFrom").val(new Date(ui.values[0] * 1000).toLocaleDateString());
                     $("#dateTo").val(new Date(ui.values[1] * 1000).toLocaleDateString());
@@ -213,6 +226,50 @@
             $("#dateFromMysql").val(dateFrom.toISOString().slice(0, 19).replace('T', ' '));
             $("#dateTo").val(dateTo.toLocaleDateString());
             $("#dateToMysql").val(dateTo.toISOString().slice(0, 19).replace('T', ' '));
+
+            if (localStorage.checkedArr != null) {
+                $('.categoryCB[type="checkbox"]').each(function() {
+                    $(this).prop("checked", ($.inArray($(this).val(), JSON.parse(localStorage.checkedArr)) !== -1));
+                });
+            }
+            if (localStorage.showBumps != null && localStorage.showBumps === 'true') {
+                $('#showBumpsCB').prop("checked", true);
+            }
+            else if (localStorage.showBumps != null && localStorage.showBumps === 'false') {
+                $('#showBumpsCB').prop("checked", false);
+            }
+
+            let checkboxArr = [];
+            let isBump;
+            $('.categoryCB[type="checkbox"]:checked').each(function() {
+                checkboxArr.push($(this).val());
+            });
+
+            let showBumpsCB = $('#showBumpsCB');
+            if (showBumpsCB.is(':checked')) {
+                isBump = 'showAll';
+            }
+            else isBump = showBumpsCB.val();
+
+            let dateFromMysql = $("#dateFromMysql").val();
+            let dateToMysql = $("#dateToMysql").val();
+
+            $.ajax({
+                url: '/',
+                type:'GET',
+                data:{isBump: isBump, checkedCategories: checkboxArr, dateFrom: dateFromMysql, dateTo: dateToMysql},
+                success:function(data){
+                    $('#map-section').html(data);
+                    initAutocomplete();
+                },
+                error: function () {
+                    $('#map-section').html('Something went wrong');
+                }
+            });
+
+            // if (localStorage.showBumps != null || localStorage.checkedArr != null) {
+            //
+            // }
         });
 
         $("#slider-range").on("slidestop", function(event, ui) {
@@ -231,6 +288,9 @@
             let dateToInput = $("#dateToMysql");
             dateFromInput.val(new Date(ui.values[0] * 1000).toISOString().slice(0, 19).replace('T', ' '));
             dateToInput.val(new Date(ui.values[1] * 1000).toISOString().slice(0, 19).replace('T', ' '));
+
+            localStorage.dateFrom = new Date(ui.values[0] * 1000).toISOString();
+            localStorage.dateTo = new Date(ui.values[1] * 1000).toISOString();
 
             let dateFrom = dateFromInput.val();
             let dateTo = dateToInput.val();

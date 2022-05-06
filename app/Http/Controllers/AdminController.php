@@ -27,7 +27,7 @@ class AdminController extends Controller
     {
         $users = User::all();
         $roles = Rola::all();
-        $usersCount = User::all()->count();
+        $usersCount = User::where('id', '>', 2)->count();
         $problemsCount = Problem::all()->count();
         $solvedProblemsCount = DB::table('stav_riesenia_problemu')->where('typ_stavu_riesenia_problemu_id', '4')->count();
 

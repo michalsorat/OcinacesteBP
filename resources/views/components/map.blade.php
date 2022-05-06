@@ -67,8 +67,6 @@
             localStorage.mapLat = mapCentre.lat();
             localStorage.mapLng = mapCentre.lng();
             localStorage.mapZoom = map.getZoom();
-            console.log(localStorage.mapLat);
-
         });
 
         google.maps.event.addListener(map,"zoom_changed", function() {
