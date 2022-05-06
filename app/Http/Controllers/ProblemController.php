@@ -42,7 +42,8 @@ class ProblemController extends Controller
     public function welcomePage(Request $request)
     {
         if ($request->ajax()) {
-            $problems = Problem::whereIn('kategoria_problemu_id', $request->checkedCategories)
+            $problems = Problem::with('PopisyRiesenia')
+                                ->whereIn('kategoria_problemu_id', $request->checkedCategories)
                                 ->when(($request->isBump) != 'showAll', function($query) use ($request) {
                                     $query->where('isBump', $request->isBump);
                                 })

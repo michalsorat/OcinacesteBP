@@ -50,6 +50,11 @@ class Problem extends Model
         return $this->hasOne(StavRieseniaProblemu::class, 'problem_id')->orderByDesc('created_at');
     }
 
+    public function PopisyRiesenia(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PopisStavuRieseniaProblemu::class, 'problem_id')->orderByDesc('created_at');
+    }
+
     public function problemImage(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(FotkaProblemu::class, 'problem_id');

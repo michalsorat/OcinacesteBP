@@ -150,9 +150,10 @@
 
         let count = 0;
         var nazov_typu_riesenia;
-        var popis_stavu_riesenia;
+        let popis_stavu_riesenia = "";
 
         @foreach($problems as $problem)
+            popis_stavu_riesenia = "";
             var loc = split(" {{ $problem->poloha }}");
 
             @foreach($typy_stavov_riesenia as $typ)
@@ -161,17 +162,10 @@
                 }
             @endforeach
 
-            @foreach($popisyAll as $popis)
-                if (popisyArr[count] === 0) {
-                    popis_stavu_riesenia = "Nepriradený popis";
-                } else if (popisyArr[count] === "{{$popis->popis_stavu_riesenia_problemu_id}}") {
-                    popis_stavu_riesenia = "{{$popis->popis}}";
-                }
+            @foreach($problem->PopisyRiesenia as $popis)
+                popis_stavu_riesenia += "{{ $popis->popis }}";
+                popis_stavu_riesenia += "\n";
             @endforeach
-
-            if (popis_stavu_riesenia == null) {
-                popis_stavu_riesenia = "Nepriradený popis";
-            }
 
             markerCluster.addMarker(createMarker(getLocVar(loc[0], loc[1]), map, "{{ $problem->created_at}}",
                 "{{ $problem->address }}", "{{ $problem->popis_problemu }}", "{{ $problem->KategoriaProblemu['nazov'] }}",
