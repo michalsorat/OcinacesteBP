@@ -34,6 +34,7 @@
                                     name="kategoria_problemu_id">
 
                                     <option value="" selected disabled hidden>Vyberte možnosť</option>
+                                    <option value="">Všetky kategórie</option>
                                     @foreach($kategorie as $kategoria)
                                         <option value="{{ $kategoria->kategoria_problemu_id }}"
                                         >{{ $kategoria->nazov }}</option>
@@ -46,6 +47,7 @@
                                     id="stav_problemu_id" class="input-filter form-input w-100"
                                     name="stav_problemu_id">
                                     <option value="" selected disabled hidden>Vyberte možnosť</option>
+                                    <option value="">Všetky stavy</option>
                                     @foreach($stavyProblemu as $stav)
                                         <option value="{{ $stav->stav_problemu_id }}">
                                             {{ $stav->nazov}}</option>
@@ -58,6 +60,7 @@
                                     id="typ_stavu_riesenia_problemu" class="input-filter form-input w-100"
                                     name="typ_stavu_riesenia_problemu_id">
                                     <option value="" selected disabled hidden>Vyberte možnosť</option>
+                                    <option value="" >Všetky stavy riešenia problému</option>
                                     @foreach($typyStavovRieseniaProblemu as $stav)
                                         <option value="{{ $stav->typ_stavu_riesenia_problemu_id}}"
                                         >{{ $stav->nazov }}</option>

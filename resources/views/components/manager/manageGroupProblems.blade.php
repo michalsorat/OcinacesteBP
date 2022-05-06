@@ -7,6 +7,7 @@
             <table class="rwd-table group-problems-table">
                 <thead>
                 <tr>
+                    <th></th>
                     <th>#</th>
                     <th>Adresa</th>
                     <th>Kategória problému</th>
@@ -24,7 +25,8 @@
                 @else
                     @foreach($groupProblems[0]->assignedProblems as $counter=>$problem)
                         <tr>
-                            <td onclick="window.location='{{ route('problemDetail', $problem->problem_id) }}'" data-th="#" id="hashtagID">{{ ++$counter }}</td>
+                            <td onclick="window.location='{{ route('problemDetail', $problem->problem_id) }}'"><i class="fa-solid fa-angles-right"></i></td>
+                            <td data-th="#" id="hashtagID">{{ ++$counter }}</td>
                             <td data-th="Adresa">{{ $problem->address }}</td>
                             <td data-th="Kategória problému">{{ $problem->KategoriaProblemu['nazov'] }}</td>
                             <td data-th="Stav problému">{{ $problem->StavProblemu->nazov }}</td>

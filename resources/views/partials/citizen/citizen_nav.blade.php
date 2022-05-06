@@ -13,7 +13,10 @@
                 <a class="nav-link" href="{{ route('problem.index') }}">Zoznam problémov</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('download') }}">Mobilná aplikácia</a>
+                <a class="nav-link" href="{{ route('download') }}">Android aplikácia</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">iOS aplikácia</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('about') }}">O projekte</a>

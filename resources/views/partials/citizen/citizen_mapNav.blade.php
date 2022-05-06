@@ -16,6 +16,9 @@
                 <a class="nav-link px-md-1 px-lg-2" href="{{ route('download') }}">Mobilná aplikácia</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="#">iOS aplikácia</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('about') }}">O projekte</a>
             </li>
             @guest

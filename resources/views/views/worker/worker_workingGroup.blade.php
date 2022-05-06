@@ -3,6 +3,11 @@
 @section('content')
     <div class="container-fluid">
         <div class="row mt-xl-5 mt-md-4 mt-2 mx-1">
+            @if($workingGroup == null)
+                <div class="col text-center">
+                    <h3>Nie ste priradený do žiadnej pracovnej čaty!</h3>
+                </div>
+            @else
             <div class="col-lg-6 px-4">
                 <h5 class="mt-4 mb-3 font-weight-bolder">Členovia pracovnej čaty</h5>
                 <div class="tableHolderSlider" id="removeUsersForm">
@@ -97,12 +102,12 @@
             <div class="group-detail-chart-worker col-lg-6 px-4 my-5">
 
             </div>
-
+            @include('partials.manager.manager_workingGroupHistory')
+            @endif
         </div>
     </div>
 
-    @include('partials.manager.manager_workingGroupHistory')
-
+    @if($workingGroup != null)
     <script>
         $(document).ready(function () {
             let assignedCat = [];
@@ -201,4 +206,5 @@
             });
         });
     </script>
+    @endif
 @endsection
