@@ -1,19 +1,84 @@
 <script type="text/javascript">
+    let mapCentre;
     let map;
     let markersCount = 0;
     let infoWindow;
     let markerCluster;
 
     function initAutocomplete() {
+        let mapOptions;
         const trnava = {lat: 48.3767994, lng: 17.5835082};
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: trnava,
-            zoom: 11,
-            mapTypeId: 'roadmap'
-        });
+
+        if(localStorage.mapLat!=null && localStorage.mapLng!=null){
+            if (localStorage.mapZoom!=null) {
+                mapOptions = {
+                    center: new google.maps.LatLng(localStorage.mapLat,localStorage.mapLng),
+                    zoom: parseInt(localStorage.mapZoom),
+                    scaleControl: true,
+                    mapTypeId: 'roadmap'
+                };
+            }
+            else {
+                mapOptions = {
+                    center: new google.maps.LatLng(localStorage.mapLat,localStorage.mapLng),
+                    zoom: 11,
+                    scaleControl: true,
+                    mapTypeId: 'roadmap'
+                };
+            }
+        }
+        else if (localStorage.mapZoom!=null) {
+            mapOptions = {
+                center: trnava,
+                zoom: parseInt(localStorage.mapZoom),
+                scaleControl: true,
+                mapTypeId: 'roadmap'
+            };
+        }
+        else {
+            //Choose some default options
+            mapOptions = {
+                center: trnava,
+                zoom: 11,
+                scaleControl: true,
+                mapTypeId: 'roadmap'
+            };
+        }
+
+        //MAP
+        map = new google.maps.Map(document.getElementById('map'),
+            mapOptions);
+
         infoWindow = new google.maps.InfoWindow();
-        getCurrLocation(map, trnava);
+        // getCurrLocation(map, trnava);
         displayMarkers();
+
+        mapCentre = map.getCenter();
+
+        //Set local storage variables.
+        localStorage.mapLat = mapCentre.lat();
+        localStorage.mapLng = mapCentre.lng();
+        localStorage.mapZoom = map.getZoom();
+
+        google.maps.event.addListener(map,"center_changed", function() {
+            //Set local storage variables.
+            mapCentre = map.getCenter();
+
+            localStorage.mapLat = mapCentre.lat();
+            localStorage.mapLng = mapCentre.lng();
+            localStorage.mapZoom = map.getZoom();
+            console.log(localStorage.mapLat);
+
+        });
+
+        google.maps.event.addListener(map,"zoom_changed", function() {
+            //Set local storage variables.
+            mapCentre = map.getCenter();
+
+            localStorage.mapLat = mapCentre.lat();
+            localStorage.mapLng = mapCentre.lng();
+            localStorage.mapZoom = map.getZoom();
+        });
 
         var contentString = document.getElementById('create-form');
         var location = document.getElementById('poloha');
