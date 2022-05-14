@@ -101,12 +101,17 @@ class WorkerController extends Controller
             ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Pridaný popis riešenia problému', 'description' => '']);
             ProblemHistoryRecord::create(['problem_id' => $problem->problem_id, 'type' => 'Zmena stavu riešenia', 'description' => $latestSolState->TypStavuRieseniaProblemu['nazov'].' -> Čaká na schválenie']);
             WorkingGroupHistory::create(['working_group_id' => $problem->working_group_id, 'type' => 'Problém vyriešený', 'description' => 'Problém ID '.$problem->problem_id.' -> čaká na schválenie']);
+            $problem->save();
+
+            return redirect()->route('worker.index')
+                ->with('status', 'Problem úspešne odoslaný na schválenie!');
+        }
+        else {
+            return redirect()->back()
+                ->with('error', 'Popis riešenia problému nemôže byť prázdny!');
         }
 
-        $problem->save();
 
-        return redirect()->route('worker.index')
-            ->with('status', 'Problem úspešne odoslaný na schválenie!');
     }
 
     public function workingGroupDetail() {
