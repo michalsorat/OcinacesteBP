@@ -297,6 +297,8 @@
             }, 40);
         }
     }
+
+
 </script>
 
 <div class="bnr-holder">

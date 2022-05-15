@@ -78,9 +78,7 @@
             <form class="start-form" action="{{ route('createProblem') }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
-                <label for="location_field">
-                    <input id="poloha" class="input-field" type="hidden" name="poloha" value="">
-                </label>
+                <input id="poloha" class="input-field" type="hidden" name="poloha" value="">
 
                 <label for="address_field"><span>Adresa <span class="required">*</span></span>
                     <input id="address" class="input-field" type="text" name="address" value="" readonly>
@@ -201,7 +199,12 @@
 
             let sliderRange = $('#slider-range');
             let dateFrom, dateTo;
-            let maxDateObject = new Date();
+
+            let maxDate = '{{$problems[$problems->count() - 1]->created_at}}';
+            let maxDateTimeParts= maxDate.split(/[- :]/);
+            maxDateTimeParts[1]--;
+            let maxDateObject = new Date(...maxDateTimeParts);
+            // let maxDateObject = new Date();
 
             if (localStorage.dateFrom == null || localStorage.dateTo == null) {
                 localStorage.dateFrom = minDateObject;
