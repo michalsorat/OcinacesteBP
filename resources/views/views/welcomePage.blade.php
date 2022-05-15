@@ -200,17 +200,13 @@
             let sliderRange = $('#slider-range');
             let dateFrom, dateTo;
 
-            let maxDate = '{{$problems[$problems->count() - 1]->created_at}}';
-            let maxDateTimeParts= maxDate.split(/[- :]/);
-            maxDateTimeParts[1]--;
-            let maxDateObject = new Date(...maxDateTimeParts);
-            // let maxDateObject = new Date();
+            let maxDateObject = new Date();
 
             if (localStorage.dateFrom == null || localStorage.dateTo == null) {
                 localStorage.dateFrom = minDateObject;
                 localStorage.dateTo = maxDateObject;
             }
-            if (new Date(localStorage.dateTo).getTime() < maxDateObject.getTime()) {
+            if ('{{session('status')}}') {
                 localStorage.dateTo = maxDateObject;
             }
 
