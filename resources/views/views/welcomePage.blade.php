@@ -210,6 +210,9 @@
                 localStorage.dateFrom = minDateObject;
                 localStorage.dateTo = maxDateObject;
             }
+            if (new Date(localStorage.dateTo).getTime() < maxDateObject.getTime()) {
+                localStorage.dateTo = maxDateObject;
+            }
 
             sliderRange.slider({
                 range: true,
