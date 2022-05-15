@@ -40,11 +40,6 @@ class Problem extends Model
         return $this->belongsTo('App\Models\StavProblemu', 'stav_problemu_id');
     }
 
-//    public function StavyRieseniaProblemu(): \Illuminate\Database\Eloquent\Relations\HasMany
-//    {
-//        return $this->hasMany(StavRieseniaProblemu::class, 'problem_id')->orderByDesc('created_at');
-//    }
-
     public function StavRieseniaProblemu(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(StavRieseniaProblemu::class, 'problem_id')->orderByDesc('created_at');

@@ -42,56 +42,47 @@ class ProblemController extends Controller
     public function welcomePage(Request $request)
     {
         if ($request->ajax()) {
-            $problems = Problem::with('PopisyRiesenia')
-                                ->whereIn('kategoria_problemu_id', $request->checkedCategories)
-                                ->when(($request->isBump) != 'showAll', function($query) use ($request) {
-                                    $query->where('isBump', $request->isBump);
-                                })
-                                ->whereBetween('created_at', [$request->dateFrom, $request->dateTo])
-                                ->orderBy('created_at', 'asc')
-                                ->get();
+            if (!empty($request->checkedCategories && $request->dateFrom != $request->dateTo)) {
+                $problems = Problem::with('PopisyRiesenia')
+                    ->whereIn('kategoria_problemu_id', $request->checkedCategories)
+                    ->when(($request->isBump) != 'showAll', function($query) use ($request) {
+                        $query->where('isBump', $request->isBump);
+                    })
+                    ->whereBetween('created_at', [$request->dateFrom, $request->dateTo])
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+                if ($problems->count() == 0) {
+                    $problems = array();
+                }
+            }
+            else {
+                $problems = array();
+            }
         }
         else {
             $problems = Problem::orderBy('created_at', 'asc')->get();
         }
 
         $typy_stavov_riesenia = TypStavuRieseniaProblemu::all();
-        $popisyAll = PopisStavuRieseniaProblemu::all();
-
         $kategorie = KategoriaProblemu::all();
         $stavyProblemu = StavProblemu::all();
 
         $stavy_riesenia = array();
-        $popisy_stavov_riesenia = array();
 
         foreach ($problems as $problem) {
             $typ = DB::table('stav_riesenia_problemu')
                 ->where('problem_id', '=', $problem->problem_id)
                 ->latest('stav_riesenia_problemu_id')->first();
             array_push($stavy_riesenia, $typ->typ_stavu_riesenia_problemu_id);
-
-            $popisTable = DB::table('popis_stavu_riesenia_problemu')
-                ->where('problem_id', '=', $problem->problem_id)
-                ->latest('popis_stavu_riesenia_problemu_id')->first();
-            if ($popisTable != null) {
-                if ($popisTable->popis_stavu_riesenia_problemu_id != null) {
-                    $id = $popisTable->popis_stavu_riesenia_problemu_id;
-                }
-                array_push($popisy_stavov_riesenia, $id);
-            }
-            else {
-                array_push($popisy_stavov_riesenia, 0);
-            }
         }
+
         if ($request->ajax()) {
             return view('components.map')
                 ->with('problems', $problems)
                 ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
                 ->with('stavy_riesenia', json_encode($stavy_riesenia))
                 ->with('kategorie', $kategorie)
-                ->with('stavy', $stavyProblemu)
-                ->with('popisyAll', $popisyAll)
-                ->with('popisyArr', json_encode($popisy_stavov_riesenia));
+                ->with('stavy', $stavyProblemu);
         }
         else {
             return view('views.welcomePage')
@@ -99,9 +90,7 @@ class ProblemController extends Controller
                 ->with('typy_stavov_riesenia', $typy_stavov_riesenia)
                 ->with('stavy_riesenia', json_encode($stavy_riesenia))
                 ->with('kategorie', $kategorie)
-                ->with('stavy', $stavyProblemu)
-                ->with('popisyAll', $popisyAll)
-                ->with('popisyArr', json_encode($popisy_stavov_riesenia));
+                ->with('stavy', $stavyProblemu);
         }
     }
 

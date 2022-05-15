@@ -146,7 +146,6 @@
         });
 
         var stavyRiesenia = {{$stavy_riesenia}};
-        var popisyArr = {{$popisyArr}};
 
         let count = 0;
         var nazov_typu_riesenia;
@@ -304,7 +303,7 @@
     <div id="map"></div>
 </div>
 
-@if(!$problems->isEmpty())
+@if($problems != null)
 <div class="modal fade" id="imageGallery" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         @include('partials.problemImage')

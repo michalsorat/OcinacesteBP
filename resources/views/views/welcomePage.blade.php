@@ -151,7 +151,6 @@
             });
             localStorage.checkedArr = JSON.stringify(checkboxArr);
 
-
             let showBumpsCB = $('#showBumpsCB');
             if (showBumpsCB.is(':checked')) {
                 isBump = 'showAll';
@@ -174,7 +173,7 @@
                     initAutocomplete();
                 },
                 error: function () {
-                    $('#map-section').html('Something went wrong');
+                    $('#map-section').html('Something went wrong!');
                 }
             });
         });
@@ -263,13 +262,9 @@
                     initAutocomplete();
                 },
                 error: function () {
-                    $('#map-section').html('Something went wrong');
+                    $('#map-section').html('Something went wrong!');
                 }
             });
-
-            // if (localStorage.showBumps != null || localStorage.checkedArr != null) {
-            //
-            // }
         });
 
         $("#slider-range").on("slidestop", function(event, ui) {
@@ -303,7 +298,7 @@
                     initAutocomplete();
                 },
                 error: function () {
-                    $('#map-section').html('Something went wrong');
+                    $('#map-section').html('Something went wrong!');
                 }
             });
         });
