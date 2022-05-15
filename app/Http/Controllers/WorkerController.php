@@ -110,8 +110,6 @@ class WorkerController extends Controller
             return redirect()->back()
                 ->with('error', 'Popis riešenia problému nemôže byť prázdny!');
         }
-
-
     }
 
     public function workingGroupDetail() {

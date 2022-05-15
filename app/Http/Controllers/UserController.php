@@ -22,23 +22,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $rola = Auth::user()->rola_id;
 
-        if($rola == 3) {
-            $users = User::all();
-            $roles = Rola::all();
-            return view('pouzivatelia.admin_index')
-                ->with('users', $users)
-                ->with('roly', $roles);
-        }
-        else if($rola == 5){
-
-            //$users = User::where('rola_id', '4');
-            //$users = User::all();
-            $users = DB::table('users')->where('rola_id','4')->get();
-
-            return view('pouzivatelia.manazer_index')->with('users', $users);
-        }
     }
 
     /**
@@ -82,11 +66,6 @@ class UserController extends Controller
     public function edit($id)
     {
 
-        $rola = Auth::user()->rola_id;
-
-        if($rola == 1){
-            return view('pouzivatelia.obcan_edit');
-        }
     }
 
     /**
@@ -162,22 +141,6 @@ class UserController extends Controller
                 $inProgressProblemsCount++;
             }
         }
-//        $createdProblemsCount = Problem::where('pouzivatel_id', '=', $id)->count();
-//        $solvedProblemsCount = Problem::where('pouzivatel_id', '=', $id)
-//            ->whereHas('StavRieseniaProblemu', function ($query) {
-//                    $query->where('typ_stavu_riesenia_problemu_id', '=', '4');
-//                })
-//            ->count();
-//        $acceptedProblemsCount = Problem::where('pouzivatel_id', '=', $id)
-//            ->whereHas('StavRieseniaProblemu', function ($query) {
-//                $query->where('typ_stavu_riesenia_problemu_id', '=', '1');
-//            })
-//            ->count();
-//        $inProgressProblemsCount = Problem::where('pouzivatel_id', '=', $id)
-//            ->whereHas('StavRieseniaProblemu', function ($query) {
-//                $query->where('typ_stavu_riesenia_problemu_id', '=', '3');
-//            })
-//            ->count();
 
         $user = User::find($id);
 
