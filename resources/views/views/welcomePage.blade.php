@@ -202,20 +202,20 @@
 
             let maxDateObject = new Date();
 
-            if (localStorage.dateFrom == null || localStorage.dateTo == null) {
+            if (localStorage.dateFrom == null) {
                 localStorage.dateFrom = minDateObject;
-                localStorage.dateTo = maxDateObject;
+                // localStorage.dateTo = maxDateObject;
             }
-            if ('{{session('status')}}') {
-                localStorage.dateTo = maxDateObject;
-            }
+            {{--if ('{{session('status')}}') {--}}
+            {{--    localStorage.dateTo = maxDateObject;--}}
+            {{--}--}}
 
             sliderRange.slider({
                 range: true,
                 min: minDateObject.getTime() / 1000,
                 max: maxDateObject.getTime() / 1000,
                 step: 5000,
-                values: [new Date(localStorage.dateFrom).getTime() / 1000, new Date(localStorage.dateTo).getTime() / 1000],
+                values: [new Date(localStorage.dateFrom).getTime() / 1000, new Date().getTime() / 1000],
                 slide: function (event, ui) {
                     $("#dateFrom").val(new Date(ui.values[0] * 1000).toLocaleDateString());
                     $("#dateTo").val(new Date(ui.values[1] * 1000).toLocaleDateString());
@@ -287,7 +287,7 @@
             dateToInput.val(new Date(ui.values[1] * 1000).toISOString().slice(0, 19).replace('T', ' '));
 
             localStorage.dateFrom = new Date(ui.values[0] * 1000).toISOString();
-            localStorage.dateTo = new Date(ui.values[1] * 1000).toISOString();
+            // localStorage.dateTo = new Date(ui.values[1] * 1000).toISOString();
 
             let dateFrom = dateFromInput.val();
             let dateTo = dateToInput.val();
