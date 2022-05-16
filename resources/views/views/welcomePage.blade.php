@@ -116,7 +116,7 @@
                         miesto</small>
                 </div>
                 <div class="btn-form">
-                    <label><input type="submit" value="Submit"/></label>
+                    <label><input type="submit" value="Vytvoriť problém"/></label>
                 </div>
             </form>
         </div>
