@@ -43,6 +43,7 @@ Route::get('/problemsJsonPagination', 'ProblemController@allProblemsJsonPaginati
 Route::get('/problemsJson', 'ProblemController@allProblemsJson');
 Route::get('/problemsClustered', 'ProblemController@allProblemsClustered');
 Route::get('/problemsJson/{id}', 'ProblemController@problemById');
+Route::post('/createBump', 'ProblemController@storeBump');
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::resource('admin', 'AdminController');
