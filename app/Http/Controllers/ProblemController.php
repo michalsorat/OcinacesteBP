@@ -1370,6 +1370,8 @@ class ProblemController extends Controller
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
 
+        $this->refreshSuperclusterIndex();
+
         return response()->json('ok');
     }
 }
