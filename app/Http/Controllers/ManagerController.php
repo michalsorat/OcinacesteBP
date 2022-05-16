@@ -34,7 +34,6 @@ class ManagerController extends Controller
         $vehicles = Vozidlo::where('working_group_id', '!=', '0')->get();
         $workingGroups = WorkingGroup::with('users')->with('vehicle')->with('assignedCategories')->with('assignedProblems')->get();
         $categories = KategoriaProblemu::all();
-        $workingGroup = null;
         $assignedProblems = array();
         $problemsToAssign = null;
 
@@ -44,7 +43,6 @@ class ManagerController extends Controller
             ->with('vehicles', $vehicles)
             ->with('workingGroups', $workingGroups)
             ->with('categories', $categories)
-            ->with('workingGroup', $workingGroup)
             ->with('problemsToAssign', $problemsToAssign)
             ->with('assignedProblems', $assignedProblems);
     }
@@ -60,11 +58,11 @@ class ManagerController extends Controller
         $workingGroup = WorkingGroup::where('id', '=', $id)
             ->with('assignedCategories')
             ->with('assignedProblems')
-            ->get();
+            ->firstOrFail();
 
         $problemsToAssign = Problem::where('working_group_id', '=', '0')
             ->where(function($query) use ($workingGroup) {
-                foreach ($workingGroup[0]->assignedCategories as $assignedCategory) {
+                foreach ($workingGroup->assignedCategories as $assignedCategory) {
                     $query->orWhere('kategoria_problemu_id', '=', $assignedCategory->kategoria_problemu_id);
                 }
             })->get();
@@ -79,7 +77,7 @@ class ManagerController extends Controller
             }
         }
 
-        foreach ($workingGroup[0]->assignedProblems as $problem) {
+        foreach ($workingGroup->assignedProblems as $problem) {
             $typ = DB::table('stav_riesenia_problemu')
                 ->where('problem_id', '=', $problem->problem_id)
                 ->latest('stav_riesenia_problemu_id')->first();
