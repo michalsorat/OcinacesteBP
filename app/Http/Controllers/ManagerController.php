@@ -34,7 +34,8 @@ class ManagerController extends Controller
         $vehicles = Vozidlo::where('working_group_id', '!=', '0')->get();
         $workingGroups = WorkingGroup::with('users')->with('vehicle')->with('assignedCategories')->with('assignedProblems')->get();
         $categories = KategoriaProblemu::all();
-        $groupProblems = null;
+        $workingGroup = null;
+        $assignedProblems = array();
         $problemsToAssign = null;
 
         return view('views.manager.manager_assignProblems')
@@ -43,8 +44,9 @@ class ManagerController extends Controller
             ->with('vehicles', $vehicles)
             ->with('workingGroups', $workingGroups)
             ->with('categories', $categories)
-            ->with('groupProblems', $groupProblems)
-            ->with('problemsToAssign', $problemsToAssign);
+            ->with('workingGroup', $workingGroup)
+            ->with('problemsToAssign', $problemsToAssign)
+            ->with('assignedProblems', $assignedProblems);
     }
 
     public function manageGroupProblems($id) {
@@ -53,6 +55,7 @@ class ManagerController extends Controller
         $solStatusTypes = TypStavuRieseniaProblemu::all();
         $priorities = Priorita::all();
         $problemsToAssignFinal = array();
+        $assignedProblems = array();
 
         $workingGroup = WorkingGroup::where('id', '=', $id)
             ->with('assignedCategories')
@@ -80,11 +83,14 @@ class ManagerController extends Controller
             $typ = DB::table('stav_riesenia_problemu')
                 ->where('problem_id', '=', $problem->problem_id)
                 ->latest('stav_riesenia_problemu_id')->first();
-            array_push($solStatusAssignedProblems, $typ->typ_stavu_riesenia_problemu_id);
+            if ($typ->typ_stavu_riesenia_problemu_id != 4) {
+                array_push($solStatusAssignedProblems, $typ->typ_stavu_riesenia_problemu_id);
+                array_push($assignedProblems, $problem);
+            }
         }
-
         return view('components.manager.manageGroupProblems')
-            ->with('groupProblems', $workingGroup)
+            ->with('workingGroup', $workingGroup)
+            ->with('assignedProblems', $assignedProblems)
             ->with('problemsToAssign', $problemsToAssignFinal)
             ->with('solStatusProblemsToAssign', $solStatusProblemsToAssign)
             ->with('solStatusAssignedProblems', $solStatusAssignedProblems)
@@ -174,10 +180,10 @@ class ManagerController extends Controller
         $latestSolState = StavRieseniaProblemu::latest()->where('problem_id', '=', $id)->first();
         StavRieseniaProblemu::create(['problem_id' => $id, 'typ_stavu_riesenia_problemu_id' => 4]); //vyriešené
         ProblemHistoryRecord::create(['problem_id' => $id, 'type' => 'Zmena stavu riešenia', 'description' => $latestSolState->TypStavuRieseniaProblemu['nazov'].' -> Vyriešené']);
-        WorkingGroupHistory::create(['working_group_id' => $problem->working_group_id, 'type' => 'Problém ukončený', 'description' => 'Problém ID '.$problem->problem_id.' -> schválený']);
+        WorkingGroupHistory::create(['working_group_id' => $problem->working_group_id, 'type' => 'Problém vyriešený', 'description' => 'Problém ID '.$problem->problem_id.' -> schválený']);
 
-        $problem->working_group_id = 0;
-        $problem->save();
+//        $problem->working_group_id = 0;
+//        $problem->save();
 
         return redirect()->route('waitingForApproval')
             ->with('status', 'Riešenie problému schválené, problém úspešne vyriešený!');

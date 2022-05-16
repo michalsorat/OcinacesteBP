@@ -138,6 +138,7 @@
                         url: '/workingGroupChart/' + workingGroupID,
                         type: 'GET',
                         success: function (data) {
+                            console.log(data)
                             let months = ['Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
                             let inProcessProbData = months.map((month, index) => {
                                 let dataObj = {};

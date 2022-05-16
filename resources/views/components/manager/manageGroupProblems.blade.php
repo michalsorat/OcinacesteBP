@@ -1,6 +1,6 @@
 <div class="col-12 px-4">
     <h6 class="mt-lg-3 mt-2 font-weight-bolder">Priradené problémy</h6>
-    @if($groupProblems == null)
+    @if($workingGroup == null)
         <h4 class="text-center my-5">Vyberte pracovnú čatu na zobrazenie pridelených problémov</h4>
     @else
         <div class="table-wrapper">
@@ -18,12 +18,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                @if($groupProblems[0]->assignedProblems->isEmpty())
-                    <tr>
-                        <td colspan="7" class="text-center">Žiadne pridelené problémy pracovnej čate</td>
-                    </tr>
-                @else
-                    @foreach($groupProblems[0]->assignedProblems as $counter=>$problem)
+{{--                @if($assignedProblems->isEmpty())--}}
+{{--                    <tr>--}}
+{{--                        <td colspan="7" class="text-center">Žiadne pridelené problémy pracovnej čate</td>--}}
+{{--                    </tr>--}}
+{{--                @else--}}
+                    @foreach($assignedProblems as $counter=>$problem)
                         <tr>
                             <td onclick="window.location='{{ route('problemDetail', $problem->problem_id) }}'"><i class="fa-solid fa-angles-right"></i></td>
                             <td data-th="#" id="hashtagID">{{ ++$counter }}</td>
@@ -43,7 +43,7 @@
                             </td>
                         </tr>
                     @endforeach
-                @endif
+{{--                @endif--}}
                 </tbody>
             </table>
         </div>
