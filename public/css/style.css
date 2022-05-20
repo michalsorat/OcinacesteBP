@@ -18,6 +18,19 @@ body {
     font-size: 16px;
 }
 
+#headerLogo {
+    width: 70px;
+    height: 40px;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+
+#headerLogo2 {
+    width: 60px;
+    height: 30px;
+    margin-top: 15px;
+}
+
 .bnr-holder {
     width: 100%;
     height: 100%;
@@ -77,7 +90,7 @@ body {
     font-family: 'Poppins', sans-serif;
     display: inline-block;
     margin-top: 5px;
-    margin-right: 30px;
+    margin-right: 20px;
     margin-left: 20px;
     color: #ffffff;
     text-decoration: none;
