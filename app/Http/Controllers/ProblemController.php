@@ -6,6 +6,7 @@ use App\Models\FotkaRieseniaProblemu;
 use App\Models\PopisStavuRieseniaProblemu;
 use App\Models\PriradeneVozidlo;
 use App\Models\PriradenyZamestnanec;
+use App\Models\ProblemDetectedByAlgorithms;
 use App\Models\ProblemHistoryRecord;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -107,7 +108,7 @@ class ProblemController extends Controller
     }
 
     public function allProblemsJsonPagination() {
-        $problem = Problem::paginate(15);
+        $problem = Problem::with('problemDetectedByAlgorithms')->paginate(15);
         return response()->json($problem->toArray());
     }
 
@@ -131,7 +132,7 @@ class ProblemController extends Controller
     }
 
     public function problemById($id) {
-        $problem = Problem::with('problemImage')->where('problem_id', $id)->first();
+        $problem = Problem::with('problemImage', 'problemDetectedByAlgorithms')->where('problem_id', $id)->first();
         return response()->json($problem);
     }
 
@@ -1369,6 +1370,13 @@ class ProblemController extends Controller
 
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
+
+        $algorithms = $request->get('detectedByAlgorithms');
+        if($algorithms) {
+            foreach ($algorithms as $algorithm) {
+                ProblemDetectedByAlgorithms::create(['problem_id' => $last->problem_id, 'algorithm' => $algorithm]);
+            }
+        }
 
         $this->refreshSuperclusterIndex();
 

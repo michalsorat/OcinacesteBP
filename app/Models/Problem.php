@@ -64,4 +64,9 @@ class Problem extends Model
     {
         return $this->hasMany(ProblemHistoryRecord::class, 'problem_id')->orderBy('created_at', 'desc');
     }
+
+    public function problemDetectedByAlgorithms(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ProblemDetectedByAlgorithms::class, 'problem_id');
+    }
 }
