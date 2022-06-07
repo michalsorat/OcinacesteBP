@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FotkaProblemu;
 use App\Models\Problem;
+use App\Models\ProblemDetectedByAlgorithms;
 use App\Models\StavRieseniaProblemu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ class MobileAppProblemController extends Controller
     public function myProblems()
     {
         $user = auth('api')->user();
-        $problem = Problem::where('pouzivatel_id', $user->id)->paginate(15);
+        $problem = Problem::where('pouzivatel_id', $user->id)->with('problemDetectedByAlgorithms')->paginate(15);
         return response()->json($problem->toArray());
     }
 
@@ -56,6 +57,13 @@ class MobileAppProblemController extends Controller
 
         $last = DB::table('problem')->latest('problem_id')->first();
         StavRieseniaProblemu::create(['problem_id' => $last->problem_id, 'typ_stavu_riesenia_problemu_id' => 1]);
+
+        $algorithms = $request->get('detectedByAlgorithms');
+        if($algorithms) {
+            foreach ($algorithms as $algorithm) {
+                ProblemDetectedByAlgorithms::create(['problem_id' => $last->problem_id, 'algorithm' => $algorithm]);
+            }
+        }
 
         $this->refreshSuperclusterIndex();
 
