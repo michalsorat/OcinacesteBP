@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-custom navbar-dark bg-dark">
     <div class="row">
         <h1 class="main_header"><a href="{{ route('welcome') }}">Oči na ceste</a></h1>
-        <a href="https://www.fiit.stuba.sk/" target="_blank"><img src="img/FIIT_STU_logo.png" id="headerLogo"/></a>
-        <a href="https://www.spravaciest.sk/" target="_blank"> <img src="img/SUC.png" id="headerLogo2"/></a>
+        <a href="https://www.fiit.stuba.sk/" target="_blank"><img src="/img/FIIT_STU_logo.png" id="headerLogo"/></a>
+        <a href="https://www.spravaciest.sk/" target="_blank"> <img src="/img/SUC.png" id="headerLogo2"/></a>
     </div>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
