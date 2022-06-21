@@ -319,7 +319,7 @@ class ProblemController extends Controller
 
         if ($request->hasFile('uploaded_images')) {
             foreach ($request->file('uploaded_images') as $uploadedImage) {
-                $fileName = date('Y-m-d-') . $uploadedImage->hashName();
+                $fileName = date('Y-m-d-H-i-s-') . $uploadedImage->hashName();
                 $uploadedImage->storeAs('problemImages', $fileName, 'public');
                 FotkaProblemu::create(['problem_id' => $last->problem_id, 'nazov_suboru' => $fileName]);
             }
