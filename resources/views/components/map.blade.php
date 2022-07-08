@@ -86,8 +86,7 @@
                 let lat = event.latLng.lat();
                 let lng = event.latLng.lng();
                 //old KEY
-                // const KEY = "AIzaSyBwqdLzr2oJjx6qzdDY8YVE9m8-yRasOwc";
-                const KEY = "AIzaSyCkf657xylGn2KpKWraX_nLq0XHu6OghgQ";
+                const KEY = "AIzaSyBwqdLzr2oJjx6qzdDY8YVE9m8-yRasOwc";
                 const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${KEY}`;
                 fetch(url)
                     .then(response => response.json())
